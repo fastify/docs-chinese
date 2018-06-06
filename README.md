@@ -1,7 +1,7 @@
 # Fastify 文档中文翻译
 
 
-* [入门](https://github.com/fastify/docs-chinese/blob/master/docs/Getting-Started.md) [@fralonra](https://github.com/fralonra)翻译
+* [入门](https://github.com/fastify/docs-chinese/blob/master/docs/Getting-Started.md) -- @fralonra
 * [服务器方法](https://github.com/fastify/fastify/blob/master/docs/Server-Methods.md)
 * [路由](https://github.com/fastify/fastify/blob/master/docs/Routes.md)
 * [日志](https://github.com/fastify/fastify/blob/master/docs/Logging.md)
@@ -19,3 +19,6 @@
 * [插件指南](https://github.com/fastify/fastify/blob/master/docs/Plugins-Guide.md)
 * [HTTP2](https://github.com/fastify/fastify/blob/master/docs/HTTP2.md)
 * [长期支持计划](https://github.com/fastify/fastify/blob/master/docs/LTS.md)
+
+### Contributor
+* [@fralonra](https://github.com/fralonra)
