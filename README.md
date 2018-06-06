@@ -11,7 +11,7 @@
 * [验证和序列化](https://github.com/fastify/fastify/blob/master/docs/Validation-and-Serialization.md)
 * [生命钩子](https://github.com/fastify/fastify/blob/master/docs/Lifecycle.md)
 * [回复](https://github.com/fastify/fastify/blob/master/docs/Reply.md)
-* [请求](https://github.com/fastify/fastify/blob/master/docs/Request.md)
+* [请求](https://github.com/fastify/docs-chinese/blob/master/docs/Request.md) -- @vincent178
 * [Content-Type 解析](https://github.com/fastify/fastify/blob/master/docs/ContentTypeParser.md)
 * [插件](https://github.com/fastify/fastify/blob/master/docs/Plugins.md)
 * [测试](https://github.com/fastify/fastify/blob/master/docs/Testing.md)
@@ -22,3 +22,4 @@
 
 ### Contributor
 * [@fralonra](https://github.com/fralonra)
+* [@vincent178](https://github.com/vincent178)

@@ -1,15 +1,15 @@
 <h1 align="center">Fastify</h1>
 
 ## Request
-The first parameter of the handler function is `Request`.<br>
-Request is a core Fastify object containing the following fields:
-- `query` - the parsed querystring
-- `body` - the body
-- `params` - the params matching the URL
-- `headers` - the headers
-- `raw` - the incoming HTTP request from Node core *(you can use the alias `req`)*
-- `id` - the request id
-- `log` - the logger instance of the incoming request
+第一个句柄方法的参数是 `Request`.<br>
+Request 是 Fastify 的核心对象，包含了一下的字段:
+- `query` - 解析后的 querystring
+- `body` - 消息主体
+- `params` - URL 参数
+- `headers` - headers
+- `raw` - Node 原生的 HTTP 请求 *(可以用别名 `req`)*
+- `id` - 请求 id
+- `log` - 请求的日志实例
 
 ```js
 fastify.post('/:params', options, function (request, reply) {
