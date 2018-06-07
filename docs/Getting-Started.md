@@ -75,7 +75,7 @@ start()
 ### 第一个插件
 就如同在 JavaScript 中一切皆为对象，在 Fastify 中，一切都是插件 (plugin)。<br>
 在深入之前，先来看看插件系统是如何工作的吧！<br>
-让我们新建一个基本的服务器，但这回我们把路由 (route) 的声明从入口文件转移到一个外部文件。(参阅[路由声明](https://github.com/fastify/fastify/blob/master/docs/Routes.md)).
+让我们新建一个基本的服务器，但这回我们把路由 (route) 的声明从入口文件转移到一个外部文件。(参阅[路由声明](https://github.com/fastify/fastify/blob/master/docs/Routes.md))。
 ```js
 const fastify = require('fastify')()
 

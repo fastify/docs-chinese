@@ -2,7 +2,7 @@
 
 
 * [入门](https://github.com/fastify/docs-chinese/blob/master/docs/Getting-Started.md) -- @fralonra
-* [服务器方法](https://github.com/fastify/fastify/blob/master/docs/Server-Methods.md)
+* [服务器方法](https://github.com/fastify/docs-chinese/blob/master/docs/Server-Methods.md) -- @fralonra
 * [路由](https://github.com/fastify/fastify/blob/master/docs/Routes.md)
 * [日志](https://github.com/fastify/fastify/blob/master/docs/Logging.md)
 * [中间件](https://github.com/fastify/fastify/blob/master/docs/Middlewares.md)
