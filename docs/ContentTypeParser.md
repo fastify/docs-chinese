@@ -3,7 +3,7 @@
 ## Content Type 解析
 Fastify 原生只支持 `'application/json'` content type. 默认的字符集是 `utf-8`. 如果你需要支持其他的 content types, 你需要使用 `addContentTypeParser` API. *默认的 JSON 解析器也可以被更改.*
 
-和其他的 API 一样, `addContentTypeParser` 被封装在定义它的范围( Scope )中了. 这就意味这如果你定义在了根范围中那么它就会全局可用, 如果你定义在一个注册的范围中，那么它只能在那个范围和子范围中可用.
+和其他的 API 一样, `addContentTypeParser` 被封装在定义它的范围( Scope )中了. 这就意味着如果你定义在了根范围中，那么就是全局可用, 如果你定义在一个注册( Register )的范围中，那么它只能在那个范围( Register )和子范围中可用.
 
 Fastify 自动将解析好的 payload 添加到 [Fastify request](https://github.com/fastify/docs-chinese/blob/master/docs/Request.md) 对象, 你能通过 `request.body` 访问.
 
@@ -21,7 +21,7 @@ fastify.addContentTypeParser('application/jsoff', async function (req) {
 })
 ```
 
-你也可以用 `hasContentTypeParser` API 来验证是否某个 content type 解析器是否存在.
+你也可以用 `hasContentTypeParser` API 来验证某个 content type 解析器是否存在.
 
 ```js
 if (!fastify.hasContentTypeParser('application/jsoff')){
@@ -51,7 +51,7 @@ fastify.addContentTypeParser('application/json', { parseAs: 'string' }, function
 查看例子 [`example/parser.js`](https://github.com/fastify/fastify/blob/master/examples/parser.js).
 
 ##### 自定义解析器的选项
-+ `parseAs` (string): `'string'` 或者 `'buffer'` 定义了如果收集进来的数据. 默认是 `'buffer'`.
++ `parseAs` (string): `'string'` 或者 `'buffer'` 定义了如何收集进来的数据. 默认是 `'buffer'`.
 + `bodyLimit` (number): 自定义解析器能够接收的最大的数据长度, 比特为单位. 默认是全局的消息主体的长度限制[`Fastify 工厂方法`](https://github.com/fastify/fastify/blob/master/docs/Factory.md#bodylimit).
 
 #### 捕获所有
