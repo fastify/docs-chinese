@@ -4,7 +4,7 @@
 
 <a name="server"></a>
 #### 服务器
-`fastify.server`：由 [**`Fastify 的工厂函数`**](https://github.com/fastify/fastify/blob/master/docs/Factory.md) 生成的 Node 原生 [server](https://nodejs.org/api/http.html#http_class_http_server) 对象。
+`fastify.server`：由 [**`Fastify 的工厂函数`**](https://github.com/fastify/docs-chinese/blob/master/docs/Factory.md) 生成的 Node 原生 [server](https://nodejs.org/api/http.html#http_class_http_server) 对象。
 
 <a name="after"></a>
 #### after
@@ -116,28 +116,28 @@ fastify.listen(3000, '0.0.0.0', (err) => {
 
 <a name="route"></a>
 #### route
-将路由添加到服务器的方法，支持简写。请看[这里](https://github.com/fastify/fastify/blob/master/docs/Routes.md)。
+将路由添加到服务器的方法，支持简写。请看[这里](https://github.com/fastify/docs-chinese/blob/master/docs/Routes.md)。
 
 <a name="close"></a>
 #### close
-`fastify.close(callback)`：调用这个函数来关闭服务器实例，并触发 [`'onClose'`](https://github.com/fastify/fastify/blob/master/docs/Hooks.md#on-close) 钩子。<br>
+`fastify.close(callback)`：调用这个函数来关闭服务器实例，并触发 [`'onClose'`](https://github.com/fastify/docs-chinese/blob/master/docs/Hooks.md#on-close) 钩子。<br>
 服务器会向所有新的请求发送 `503` 错误，并销毁它们。
 
 <a name="decorate"></a>
 #### decorate*
-向 Fastify 实例、响应或请求添加装饰器函数。参阅[这里](https://github.com/fastify/fastify/blob/master/docs/Decorators.md)了解更多。
+向 Fastify 实例、响应或请求添加装饰器函数。参阅[这里](https://github.com/fastify/docs-chinese/blob/master/docs/Decorators.md)了解更多。
 
 <a name="register"></a>
 #### register
-Fastify 允许用户通过插件扩展功能。插件可以是一组路由、装饰器或其他。请看[这里](https://github.com/fastify/fastify/blob/master/docs/Plugins.md)。
+Fastify 允许用户通过插件扩展功能。插件可以是一组路由、装饰器或其他。请看[这里](https://github.com/fastify/docs-chinese/blob/master/docs/Plugins.md)。
 
 <a name="use"></a>
 #### use
-向 Fastify 添加中间件，请看[这里](https://github.com/fastify/fastify/blob/master/docs/Middlewares.md)。
+向 Fastify 添加中间件，请看[这里](https://github.com/fastify/docs-chinese/blob/master/docs/Middlewares.md)。
 
 <a name="addHook"></a>
 #### addHook
-向 Fastify 添加特定的生命周期钩子函数，请看[这里](https://github.com/fastify/fastify/blob/master/docs/Hooks.md)。
+向 Fastify 添加特定的生命周期钩子函数，请看[这里](https://github.com/fastify/docs-chinese/blob/master/docs/Hooks.md)。
 
 <a name="base-path"></a>
 #### basepath
@@ -169,24 +169,24 @@ fastify.register(function (instance, opts, next) {
 
 <a name="log"></a>
 #### log
-日志的实例，详见[这里](https://github.com/fastify/fastify/blob/master/docs/Logging.md)。
+日志的实例，详见[这里](https://github.com/fastify/docs-chinese/blob/master/docs/Logging.md)。
 
 <a name="inject"></a>
 #### inject
-伪造 http 注入 (作为测试之用) 。请看[更多内容](https://github.com/fastify/fastify/blob/master/docs/Testing.md#inject)。
+伪造 http 注入 (作为测试之用) 。请看[更多内容](https://github.com/fastify/docs-chinese/blob/master/docs/Testing.md#inject)。
 
 <a name="add-schema"></a>
 #### addSchema
 `fastify.addSchema(schemaObj)`，向 Fastify 实例添加可共用的 schema，用于验证数据。你可以通过该 schema 的 id 在应用的任意位置使用它。<br/>
-请看[验证和序列化](https://github.com/fastify/fastify/blob/master/docs/Validation-and-Serialization.md)一文中的[范例](https://github.com/fastify/fastify/blob/master/docs/Validation-and-Serialization.md#shared-schema)。
+请看[验证和序列化](https://github.com/fastify/docs-chinese/blob/master/docs/Validation-and-Serialization.md)一文中的[范例](https://github.com/fastify/docs-chinese/blob/master/docs/Validation-and-Serialization.md#shared-schema)。
 <a name="set-schema-compiler"></a>
 #### setSchemaCompiler
-为所有的路由设置 schema 编译器 (schema compiler)，请看[这里](https://github.com/fastify/fastify/blob/master/docs/Validation-and-Serialization.md#schema-compiler)了解更多信息。
+为所有的路由设置 schema 编译器 (schema compiler)，请看[这里](https://github.com/fastify/docs-chinese/blob/master/docs/Validation-and-Serialization.md#schema-compiler)了解更多信息。
 
 <a name="set-not-found-handler"></a>
 #### setNotFoundHandler
 
-`fastify.setNotFoundHandler(handler(request, reply))`：为 404 状态 (not found) 设置处理器 (handler) 函数。向 `fastify.register()` 传递不同的 [`prefix` 选项](https://github.com/fastify/fastify/blob/master/docs/Plugins.md#route-prefixing-option)，就可以为不同的插件设置不同的处理器。这些处理器被视为常规的路由处理器，因此它们的请求会经历一个完整的 [Fastify 生命周期](https://github.com/fastify/fastify/blob/master/docs/Lifecycle.md#lifecycle)。
+`fastify.setNotFoundHandler(handler(request, reply))`：为 404 状态 (not found) 设置处理器 (handler) 函数。向 `fastify.register()` 传递不同的 [`prefix` 选项](https://github.com/fastify/docs-chinese/blob/master/docs/Plugins.md#route-prefixing-option)，就可以为不同的插件设置不同的处理器。这些处理器被视为常规的路由处理器，因此它们的请求会经历一个完整的 [Fastify 生命周期](https://github.com/fastify/docs-chinese/blob/master/docs/Lifecycle.md#lifecycle)。
 
 ```js
 fastify.setNotFoundHandler(function (request, reply) {

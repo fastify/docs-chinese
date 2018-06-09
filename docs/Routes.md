@@ -11,22 +11,22 @@ fastify.route(options)
 
 * `url`：路由匹配的 url 路径 (别名：`path`)。
 * `schema`：用于验证请求与回复的 schema 对象。
-必须符合 [JSON Schema](http://json-schema.org/) 格式。请看[这里](https://github.com/fastify/fastify/blob/master/docs/Validation-and-Serialization.md)了解更多信息。
+必须符合 [JSON Schema](http://json-schema.org/) 格式。请看[这里](https://github.com/fastify/docs-chinese/blob/master/docs/Validation-and-Serialization.md)了解更多信息。
 
   * `body`：当为 POST 或 PUT 方法时，校验请求主体。
   * `querystring`: 校验 querystring。可以是一个完整的 JSON Schema 对象，它包括了值为 `object` 的 `type` 属性以及包含参数的 `properties` 对象，也可以仅仅是 `properties` 对象中的值 (见下文示例)。
   * `params`: 校验 url 参数。
   * `response`：过滤并生成用于响应的 schema，能帮助提升 10-20% 的吞吐量。
-* `beforeHandler(request, reply, done)`：处理请求之前调用的[钩子函数](https://github.com/fastify/fastify/blob/master/docs/Hooks.md#before-handler)，当需要在路由层面进行身份验证等操作时能派上用场。它还可以是一个函数数组。
+* `beforeHandler(request, reply, done)`：处理请求之前调用的[钩子函数](https://github.com/fastify/docs-chinese/blob/master/docs/Hooks.md#before-handler)，当需要在路由层面进行身份验证等操作时能派上用场。它还可以是一个函数数组。
 * `handler(request, reply)`：处理请求的函数。
-* `schemaCompiler(schema)`：生成校验 schema 的函数。请看[这里](https://github.com/fastify/fastify/blob/master/docs/Validation-and-Serialization.md#schema-compiler)。
+* `schemaCompiler(schema)`：生成校验 schema 的函数。请看[这里](https://github.com/fastify/docs-chinese/blob/master/docs/Validation-and-Serialization.md#schema-compiler)。
 * `bodyLimit`：一个以字节为单位的整形数，默认值为 `1048576` (1 MiB)，防止默认的 JSON 解析器解析超过此大小的请求主体。你也可以通过 `fastify(options)`，在首次创建 Fastify 实例时全局设置该值。
 * `logLevel`：设置日志级别。详见下文。
 * `config`：存放自定义配置的对象。
 
-  `request` 的相关内容请看[请求](https://github.com/fastify/fastify/blob/master/docs/Request.md)一文。
+  `request` 的相关内容请看[请求](https://github.com/fastify/docs-chinese/blob/master/docs/Request.md)一文。
 
-  `reply` 请看[回复](https://github.com/fastify/fastify/blob/master/docs/Reply.md)一文。
+  `reply` 请看[回复](https://github.com/fastify/docs-chinese/blob/master/docs/Reply.md)一文。
 
 
 示例：
@@ -228,7 +228,7 @@ module.exports = function (fastify, opts, next) {
 在 Fastify 中为路由里设置不同的日志级别是十分容易的。<br/>
 你只需在插件或路由的选项里设置 `logLevel` 为相应的[值](https://github.com/pinojs/pino/blob/master/docs/API.md#discussion-3)即可。
 
-要注意的是，如果在插件层面上设置了 `logLevel`，那么 [`setNotFoundHandler`](https://github.com/fastify/fastify/blob/master/docs/Server-Methods.md#setnotfoundhandler) 和 [`setErrorHandler`](https://github.com/fastify/fastify/blob/master/docs/Server-Methods.md#seterrorhandler) 也会受到影响。
+要注意的是，如果在插件层面上设置了 `logLevel`，那么 [`setNotFoundHandler`](https://github.com/fastify/docs-chinese/blob/master/docs/Server-Methods.md#setnotfoundhandler) 和 [`setErrorHandler`](https://github.com/fastify/docs-chinese/blob/master/docs/Server-Methods.md#seterrorhandler) 也会受到影响。
 
 ```js
 // server.js
