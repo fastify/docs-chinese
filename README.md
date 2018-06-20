@@ -8,7 +8,7 @@
 * [中间件](https://github.com/fastify/docs-chinese/blob/master/docs/Middlewares.md) -- @fralonra
 * [钩子方法](https://github.com/fastify/docs-chinese/blob/master/docs/Hooks.md) -- @fralonra
 * [装饰器](https://github.com/fastify/docs-chinese/blob/master/docs/Decorators.md) -- @fralonra
-* [验证和序列化](https://github.com/fastify/fastify/blob/master/docs/Validation-and-Serialization.md)
+* [验证和序列化](https://github.com/fastify/docs-chinese/blob/master/docs/Validation-and-Serialization.md) -- @fralonra
 * [生命钩子](https://github.com/fastify/fastify/blob/master/docs/Lifecycle.md)
 * [回复](https://github.com/fastify/fastify/blob/master/docs/Reply.md)
 * [请求](https://github.com/fastify/docs-chinese/blob/master/docs/Request.md) -- @vincent178
