@@ -16,7 +16,7 @@
 * [插件](https://github.com/fastify/docs-chinese/blob/master/docs/Plugins.md) -- @vincent178
 * [测试](https://github.com/fastify/docs-chinese/blob/master/docs/Testing.md) -- @vincent178
 * [基准测试](https://github.com/fastify/docs-chinese/blob/master/docs/Benchmarking.md) -- @vincent178
-* [插件指南](https://github.com/fastify/fastify/blob/master/docs/Plugins-Guide.md)
+* [插件指南](https://github.com/fastify/fastify/blob/master/docs/Plugins-Guide.md) -- @vincent178
 * [HTTP2](https://github.com/fastify/docs-chinese/blob/master/docs/HTTP2.md) -- @vincent178
 * [长期支持计划](https://github.com/fastify/docs-chinese/blob/master/docs/LTS.md) -- @vincent178
 
