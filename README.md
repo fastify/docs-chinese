@@ -1,6 +1,6 @@
 # Fastify 文档中文翻译
 
-
+### 文档
 * [入门](https://github.com/fastify/docs-chinese/blob/master/docs/Getting-Started.md) -- @fralonra
 * [服务器方法](https://github.com/fastify/docs-chinese/blob/master/docs/Server-Methods.md) -- @fralonra
 * [路由](https://github.com/fastify/docs-chinese/blob/master/docs/Routes.md) -- @fralonra
@@ -20,6 +20,13 @@
 * [HTTP2](https://github.com/fastify/fastify/blob/master/docs/HTTP2.md)
 * [长期支持计划](https://github.com/fastify/fastify/blob/master/docs/LTS.md)
 
-### Contributor
+### 翻译指南
+* Fork https://github.com/fastify/docs-chinese
+* 选择某个待翻译的文档
+* 创建 Git Branch
+* 开始翻译
+* 创建 PR，尽量保证一篇文档一个 commit 一个 PR
+
+### 贡献者
 * [@fralonra](https://github.com/fralonra)
 * [@vincent178](https://github.com/vincent178)
