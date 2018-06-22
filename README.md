@@ -18,7 +18,7 @@
 * [基准测试](https://github.com/fastify/docs-chinese/blob/master/docs/Benchmarking.md) -- @vincent178
 * [插件指南](https://github.com/fastify/fastify/blob/master/docs/Plugins-Guide.md)
 * [HTTP2](https://github.com/fastify/fastify/blob/master/docs/HTTP2.md)
-* [长期支持计划](https://github.com/fastify/fastify/blob/master/docs/LTS.md)
+* [长期支持计划](https://github.com/fastify/docs-chinese/blob/master/docs/LTS.md) -- @vincent178
 
 ### 翻译指南
 * Fork https://github.com/fastify/docs-chinese
