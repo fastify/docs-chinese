@@ -1,24 +1,24 @@
 <h1 align="center">Fastify</h1>
 
-## Reply
-The second parameter of the handler function is `Reply`.
-Reply is a core Fastify object that exposes the following functions:
+## 回复
+处理器函数的第二个参数为 `Reply`。
+Reply 是 Fastify 的一个核心对象。它暴露了以下函数：
 
-- `.code(statusCode)` - Sets the status code.
-- `.header(name, value)` - Sets a response header.
-- `.getHeader(name)` - Retrieve value of already set header.
-- `.hasHeader(name)` = Determine if a header has been set.
-- `.type(value)` - Sets the header `Content-Type`.
-- `.redirect([code,] url)` - Redirect to the specified url, the status code is optional (default to `302`).
-- `.serialize(payload)` - Serializes the specified payload using the default json serializer and returns the serialized payload.
-- `.serializer(function)` - Sets a custom serializer for the payload.
-- `.send(payload)` - Sends the payload to the user, could be a plain text, a buffer, JSON, stream, or an Error object.
-- `.sent` - A boolean value that you can use if you need to know if `send` has already been called.
-- `.res` - The [`http.ServerResponse`](https://nodejs.org/dist/latest/docs/api/http.html#http_class_http_serverresponse) from Node core.
+- `.code(statusCode)` - 设置状态码。
+- `.header(name, value)` - 设置响应 header。
+- `.getHeader(name)` - 获取某个 header 的值。
+- `.hasHeader(name)` - 检查某个 header 是否设置。
+- `.type(value)` - 设置 `Content-Type` header。
+- `.redirect([code,] url)` - 重定向至指定的 url，状态码可选 (默认为 `302`)。
+- `.serialize(payload)` - 使用默认的 json 序列化工具序列化指定的 payload，并返回处理后的结果。
+- `.serializer(function)` - 设置自定义的 payload 序列化工具。
+- `.send(payload)` - 向用户发送 payload。类型可以是纯文本、buffer、JSON、stream，或一个 Error 对象。
+- `.sent` - 一个 boolean，检查 `send` 是否已被调用。
+- `.res` - Node 原生的 [`http.ServerResponse`](https://nodejs.org/dist/latest/docs/api/http.html#http_class_http_serverresponse) 对象。
 
 ```js
 fastify.get('/', options, function (request, reply) {
-  // Your code
+  // 你的代码
   reply
     .code(200)
     .header('Content-Type', 'application/json; charset=utf-8')
@@ -26,7 +26,7 @@ fastify.get('/', options, function (request, reply) {
 })
 ```
 
-Additionally, `Reply` provides access to the context of the request:
+另外，`Reply` 能够访问请求的上下文：
 
 ```js
 fastify.get('/', {config: {foo: 'bar'}}, function (request, reply) {
@@ -36,18 +36,17 @@ fastify.get('/', {config: {foo: 'bar'}}, function (request, reply) {
 
 <a name="code"></a>
 ### .code(statusCode)
-If not set via `reply.code`, the resulting `statusCode` will be `200`.
+如果没有设置 `reply.code`，`statusCode` 会是 `200`。
 
 <a name="header"></a>
 ### .header(key, value)
-Sets a response header. If the value is omitted or undefined it is coerced
-to `''`.
+设置响应 header。如果值被省略或为 undefined，将被强制设成 `''`。
 
-For more information, see [`http.ServerResponse#setHeader`](https://nodejs.org/dist/latest/docs/api/http.html#http_response_setheader_name_value).
+更多信息，请看 [`http.ServerResponse#setHeader`](https://nodejs.org/dist/latest/docs/api/http.html#http_response_setheader_name_value)。
 
 <a name="getHeader"></a>
 ### .getHeader(key)
-Retrieves the value of a previously set header.
+获取已设置的 header 的值。
 ```js
 reply.header('x-foo', 'foo')
 reply.getHeader('x-foo') // 'foo'
@@ -56,7 +55,7 @@ reply.getHeader('x-foo') // 'foo'
 <a name="getHeader"></a>
 ### .removeHeader(key)
 
-Removed the value of a previously set header.
+清除已设置的 header 的值。
 ```js
 reply.header('x-foo', 'foo')
 reply.removeHeader('x-foo')
@@ -65,19 +64,19 @@ reply.getHeader('x-foo') // undefined
 
 <a name="hasHeader"></a>
 ### .hasHeader(key)
-Returns a boolean indicating if the specified header has been set.
+返回一个 boolean，用于检查是否设置了某个 header。
 
 <a name="redirect"></a>
 ### .redirect(dest)
-Redirects a request to the specified url, the status code is optional, default to `302`.
+重定向请求至指定的 url，状态码可选，默认为 `302`。
 ```js
 reply.redirect('/home')
 ```
 
 <a name="type"></a>
 ### .type(contentType, type)
-Sets the content type for the response.
-This is a shortcut for `reply.header('Content-Type', 'the/type')`.
+设置响应的 content type。
+这是 `reply.header('Content-Type', 'the/type')` 的简写。
 
 ```js
 reply.type('text/html')
@@ -85,7 +84,7 @@ reply.type('text/html')
 
 <a name="serializer"></a>
 ### .serializer(func)
-`.send()` will by default JSON-serialize any value that is not one of: `Buffer`, `stream`, `string`, `undefined`, `Error`. If you need to replace the default serializer with a custom serializer for a particular request, you can do so with the `.serializer()` utility. Be aware that if you are using a custom serializer, you must set a custom `'Content-Type'` header.
+`.send()` 方法会默认将 `Buffer`、`stream`、`string`、`undefined`、`Error` 之外类型的值 JSON-序列化。假如你需要在特定的请求上使用自定义的序列化工具，你可以通过 `.serializer()` 来实现。要注意的是，如果使用了自定义的序列化工具，你必须同时设置 `'Content-Type'` header。
 
 ```js
 reply
@@ -93,7 +92,7 @@ reply
   .serializer(protoBuf.serialize)
 ```
 
-Note that you don't need to use this utility inside a `handler` because Buffers, streams, and strings (unless a serializer is set) are considered to already be serialized.
+注意，你并不需要在一个 `handler` 内部使用这一工具，因为 Buffers、streams 以及字符串 (除非已经设置了序列化工具) 被认为是已序列化过的。
 
 ```js
 reply
@@ -101,15 +100,15 @@ reply
   .send(protoBuf.serialize(data))
 ```
 
-See [`.send()`](#send) for more information on sending different types of values.
+请看 [`.send()`](#send) 了解更多关于发送不同类型值的信息。
 
 <a name="send"></a>
 ### .send(data)
- As the name suggests, `.send()` is the function that sends the payload to the end user.
+顾名思义，`.send()` 是向用户发送 payload 的函数。
 
 <a name="send-object"></a>
-#### Objects
-As noted above, if you are sending JSON objects, `send` will serialize the object with [fast-json-stringify](https://www.npmjs.com/package/fast-json-stringify) if you set an output schema, otherwise `JSON.stringify()` will be used.
+#### 对象
+如上文所述，如果你发送 JSON 对象时，设置了输出的 schema，那么 `send` 会使用 [fast-json-stringify](https://www.npmjs.com/package/fast-json-stringify) 来序列化对象。否则，将使用 `JSON.stringify()`。
 ```js
 fastify.get('/json', options, function (request, reply) {
   reply.send({ hello: 'world' })
@@ -117,8 +116,8 @@ fastify.get('/json', options, function (request, reply) {
 ```
 
 <a name="send-string"></a>
-#### Strings
-If you pass a string to `send` without a `Content-Type`, it will be sent as `text/plain; charset=utf-8`. If you set the `Content-Type` header and pass a string to `send`, it will be serialized with the custom serializer if one is set, otherwise it will be sent unmodified (unless the `Content-Type` header is set to `application/json; charset=utf-8`, in which case it will be JSON-serialized like an object — see the section above).
+#### 字符串
+在未设置 `Content-Type` 的时候，字符串会以 `text/plain; charset=utf-8` 类型发送。如果设置了 `Content-Type`，且使用自定义序列化工具，那么 `send` 发出的字符串会被序列化。否则，字符串不会有任何改动 (除非 `Content-Type` 的值为 `application/json; charset=utf-8`，这时，字符串会像对象一样被 JSON-序列化，正如上一节所述)。
 ```js
 fastify.get('/json', options, function (request, reply) {
   reply.send('plain string')
@@ -127,7 +126,7 @@ fastify.get('/json', options, function (request, reply) {
 
 <a name="send-streams"></a>
 #### Streams
-*send* can also handle streams out of the box, internally uses [pump](https://www.npmjs.com/package/pump) to avoid leaks of file descriptors. If you are sending a stream and you have not set a `'Content-Type'` header, *send* will set it at `'application/octet-stream'`.
+*send* 开箱即用地支持 stream。它使用 [pump](https://www.npmjs.com/package/pump) 来避免文件描述符 (file descriptors) 的泄露。如果在未设置 `'Content-Type'` header 的情况下发送 stream，它会被设定为 `'application/octet-stream'`。
 ```js
 fastify.get('/streams', function (request, reply) {
   const fs = require('fs')
@@ -138,7 +137,7 @@ fastify.get('/streams', function (request, reply) {
 
 <a name="send-buffers"></a>
 #### Buffers
-If you are sending a buffer and you have not set a `'Content-Type'` header, *send* will set it to `'application/octet-stream'`.
+未设置 `'Content-Type'` header 的情况下发送 buffer，*send* 会将其设置为 `'application/octet-stream'`。
 ```js
 const fs = require('fs')
 fastify.get('/streams', function (request, reply) {
@@ -150,18 +149,18 @@ fastify.get('/streams', function (request, reply) {
 
 <a name="errors"></a>
 #### Errors
-If you pass to *send* an object that is an instance of *Error*, Fastify will automatically create an error structured as the following:
+若使用 *send* 发送一个 *Error* 的实例，Fastify 会自动创建一个如下的错误结构：
 ```js
 {
-  error: String        // the http error message
-  message: String      // the user error message
-  statusCode: Number   // the http status code
+  error: String        // http 错误信息
+  message: String      // 用户错误信息
+  statusCode: Number   // http 状态码
 }
 ```
-You can add some custom property to the Error object, such as `code` and `headers`, that will be used to enhance the http response.<br>
-*Note: If you are passing an error to `send` and the statusCode is less than 400, Fastify will automatically set it at 500.*
+你可以向 Error 对象添加自定义属性，例如 `code` 或 `headers`，这可以用来增强 http 响应。<br>
+*注意：如果 `send` 一个错误，但状态码小于 400，Fastify 会自动将其设为 500。*
 
-Tip: you can simplify errors by using the [`http-errors`](https://npm.im/http-errors) module to generate errors:
+贴士：你可以通过 [`http-errors`](https://npm.im/http-errors) 来简化生成的错误：
 
 ```js
 fastify.get('/', function (request, reply) {
@@ -169,11 +168,11 @@ fastify.get('/', function (request, reply) {
 })
 ```
 
-If you want to completely customize the error response, checkout [`setErrorHandler`](https://github.com/fastify/docs-chinese/blob/master/docs/Server-Methods.md#seterrorhandler) API.
+如果你想完全自定义错误响应，请看 [`setErrorHandler`](https://github.com/fastify/docs-chinese/blob/master/docs/Server-Methods.md#seterrorhandler) API。
 
-Errors with a `status` or `statusCode` property equal to `404` will be routed to the not found handler.
-See [`server.setNotFoundHandler`](https://github.com/fastify/docs-chinese/blob/master/docs/Server-Methods.md#setnotfoundhandler)
-API to learn more about handling such cases:
+`status` 或 `statusCode` 属性为 `404` 的错误，会被导引到 not found 的处理函数。
+更多信息，详见 [`server.setNotFoundHandler`](https://github.com/fastify/docs-chinese/blob/master/docs/Server-Methods.md#setnotfoundhandler)
+API：
 
 ```js
 fastify.setNotFoundHandler(function (request, reply) {
@@ -186,8 +185,8 @@ fastify.get('/', function (request, reply) {
 ```
 
 <a name="payload-type"></a>
-#### Type of the final payload
-The type of the sent payload (after serialization and going through any [`onSend` hooks](https://github.com/fastify/docs-chinese/blob/master/docs/Hooks.md#the-onsend-hook)) must be one of the following types, otherwise an error will be thrown:
+#### 最终 payload 的类型
+发送的 payload (序列化之后、经过任意的 [`onSend` 钩子](https://github.com/fastify/docs-chinese/blob/master/docs/Hooks.md#the-onsend-hook)) 必须为下列类型之一，否则将会抛出一个错误：
 
 - `string`
 - `Buffer`
@@ -196,9 +195,9 @@ The type of the sent payload (after serialization and going through any [`onSend
 - `null`
 
 <a name="async-await-promise"></a>
-#### Async-Await and Promises
-Fastify natively handles promises and supports async-await.<br>
-*Note that in the following examples we are not using reply.send.*
+#### Async-Await 与 Promise
+Fastify 原生地处理 promise 并支持 async-await。<br>
+*请注意，在下面的例子中我们没有使用 reply.send。*
 ```js
 fastify.get('/promises', options, function (request, reply) {
   return new Promise(function (resolve) {
@@ -214,7 +213,7 @@ fastify.get('/async-await', options, async function (request, reply) {
 })
 ```
 
-Rejected promises default to a `500` HTTP status code. Reject the promise, or `throw` in an `async function`, with an object that has `statusCode` (or `status`) and `message` properties to modify the reply.
+被 reject 的 promise 默认发送 `500` 状态码。要修改回复，可以 reject 一个 promise，或在 `async 函数` 中进行 `throw` 操作，同时附带上一个有 `statusCode` (或 `status`) 与 `message` 属性的对象。
 
 ```js
 fastify.get('/teapot', async function (request, reply) => {
@@ -225,4 +224,4 @@ fastify.get('/teapot', async function (request, reply) => {
 })
 ```
 
-If you want to know more please review [Routes#async-await](https://github.com/fastify/docs-chinese/blob/master/docs/Routes.md#async-await).
+想要了解更多？请看 [Routes#async-await](https://github.com/fastify/docs-chinese/blob/master/docs/Routes.md#async-await)。
