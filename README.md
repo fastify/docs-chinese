@@ -10,7 +10,7 @@
 * [装饰器](https://github.com/fastify/docs-chinese/blob/master/docs/Decorators.md) -- @fralonra
 * [验证和序列化](https://github.com/fastify/docs-chinese/blob/master/docs/Validation-and-Serialization.md) -- @fralonra
 * [生命周期](https://github.com/fastify/doc-chinese/blob/master/docs/Lifecycle.md) -- @fralonra
-* [回复](https://github.com/fastify/fastify/blob/master/docs/Reply.md)
+* [回复](https://github.com/fastify/doc-chinese/blob/master/docs/Reply.md) -- @fralonra
 * [请求](https://github.com/fastify/docs-chinese/blob/master/docs/Request.md) -- @vincent178
 * [Content-Type 解析](https://github.com/fastify/docs-chinese/blob/master/docs/ContentTypeParser.md) -- @vincent178
 * [插件](https://github.com/fastify/docs-chinese/blob/master/docs/Plugins.md) -- @vincent178
