@@ -169,7 +169,7 @@ fastify.get('/', options, async function (request, reply) {
 ```
 **警告:**
 * 如果你同时使用 `return` 与 `reply.send`，那么只会发送第一次，同时还会触发警告日志，因为你试图发送两次响应。
-* 不能返回 `undefined`。更多细节请看 [promise 取舍]。
+* 不能返回 `undefined`。更多细节请看 [promise 取舍](#promise-resolution)。
 
 <a name="promise-resolution"></a>
 ### Promise 取舍
