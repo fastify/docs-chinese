@@ -188,14 +188,22 @@ fastify.register(function (instance, opts, next) {
 
 `fastify.setNotFoundHandler(handler(request, reply))`：为 404 状态 (not found) 设置处理器 (handler) 函数。向 `fastify.register()` 传递不同的 [`prefix` 选项](https://github.com/fastify/docs-chinese/blob/master/docs/Plugins.md#route-prefixing-option)，就可以为不同的插件设置不同的处理器。这些处理器被视为常规的路由处理器，因此它们的请求会经历一个完整的 [Fastify 生命周期](https://github.com/fastify/docs-chinese/blob/master/docs/Lifecycle.md#lifecycle)。
 
+你也可以为 404 处理器注册一个 [beforeHandler](https://www.fastify.io/docs/latest/Hooks/#beforehandler) 钩子。
+
 ```js
-fastify.setNotFoundHandler(function (request, reply) {
-  // 默认的 not found 处理器
+fastify.setNotFoundHandler({
+  beforeHandler: (req, reply, next) => {
+    req.body.beforeHandler = true
+    next()
+  }  
+}, function (request, reply) {
+    // 设置了 beforeHandler 钩子的默认 not found 处理器
 })
 
 fastify.register(function (instance, options, next) {
   instance.setNotFoundHandler(function (request, reply) {
-    // '/v1' 开头的 URL 的 not found 处理器
+    // '/v1' 开头的 URL 的 not found 处理器，
+    // 未设置 beforeHandler 钩子
   })
   next()
 }, { prefix: '/v1' })
