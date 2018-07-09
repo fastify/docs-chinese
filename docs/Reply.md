@@ -5,6 +5,7 @@
 Reply 是 Fastify 的一个核心对象。它暴露了以下函数：
 
 - `.code(statusCode)` - 设置状态码。
+- `.status(statusCode)` - `.code(statusCode)` 的别名。
 - `.header(name, value)` - 设置响应 header。
 - `.getHeader(name)` - 获取某个 header 的值。
 - `.hasHeader(name)` - 检查某个 header 是否设置。
