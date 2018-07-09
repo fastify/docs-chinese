@@ -34,6 +34,22 @@ console.log(fastify.conf.db)
 
 装饰器是 *不可覆盖* 的。如果你声明一个已存在的 *(存在同名)* 装饰器，`decorate` 将会抛出一个异常。
 
+装饰器接受特别的 "getter/setter" 对象。这些对象拥有着名为 `getter` 与 `setter` 的函数 (尽管 `setter` 是可选的)。这么做便可以通过装饰器来定义属性。例如：
+
+```js
+fastify.decorate('foo', {
+  getter () {
+    return 'a getter'
+  }
+})
+```
+
+上例会在 *Fastify* 实例中定义一个 `foo` 属性：
+
+```js
+console.log(fastify.foo) // 'a getter'
+```
+
 <a name="decorate-reply"></a>
 **decorateReply**
 顾名思义，当你需要向 `Reply` 核心对象添加新方法时，使用 `decorateReply` API。同 `decorate` 一样，将新属性与其值作为参数传递便大功告成了：
