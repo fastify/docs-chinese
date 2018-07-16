@@ -13,6 +13,7 @@
 * [回复](https://github.com/fastify/docs-chinese/blob/master/docs/Reply.md)
 * [请求](https://github.com/fastify/docs-chinese/blob/master/docs/Request.md)
 * [Content-Type 解析](https://github.com/fastify/docs-chinese/blob/master/docs/ContentTypeParser.md)
+* [工厂函数](https://github.com/fastify/docs-chinese/blob/master/docs/Factory.md)
 * [插件](https://github.com/fastify/docs-chinese/blob/master/docs/Plugins.md)
 * [测试](https://github.com/fastify/docs-chinese/blob/master/docs/Testing.md)
 * [基准测试](https://github.com/fastify/docs-chinese/blob/master/docs/Benchmarking.md)
@@ -29,3 +30,4 @@
 ### 贡献者
 * [@fralonra](https://github.com/fralonra)
 * [@vincent178](https://github.com/vincent178)
+* [@xtx1130](https://github.com/xtx1130)
