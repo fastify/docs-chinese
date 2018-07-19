@@ -12,14 +12,14 @@
 
 ```js
 fastify
-  .register((instance. opts, next) => {
+  .register((instance, opts, next) => {
     console.log('当前插件')
     next()
   })
   .after(err => {
     console.log('当前插件之后')
   })
-  .register((instance. opts, next) => {
+  .register((instance, opts, next) => {
     console.log('下一个插件')
     next()
   })
@@ -96,7 +96,7 @@ fastify.listen(3000)
 
 ```js
 fastify.listen(3000, '127.0.0.1')
-  .then(() => console.log('Listening'))
+  .then((address) => console.log(`server listening on ${address}`))
   .catch(err => {
     console.log('Error starting server:', err)
     process.exit(1)
