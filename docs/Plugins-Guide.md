@@ -239,9 +239,9 @@ fastify.get('/plugin2', (request, reply) => {
 
 <a name="middlewares"></a>
 ## 中间件
-假设你是从 Express 或者 Restify 这类框架过来的, 并且你已经知道哪些中间件是你需要的, 你也不想重写这块工作.
 Fastify [支持](https://github.com/fastify/docs-chinese/blob/master/docs/Middlewares.md) 开箱即用的 Express/Restify/Connect 中间件, 这意味着你可以直接插入你原来的代码而不会有任何问题! *(当然, 更快)*<br>
-我们是怎么做到的? 查看我们的中间件引擎, [middie](https://github.com/fastify/middie).
+假设你是从 Express 或者 Restify 这类框架过来的, 并且你已经知道哪些中间件是你需要的, 你也不想重写这块工作, Fastify 正好可以帮助你实现目标.
+我们是怎么做到的? 请查看我们的中间件引擎, [middie](https://github.com/fastify/middie).
 ```js
 const yourMiddleware = require('your-middleware')
 fastify.use(yourMiddleware)
