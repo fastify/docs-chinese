@@ -99,6 +99,11 @@ fastify.route({
 })
 ```
 
+<a name="get-shared-schema"></a>
+#### 获取所有共用 schema 的拷贝
+
+`getSchemas` 函数返回所有通过 `addSchema` 方法添加的共用 schema。
+
 <a name="schema-compiler"></a>
 #### Schema 编译器
 
