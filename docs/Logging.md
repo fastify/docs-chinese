@@ -40,7 +40,8 @@ fastify.get('/', options, function (request, reply) {
 })
 ```
 
-默认情况下，Fastify 给每个请求分配了一个 id 以便跟踪。如果头部存在 "request-id" 即使用该值，否则会生成一个新的增量 id。
+<a name="logging-request-id" />
+默认情况下，Fastify 给每个请求分配了一个 id 以便跟踪。如果头部存在 "request-id" 即使用该值，否则会生成一个新的增量 id。你可以通过 Fastify 工厂函数的 [`requestIdHeader`](./Factory.md#factory-request-id-header) 选项来自定义该头部的名称。
 此外，你还可以通过 `genReqId` 选项生成自定义的请求 id。它的参数是来访的请求。
 ```js
 let i = 0
@@ -56,8 +57,8 @@ const fastify = require('fastify')({
 const fastify = require('fastify')({
   logger: {
     serializers: {
-      req: function (req) { 
-        return { url: req.url } 
+      req: function (req) {
+        return { url: req.url }
       }
     }
   }
