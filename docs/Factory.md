@@ -128,6 +128,6 @@ fastify.get('/user/:username', (request, reply) => {
 <a name="factory-request-id-header"></a>
 ### `requestIdHeader`
 
-用来获知请求 id 的 header 名。请看[请求 id](./Logging.md#logging-request-id) 一节。
+用来获知请求 id 的 header 名。请看[请求 id](https://github.com/fastify/docs-chinese/blob/master/docs/Logging.md#logging-request-id) 一节。
 
 + 默认值: `'request-id'`
