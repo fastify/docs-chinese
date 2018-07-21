@@ -10,12 +10,15 @@ Hello！感谢你来到 Fastify 的世界！<br>
 ```
 npm i fastify --save
 ```
+
 <a name="first-server"></a>
 ### 第一个服务器
 让我们开始编写第一个服务器吧：
 ```js
 // 加载框架并新建实例
-const fastify = require('fastify')()
+const fastify = require('fastify')({
+  logger: true
+})
 
 // 声明路由
 fastify.get('/'，function (request，reply) {
@@ -23,11 +26,12 @@ fastify.get('/'，function (request，reply) {
 })
 
 // 启动服务！
-fastify.listen(3000，function (err) {
+fastify.listen(3000，function (err, address) {
   if (err) {
     fastify.log.error(err)
     process.exit(1)
   }
+  fastify.log.info(`server listening on ${address}`)
 })
 ```
 
@@ -59,11 +63,12 @@ start()
 > 本文档中的示例，默认情况下只监听本地 `127.0.0.1` 端口。要监听所有有效的 IPv4 端口，需要将代码修改为监听 `0.0.0.0`，如下所示：
 >
 > ```js
-> fastify.listen(3000，'0.0.0.0'，function (err) {
+> fastify.listen(3000，'0.0.0.0'，function (err, address) {
 >   if (err) {
 >     fastify.log.error(err)
 >     process.exit(1)
 >   }
+>   fastify.log.info(`server listening on ${address}`)
 > })
 > ```
 >
@@ -77,15 +82,18 @@ start()
 在深入之前，先来看看插件系统是如何工作的吧！<br>
 让我们新建一个基本的服务器，但这回我们把路由 (route) 的声明从入口文件转移到一个外部文件。(参阅[路由声明](https://github.com/fastify/docs-chinese/blob/master/docs/Routes.md))。
 ```js
-const fastify = require('fastify')()
+const fastify = require('fastify')({
+  logger: true
+})
 
 fastify.register(require('./our-first-route'))
 
-fastify.listen(3000，function (err) {
+fastify.listen(3000，function (err, address) {
   if (err) {
     fastify.log.error(err)
     process.exit(1)
   }
+  fastify.log.info(`server listening on ${address}`)
 })
 ```
 
@@ -112,18 +120,21 @@ Fastify 则不走寻常路，它从本质上用最轻松的方式解决这一问
 
 **server.js**
 ```js
-const fastify = require('fastify')()
+const fastify = require('fastify')({
+  logger: true
+})
 
 fastify.register(require('./our-db-connector')，{
   url: 'mongodb://localhost:27017/'
 })
 fastify.register(require('./our-first-route'))
 
-fastify.listen(3000，function (err) {
+fastify.listen(3000，function (err, address) {
   if (err) {
     fastify.log.error(err)
     process.exit(1)
   }
+  fastify.log.info(`server listening on ${address}`)
 })
 ```
 

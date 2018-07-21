@@ -51,7 +51,7 @@ fastify.ready().then(() => {
 所有的插件加载完毕、`ready` 事件触发后，在指定的端口启动服务器。它的回调函数与 Node 原生方法的回调相同。默认情况下，服务器监听 `127.0.0.1`。将地址设置为 `0.0.0.0` 可监听所有的 IPV4 地址。设置为 `::` 则可监听所有的 IPV6 地址，在某些系统中，这么做亦可同时监听所有 IPV4 地址。监听所有的接口要格外谨慎，因为这种方式存在着固有的[安全风险](https://web.archive.org/web/20170831174611/https://snyk.io/blog/mongodb-hack-and-secure-defaults/)。
 
 ```js
-fastify.listen(3000, err => {
+fastify.listen(3000, (err, address) => {
   if (err) {
     fastify.log.error(err)
     process.exit(1)
@@ -62,7 +62,7 @@ fastify.listen(3000, err => {
 指定监听的地址：
 
 ```js
-fastify.listen(3000, '127.0.0.1', err => {
+fastify.listen(3000, '127.0.0.1', (err, address) => {
   if (err) {
     fastify.log.error(err)
     process.exit(1)
@@ -73,7 +73,7 @@ fastify.listen(3000, '127.0.0.1', err => {
 指定积压队列 (backlog queue size) 的大小：
 
 ```js
-fastify.listen(3000, '127.0.0.1', 511, err => {
+fastify.listen(3000, '127.0.0.1', 511, (err, address) => {
   if (err) {
     fastify.log.error(err)
     process.exit(1)
@@ -85,7 +85,7 @@ fastify.listen(3000, '127.0.0.1', 511, err => {
 
 ```js
 fastify.listen(3000)
-  .then(() => console.log('Listening'))
+  .then((address) => console.log(`server listening on ${address}`))
   .catch(err => {
     console.log('Error starting server:', err)
     process.exit(1)
@@ -106,7 +106,7 @@ fastify.listen(3000, '127.0.0.1')
 当部署在 Docker 或其它容器上时，明智的做法是监听 `0.0.0.0`。因为默认情况下，这些容器并未将映射的端口暴露在 `127.0.0.1`：
 
 ```js
-fastify.listen(3000, '0.0.0.0', (err) => {
+fastify.listen(3000, '0.0.0.0', (err, address) => {
   if (err) {
     fastify.log.error(err)
     process.exit(1)
