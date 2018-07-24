@@ -69,7 +69,7 @@ reply.getHeader('x-foo') // undefined
 
 <a name="redirect"></a>
 ### .redirect(dest)
-重定向请求至指定的 url，状态码可选，默认为 `302`。
+重定向请求至指定的 url，状态码可选，当未通过 `code` 方法设置时，默认为 `302`。
 ```js
 reply.redirect('/home')
 ```
