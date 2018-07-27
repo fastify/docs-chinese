@@ -48,7 +48,7 @@ fastify.ready().then(() => {
 
 <a name="listen"></a>
 #### listen
-所有的插件加载完毕、`ready` 事件触发后，在指定的端口启动服务器。它的回调函数与 Node 原生方法的回调相同。默认情况下，服务器监听 `127.0.0.1`。将地址设置为 `0.0.0.0` 可监听所有的 IPV4 地址。设置为 `::` 则可监听所有的 IPV6 地址，在某些系统中，这么做亦可同时监听所有 IPV4 地址。监听所有的接口要格外谨慎，因为这种方式存在着固有的[安全风险](https://web.archive.org/web/20170831174611/https://snyk.io/blog/mongodb-hack-and-secure-defaults/)。
+所有的插件加载完毕、`ready` 事件触发后，在指定的端口启动服务器。它的回调函数与 Node 原生方法的回调相同。默认情况下，服务器监听 `localhost` 所决定的地址 (`127.0.0.1` 或 `::1`，取决于操作系统)。将地址设置为 `0.0.0.0` 可监听所有的 IPV4 地址。设置为 `::` 则可监听所有的 IPV6 地址，在某些系统中，这么做亦可同时监听所有 IPV4 地址。监听所有的接口要格外谨慎，因为这种方式存在着固有的[安全风险](https://web.archive.org/web/20170831174611/https://snyk.io/blog/mongodb-hack-and-secure-defaults/)。
 
 ```js
 fastify.listen(3000, err => {
