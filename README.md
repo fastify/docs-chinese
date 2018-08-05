@@ -21,8 +21,12 @@
 * [插件指南](https://github.com/fastify/docs-chinese/blob/master/docs/Plugins-Guide.md)
 * [HTTP2](https://github.com/fastify/docs-chinese/blob/master/docs/HTTP2.md)
 * [长期支持计划](https://github.com/fastify/docs-chinese/blob/master/docs/LTS.md)
+* [TypeScript 与类型支持](https://github.com/fastify/docs-chinese/blob/master/docs/TypeScript.md)
 
 ### 翻译指南
+
+如果你发现了翻译的错误，或文档的滞后，请创建一个 issue 来告诉我们，或是按如下方法直接参与翻译。感谢！
+
 * Fork https://github.com/fastify/docs-chinese
 * 创建 Git Branch
 * 开始翻译
