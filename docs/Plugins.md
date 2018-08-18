@@ -48,8 +48,32 @@ fastify.register(require('fastify-foo'), {
 <a name="error-handling"></a>
 #### 错误处理
 错误处理是由 [avvio](https://github.com/mcollina/avvio#error-handling) 解决的.<br>
-一个通用的原则, 我们建议在 `register` 回调中处理错误, 不然服务器就不会启动, 并且在 `listen` 回调中有一个没有处理的错误.
+一个通用的原则, 我们建议在下一个 `next` 或 `ready` 代码块中处理错误, 否则错误将出现在 `listen` 回调里.
 
+```js
+fastify.register(require('my-plugin'))
+
+// `after` 将在上一个 `register` 结束后执行
+fastify.after(err => console.log(err))
+
+// `ready` 将在所有 `register` 结束后执行
+fastify.ready(err => console.log(err))
+
+// `listen` 是一个特殊的 `ready`,
+// 因此它的执行时机与 `ready` 一致
+fastify.listen(3000, (err, address) => {
+  if (err) console.log(err)
+})
+```
+
+*async-await* 只被 `ready` 与 `listen` 支持.
+```js
+fastify.register(require('my-plugin'))
+
+await fastify.ready()
+
+await fastify.listen(3000)
+```
 <a name="create-plugin"></a>
 ### 创建插件
 创建插件非常简单, 你只需要创建一个方法, 这个方法接收三个参数: `fastify` 实例, 选项( Options )对象 和 `next` 回调.<br>
