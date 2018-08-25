@@ -131,3 +131,42 @@ fastify.get('/user/:username', (request, reply) => {
 用来获知请求 id 的 header 名。请看[请求 id](https://github.com/fastify/docs-chinese/blob/master/docs/Logging.md#logging-request-id) 一节。
 
 + 默认值: `'request-id'`
+
+<a name="factory-trust-proxy"></a>
+### `trustProxy`
+
+通过开启 `trustProxy` 选项，Fastify 会认为使用了代理服务，且 `X-Forwarded-*` header 是可信的，否则该值被认为是极具欺骗性的。
+
+```js
+const fastify = Fastify({ trustProxy: true })
+```
+
++ 默认值: `false`
++ `true/false`: 信任所有代理 (`true`) 或不信任任意的代理 (`false`)。
++ `string`: 只信任给定的 IP/CIDR (例如 `'127.0.0.1'`)。可以是一组用英文逗号分隔的地址 (例如 `'127.0.0.1,192.168.1.1/24'`)。
++ `Array<string>`: 只信任给定的 IP/CIDR 列表 (例如 `['127.0.0.1']`)。
++ `number`: 信任来自前置代理服务器的第n跳 (hop) 地址作为客户端。
++ `Function`: 自定义的信任函数，第一个参数为 `address`
+    ```js
+    function myTrustFn(address, hop) {
+      return address === '1.2.3.4' || hop === 1
+    }
+    ```
+
+更多示例详见 [proxy-addr](https://www.npmjs.com/package/proxy-addr)。
+
+你还可以通过原始的 `request` 对象获取 `ip` 与 `hostname` 的值。
+
+```js
+fastify.get('/', (request, reply) => {
+  console.log(request.raw.ip)
+  console.log(request.raw.hostname)
+})
+```
+
+<a name="plugin-timeout"></a>
+### `pluginTimeout`
+
+单个插件允许加载的最长时间，以毫秒计。如果某个插件加载超时，则 [`ready`](https://github.com/fastify/fastify/blob/master/docs/Server-Methods.md#ready) 会抛出一个含有 `'ERR_AVVIO_PLUGIN_TIMEOUT'` 代码的 `Error` 对象。
+
++ 默认值: `0` (禁用状态)
