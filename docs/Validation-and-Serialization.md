@@ -107,18 +107,30 @@ fastify.route({
 <a name="schema-compiler"></a>
 #### Schema 编译器
 
-`schemaCompiler` 返回一个用于验证请求主体、url 参数、header 以及查询字符串的函数。默认情况下，它返回一个实现了 `ajv` 验证接口的函数。Fastify 使用它对验证进行加速。
+`schemaCompiler` 返回一个用于验证请求主体、url 参数、header 以及查询字符串的函数。默认情况下，它返回一个实现了 [ajv](https://ajv.js.org/) 验证接口的函数。Fastify 使用它对验证进行加速。
 
-你不能改变 `ajv` 默认实例的配置选项，但可以新建一个自定义的实例：
+Fastify 使用的 `ajv` 基本配置如下：
+
+```js
+{
+  removeAdditional: true,
+  useDefaults: true,
+  coerceTypes: true
+}
+```
+
+上述配置无法被修改。假如你想改变或新增配置选项，你需要创建一个自定义的实例，并覆盖已存在的实例：
 
 ```js
 const fastify = require('fastify')()
 const Ajv = require('ajv')
 const ajv = new Ajv({
-  // fastify 使用的默认参数
+  // fastify 使用的默认参数（如果需要）
   removeAdditional: true,
   useDefaults: true,
   coerceTypes: true
+  // 任意其他参数
+  // ...
 })
 fastify.setSchemaCompiler(function (schema) {
   return ajv.compile(schema)
