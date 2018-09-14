@@ -21,12 +21,12 @@ const fastify = require('fastify')({
 })
 
 // 声明路由
-fastify.get('/'，function (request，reply) {
+fastify.get('/', function (request, reply) {
   reply.send({ hello: 'world' })
 })
 
 // 启动服务！
-fastify.listen(3000，function (err, address) {
+fastify.listen(3000, function (err, address) {
   if (err) {
     fastify.log.error(err)
     process.exit(1)
@@ -40,7 +40,7 @@ fastify.listen(3000，function (err, address) {
 ```js
 const fastify = require('fastify')()
 
-fastify.get('/'，async (request，reply) => {
+fastify.get('/', async (request, reply) => {
   return { hello: 'world' }
 })
 
@@ -63,7 +63,7 @@ start()
 > 本文档中的示例，默认情况下只监听本地 `127.0.0.1` 端口。要监听所有有效的 IPv4 端口，需要将代码修改为监听 `0.0.0.0`，如下所示：
 >
 > ```js
-> fastify.listen(3000，'0.0.0.0'，function (err, address) {
+> fastify.listen(3000, '0.0.0.0', function (err, address) {
 >   if (err) {
 >     fastify.log.error(err)
 >     process.exit(1)
@@ -88,7 +88,7 @@ const fastify = require('fastify')({
 
 fastify.register(require('./our-first-route'))
 
-fastify.listen(3000，function (err, address) {
+fastify.listen(3000, function (err, address) {
   if (err) {
     fastify.log.error(err)
     process.exit(1)
@@ -100,8 +100,8 @@ fastify.listen(3000，function (err, address) {
 ```js
 // our-first-route.js
 
-async function routes (fastify，options) {
-  fastify.get('/'，async (request，reply) => {
+async function routes (fastify, options) {
+  fastify.get('/', async (request, reply) => {
     return { hello: 'world' }
   })
 }
@@ -124,12 +124,12 @@ const fastify = require('fastify')({
   logger: true
 })
 
-fastify.register(require('./our-db-connector')，{
+fastify.register(require('./our-db-connector'), {
   url: 'mongodb://localhost:27017/'
 })
 fastify.register(require('./our-first-route'))
 
-fastify.listen(3000，function (err, address) {
+fastify.listen(3000, function (err, address) {
   if (err) {
     fastify.log.error(err)
     process.exit(1)
@@ -143,12 +143,12 @@ fastify.listen(3000，function (err, address) {
 const fastifyPlugin = require('fastify-plugin')
 const MongoClient = require('mongodb').MongoClient
 
-async function dbConnector (fastify，options) {
+async function dbConnector (fastify, options) {
   const url = options.url
   delete options.url
 
-  const db = await MongoClient.connect(url，options)
-  fastify.decorate('mongo'，db)
+  const db = await MongoClient.connect(url, options)
+  fastify.decorate('mongo', db)
 }
 // 用 fastify-plugin 包装插件，以使插件中声明的装饰器、钩子函数及中间件暴露在根作用域里。
 module.exports = fastifyPlugin(dbConnector)
@@ -156,15 +156,15 @@ module.exports = fastifyPlugin(dbConnector)
 
 **our-first-route.js**
 ```js
-async function routes (fastify，options) {
+async function routes (fastify, options) {
   const database = fastify.mongo.db('db')
   const collection = database.collection('test')
 
-  fastify.get('/'，async (request，reply) => {
+  fastify.get('/', async (request, reply) => {
     return { hello: 'world' }
   })
 
-  fastify.get('/search/:id'，async (request，reply) => {
+  fastify.get('/search/:id', async (request, reply) => {
     const result = await collection.findOne({ id: request.params.id })
     if (result.value === null) {
       throw new Error('Invalid value')
@@ -231,16 +231,16 @@ Fastify 使用 [JSON Schema](http://json-schema.org/) 验证来访的请求。
 const opts = {
   schema: {
     body: {
-      type: 'object'，
+      type: 'object',
       properties: {
-        someKey: { type: 'string' }，
+        someKey: { type: 'string' },
         someOtherKey: { type: 'number' }
       }
     }
   }
 }
 
-fastify.post('/'，opts，async (request，reply) => {
+fastify.post('/', opts, async (request, reply) => {
   return { hello: 'world' }
 })
 ```
@@ -256,7 +256,7 @@ const opts = {
   schema: {
     response: {
       200: {
-        type: 'object'，
+        type: 'object',
         properties: {
           hello: { type: 'string' }
         }
@@ -265,7 +265,7 @@ const opts = {
   }
 }
 
-fastify.get('/'，opts，async (request，reply) => {
+fastify.get('/', opts, async (request, reply) => {
   return { hello: 'world' }
 })
 ```
@@ -308,8 +308,8 @@ npm i fastify-cli
 // server.js
 'use strict'
 
-module.exports = async function (fastify，opts) {
-  fastify.get('/'，async (request，reply) => {
+module.exports = async function (fastify, opts) {
+  fastify.get('/', async (request, reply) => {
     return { hello: 'world' }
   })
 }
