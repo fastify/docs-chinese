@@ -229,7 +229,7 @@ module.exports = function (fastify, opts, next) {
 在 Fastify 中为路由里设置不同的日志级别是十分容易的。<br/>
 你只需在插件或路由的选项里设置 `logLevel` 为相应的[值](https://github.com/pinojs/pino/blob/master/docs/API.md#discussion-3)即可。
 
-要注意的是，如果在插件层面上设置了 `logLevel`，那么 [`setNotFoundHandler`](https://github.com/fastify/docs-chinese/blob/master/docs/Server-Methods.md#setnotfoundhandler) 和 [`setErrorHandler`](https://github.com/fastify/docs-chinese/blob/master/docs/Server-Methods.md#seterrorhandler) 也会受到影响。
+要注意的是，如果在插件层面上设置了 `logLevel`，那么 [`setNotFoundHandler`](https://github.com/fastify/docs-chinese/blob/master/docs/Server.md#setnotfoundhandler) 和 [`setErrorHandler`](https://github.com/fastify/docs-chinese/blob/master/docs/Server.md#seterrorhandler) 也会受到影响。
 
 ```js
 // server.js
