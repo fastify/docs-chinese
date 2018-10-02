@@ -2,7 +2,7 @@
 
 ### 文档目录
 * [入门](https://github.com/fastify/docs-chinese/blob/master/docs/Getting-Started.md)
-* [服务器方法](https://github.com/fastify/docs-chinese/blob/master/docs/Server-Methods.md)
+* [服务器方法](https://github.com/fastify/docs-chinese/blob/master/docs/Server.md)
 * [路由](https://github.com/fastify/docs-chinese/blob/master/docs/Routes.md)
 * [日志](https://github.com/fastify/docs-chinese/blob/master/docs/Logging.md)
 * [中间件](https://github.com/fastify/docs-chinese/blob/master/docs/Middlewares.md)
@@ -13,7 +13,6 @@
 * [回复](https://github.com/fastify/docs-chinese/blob/master/docs/Reply.md)
 * [请求](https://github.com/fastify/docs-chinese/blob/master/docs/Request.md)
 * [Content-Type 解析](https://github.com/fastify/docs-chinese/blob/master/docs/ContentTypeParser.md)
-* [工厂函数](https://github.com/fastify/docs-chinese/blob/master/docs/Factory.md)
 * [插件](https://github.com/fastify/docs-chinese/blob/master/docs/Plugins.md)
 * [测试](https://github.com/fastify/docs-chinese/blob/master/docs/Testing.md)
 * [基准测试](https://github.com/fastify/docs-chinese/blob/master/docs/Benchmarking.md)
