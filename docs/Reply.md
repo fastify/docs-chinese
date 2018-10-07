@@ -169,10 +169,10 @@ fastify.get('/', function (request, reply) {
 })
 ```
 
-如果你想完全自定义错误响应，请看 [`setErrorHandler`](https://github.com/fastify/docs-chinese/blob/master/docs/Server-Methods.md#seterrorhandler) API。
+如果你想完全自定义错误响应，请看 [`setErrorHandler`](https://github.com/fastify/docs-chinese/blob/master/docs/Server.md#seterrorhandler) API。
 
 `status` 或 `statusCode` 属性为 `404` 的错误，会被导引到 not found 的处理函数。
-更多信息，详见 [`server.setNotFoundHandler`](https://github.com/fastify/docs-chinese/blob/master/docs/Server-Methods.md#setnotfoundhandler)
+更多信息，详见 [`server.setNotFoundHandler`](https://github.com/fastify/docs-chinese/blob/master/docs/Server.md#setnotfoundhandler)
 API：
 
 ```js
