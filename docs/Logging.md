@@ -41,16 +41,7 @@ fastify.get('/', options, function (request, reply) {
 ```
 
 <a name="logging-request-id" />
-默认情况下，Fastify 给每个请求分配了一个 id 以便跟踪。如果头部存在 "request-id" 即使用该值，否则会生成一个新的增量 id。你可以通过 Fastify 工厂函数的 [`requestIdHeader`](https://github.com/fastify/docs-chinese/blob/master/docs/Server.md#factory-request-id-header) 选项来自定义该头部的名称。
-此外，你还可以通过 `genReqId` 选项生成自定义的请求 id。它的参数是来访的请求。
-```js
-let i = 0
-const fastify = require('fastify')({
-  logger: {
-    genReqId: function (req) { return i++ }
-  }
-})
-```
+默认情况下，Fastify 给每个请求分配了一个 id 以便跟踪。如果头部存在 "request-id" 即使用该值，否则会生成一个新的增量 id。你可以通过 Fastify 工厂函数的 [`requestIdHeader`](https://github.com/fastify/docs-chinese/blob/master/docs/Server.md#factory-request-id-header) 与 [`genReqId`](https://github.com/fastify/docs-chinese/blob/master/docs/Server.md#gen-request-id) 来进行自定义。
 
 默认的日志工具使用标准的序列化工具，生成包括 `req`、`res` 与 `err` 属性在内的序列化对象。可以借由指定自定义的序列化工具来改变这一行为。
 ```js
