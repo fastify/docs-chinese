@@ -312,8 +312,8 @@ Fastify 允许用户通过插件扩展功能。插件可以是一组路由、装
 #### addHook
 向 Fastify 添加特定的生命周期钩子函数，请看[这里](https://github.com/fastify/docs-chinese/blob/master/docs/Hooks.md)。
 
-<a name="base-path"></a>
-#### basepath
+<a name="prefix"></a>
+#### prefix
 添加在路由前的完整路径。
 
 示例：
@@ -321,16 +321,16 @@ Fastify 允许用户通过插件扩展功能。插件可以是一组路由、装
 ```js
 fastify.register(function (instance, opts, next) {
   instance.get('/foo', function (request, reply) {
-    // 输出："basePath: /v1"
-    request.log.info('basePath: %s', instance.basePath)
-    reply.send({basePath: instance.basePath})
+    // 输出："prefix: /v1"
+    request.log.info('prefix: %s', instance.prefix)
+    reply.send({prefix: instance.prefix})
   })
 
   instance.register(function (instance, opts, next) {
     instance.get('/bar', function (request, reply) {
-      // 输出："basePath: /v1/v2"
-      request.log.info('basePath: %s', instance.basePath)
-      reply.send({basePath: instance.basePath})
+      // 输出："prefix: /v1/v2"
+      request.log.info('prefix: %s', instance.prefix)
+      reply.send({prefix: instance.prefix})
     })
 
     next()
