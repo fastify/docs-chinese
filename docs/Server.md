@@ -299,6 +299,8 @@ fastify.listen(3000, '0.0.0.0', (err, address) => {
 })
 ```
 
+假如未设置 `port` (或设为 0)，则会自动选择一个随机可用的端口 (之后可通过 `fastify.server.address().port` 获知)。
+
 <a name="route"></a>
 #### route
 将路由添加到服务器的方法，支持简写。请看[这里](https://github.com/fastify/docs-chinese/blob/master/docs/Routes.md)。
