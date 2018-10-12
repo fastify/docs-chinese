@@ -32,24 +32,6 @@ fastify.utility()
 console.log(fastify.conf.db)
 ```
 
-装饰器是 *不可覆盖* 的。如果你声明一个已存在的 *(存在同名)* 装饰器，`decorate` 将会抛出一个异常。
-
-装饰器接受特别的 "getter/setter" 对象。这些对象拥有着名为 `getter` 与 `setter` 的函数 (尽管 `setter` 是可选的)。这么做便可以通过装饰器来定义属性。例如：
-
-```js
-fastify.decorate('foo', {
-  getter () {
-    return 'a getter'
-  }
-})
-```
-
-上例会在 *Fastify* 实例中定义一个 `foo` 属性：
-
-```js
-console.log(fastify.foo) // 'a getter'
-```
-
 <a name="decorate-reply"></a>
 **decorateReply**
 顾名思义，当你需要向 `Reply` 核心对象添加新方法时，使用 `decorateReply` API。同 `decorate` 一样，将新属性与其值作为参数传递便大功告成了：
@@ -71,6 +53,68 @@ fastify.decorateRequest('utility', function () {
 ```
 
 注：使用箭头函数会破坏 `this` 和 Fastify `reply` 实例的绑定。
+
+<a name="decorators-encapsulation"></a>
+#### 装饰器与封装
+
+在经过封装的同一个插件中，装饰器是 *不可覆盖* 的。如果你声明一个已存在的 *(存在同名)* 装饰器，`decorate`、`decorateRequest` 以及 `decorateReply` 将会抛出一个异常。
+
+下面的示例会抛出异常：
+ ````js
+const server = require('fastify')()
+  server.decorateReply('view', function (template, args) {
+  // 页面渲染引擎的代码。
+})
+server.get('/', (req, reply) => {
+  reply.view('/index.html', { hello: 'world' })
+})
+// 当在其他地方定义
+// view 装饰器时，抛出异常。
+server.decorateReply('view', function (template, args) {
+  // 另一个渲染引擎。
+})
+server.listen(3000)
+```
+
+但下面这个例子不会抛异常：
+
+```js
+const server = require('fastify')()
+  server.decorateReply('view', function (template, args) {
+  // 页面渲染引擎的代码。
+})
+server.register(async function (server, opts) {
+  // 我们在当前封装的插件内添加了一个 view 装饰器。
+  // 这么做不会抛出异常。
+  // 因为插件外部和内部的 view 装饰器是不一样的。
+  server.decorateReply('view', function (template, args) {
+    // another rendering engine
+  })
+  server.get('/', (req, reply) => {
+    reply.view('/index.page', { hello: 'world' })
+  })
+}, { prefix: '/bar' })
+server.listen(3000)
+```
+
+<a name="getters-setters"></a>
+#### Getter 和 Setter
+
+装饰器接受特别的 "getter/setter" 对象。这些对象拥有着名为 `getter` 与 `setter` 的函数 (尽管 `setter` 是可选的)。这么做便可以通过装饰器来定义属性。例如：
+
+```js
+fastify.decorate('foo', {
+  getter () {
+    return 'a getter'
+  }
+})
+```
+
+上例会在 *Fastify* 实例中定义一个 `foo` 属性：
+
+```js
+console.log(fastify.foo) // 'a getter'
+```
 
 <a name="usage_notes"></a>
 #### Usage Notes
