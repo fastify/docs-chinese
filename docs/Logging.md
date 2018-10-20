@@ -21,7 +21,7 @@ fastify.get('/', options, function (request, reply) {
 ```
 
 如果你想为日志配置选项，直接将选项传递给 Fastify 实例就可以了。
-你可以在 [Pino 的文档](https://github.com/pinojs/pino/blob/master/docs/API.md#pinooptions-stream)中找到全部选项。如果你想向 Pino 传送自定义流 (stream)，仅需在 `logger` 对象中添加 `stream` 一项即可。
+你可以在 [Pino 的文档](https://github.com/pinojs/pino/blob/master/docs/api.md#pinooptions-stream)中找到全部选项。如果你想向 Pino 传送自定义流 (stream)，仅需在 `logger` 对象中添加 `stream` 一项即可。
 
 ```js
 const split = require('split2')
