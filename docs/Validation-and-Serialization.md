@@ -223,6 +223,18 @@ const schema = {
   "message": "body should have required property 'name'"
 }
 ```
+
+如果你想在路由内部控制错误，可以设置 `attachValidation` 选项。当出现验证错误时，请求的 `validationError` 属性将会包含一个 `Error` 对象，在这对象内部有原始的验证结果 `validation`，如下所示：
+ ```js
+const fastify = Fastify()
+ fastify.post('/', { schema, attachValidation: true }, function (req, reply) {
+  if (req.validation) {
+    // `req.validationError.validation` 包含了原始的验证错误信息
+    reply.code(400).send(req.validationError)
+  }
+})
+```
+
 你还可以使用 [setErrorHandler](https://www.fastify.io/docs/latest/Server/#seterrorhandler) 方法来自定义一个校验错误响应，如下：
  ```js
 fastify.setErrorHandler(function (error, request, reply) {
