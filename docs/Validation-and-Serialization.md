@@ -202,6 +202,36 @@ fastify.post('/the/url', { schema }, handler)
 
 *假如你需要在特定位置使用自定义的序列化工具，你可以使用 `reply.serializer(...)`。*
 
+### 错误控制
+当某个请求 schema 校验失败时，Fastify 会自动返回一个包含校验结果的 400 响应。举例来说，假如你的路由有一个如下的 schema：
+ ```js
+const schema = {
+  body: {
+    type: 'object',
+    properties: {
+      name: { type: 'string' }
+    },
+    required: ['name']
+  }
+}
+```
+当校验失败时，路由会立即返回一个包含以下内容的响应：
+ ```js
+{ 
+  "statusCode": 400,
+  "error": "Bad Request",
+  "message": "body should have required property 'name'"
+}
+```
+你还可以使用 [setErrorHandler](https://www.fastify.io/docs/latest/Server/#seterrorhandler) 方法来自定义一个校验错误响应，如下：
+ ```js
+fastify.setErrorHandler(function (error, request, reply) {
+  if (error.validation) {
+     reply.status(422).send(new Error('validation failed'))
+  }
+})
+```
+
 <a name="resources"></a>
 ### 资源
 - [JSON Schema](http://json-schema.org/)
