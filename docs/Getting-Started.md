@@ -7,8 +7,13 @@ Hello！感谢你来到 Fastify 的世界！<br>
 
 <a name="install"></a>
 ### 安装
+使用 npm 安装：
 ```
 npm i fastify --save
+```
+使用 yarn 安装：
+```
+yarn add fastify
 ```
 
 <a name="first-server"></a>
