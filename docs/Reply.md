@@ -166,7 +166,7 @@ fastify.get('/streams', function (request, reply) {
   statusCode: Number   // http 状态码
 }
 ```
-你可以向 Error 对象添加自定义属性，例如 `code` 或 `headers`，这可以用来增强 http 响应。<br>
+你可以向 Error 对象添加自定义属性，例如 `statusCode` 或 `headers`，这可以用来增强 http 响应。<br>
 *注意：如果 `send` 一个错误，但状态码小于 400，Fastify 会自动将其设为 500。*
 
 贴士：你可以通过 [`http-errors`](https://npm.im/http-errors) 或 [`fastify-sensible`](https://github.com/fastify/fastify-sensible) 来简化生成的错误：
@@ -177,7 +177,21 @@ fastify.get('/', function (request, reply) {
 })
 ```
 
-如果你想完全自定义错误响应，请看 [`setErrorHandler`](https://github.com/fastify/docs-chinese/blob/master/docs/Server.md#seterrorhandler) API。
+如果你想完全自定义错误处理，请看 [`setErrorHandler`](https://github.com/fastify/docs-chinese/blob/master/docs/Server.md#seterrorhandler) API。<br>
+*注：当自定义错误处理时，你需要自行记录日志*
+
+API:
+
+ ```js
+fastify.setErrorHandler(function (error, request, reply) {
+  request.log.warn(error)
+  var statusCode = error.statusCode >= 400 ? error.statusCode : 500
+  reply
+    .code(statusCode)
+    .type('text/plain')
+    .send(statusCode >= 500 ? 'Internal server error' : error.message)
+})
+```
 
 路由生成的 not found 错误会使用 [`setNotFoundHandler`](https://github.com/fastify/fastify/blob/master/docs/Server-Methods.md#setnotfoundhandler)。
 API：
