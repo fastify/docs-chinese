@@ -399,12 +399,26 @@ fastify.register(function (instance, options, next) {
 <a name="set-error-handler"></a>
 #### setErrorHandler
 
-`fastify.setErrorHandler(handler(error, request, reply))`：设置任意时刻的错误处理器函数。错误处理器是完全封装 (fully encapsulated) 的，因此不同插件的处理器可以不同。支持 *async-await* 语法。
+`fastify.setErrorHandler(handler(error, request, reply))`：设置任意时刻的错误处理器函数。错误处理器是完全封装 (fully encapsulated) 的，因此不同插件的处理器可以不同。支持 *async-await* 语法。<br>
+*注：假如错误的 `statusCode` 小于 400，在处理错误前 Fastify 将会自动将其设为 500。*
 
 ```js
 fastify.setErrorHandler(function (error, request, reply) {
+  // 记录错误
   // 发送错误响应
 })
+```
+
+当没有设置错误处理器时，Fastify 会调用一个默认函数，并根据 `statusCode` 相应地记录日志：
+```js
+var statusCode = error.statusCode
+if (statusCode >= 500) {
+  log.error(error)
+} else if (statusCode >= 400) {
+  log.info(error)
+} else {
+  log.error(error)
+}
 ```
 
 <a name="print-routes"></a>
