@@ -181,7 +181,7 @@ fastify.get('/', (request, reply) => {
 
 单个插件允许加载的最长时间，以毫秒计。如果某个插件加载超时，则 [`ready`](https://github.com/fastify/fastify/blob/master/docs/Server.md#ready) 会抛出一个含有 `'ERR_AVVIO_PLUGIN_TIMEOUT'` 代码的 `Error` 对象。
 
-+ 默认值: `0` (禁用状态)
++ 默认值: `10000`
 
 ## 实例
 

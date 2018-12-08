@@ -57,10 +57,10 @@ fastify.decorateRequest('utility', function () {
 <a name="decorators-encapsulation"></a>
 #### 装饰器与封装
 
-在经过封装的同一个插件中，装饰器是 *不可覆盖* 的。如果你声明一个已存在的 *(存在同名)* 装饰器，`decorate`、`decorateRequest` 以及 `decorateReply` 将会抛出一个异常。
+在经过封装的同一个插件中，如果通过 `decorate`、`decorateRequest` 以及 `decorateReply` 多次定义了一个同名的的装饰器，Fastify 将会抛出一个异常。
 
 下面的示例会抛出异常：
- ````js
+ ```js
 const server = require('fastify')()
   server.decorateReply('view', function (template, args) {
   // 页面渲染引擎的代码。

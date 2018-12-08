@@ -11,6 +11,7 @@ Reply 是 Fastify 的一个核心对象。它暴露了以下函数：
 - `.hasHeader(name)` - 检查某个 header 是否设置。
 - `.type(value)` - 设置 `Content-Type` header。
 - `.redirect([code,] url)` - 重定向至指定的 url，状态码可选 (默认为 `302`)。
+- `.callNotFound()` - 调用自定义的 not found 处理函数。
 - `.serialize(payload)` - 使用默认的 json 序列化工具序列化指定的 payload，并返回处理后的结果。
 - `.serializer(function)` - 设置自定义的 payload 序列化工具。
 - `.send(payload)` - 向用户发送 payload。类型可以是纯文本、buffer、JSON、stream，或一个 Error 对象。
@@ -72,6 +73,13 @@ reply.getHeader('x-foo') // undefined
 重定向请求至指定的 url，状态码可选，当未通过 `code` 方法设置时，默认为 `302`。
 ```js
 reply.redirect('/home')
+```
+
+<a name="call-not-found"></a>
+### .callNotFound()
+调用自定义的 not found 处理函数。
+```js
+reply.callNotFound()
 ```
 
 <a name="type"></a>
@@ -161,7 +169,7 @@ fastify.get('/streams', function (request, reply) {
 你可以向 Error 对象添加自定义属性，例如 `code` 或 `headers`，这可以用来增强 http 响应。<br>
 *注意：如果 `send` 一个错误，但状态码小于 400，Fastify 会自动将其设为 500。*
 
-贴士：你可以通过 [`http-errors`](https://npm.im/http-errors) 来简化生成的错误：
+贴士：你可以通过 [`http-errors`](https://npm.im/http-errors) 或 [`fastify-sensible`](https://github.com/fastify/fastify-sensible) 来简化生成的错误：
 
 ```js
 fastify.get('/', function (request, reply) {
@@ -171,17 +179,15 @@ fastify.get('/', function (request, reply) {
 
 如果你想完全自定义错误响应，请看 [`setErrorHandler`](https://github.com/fastify/docs-chinese/blob/master/docs/Server.md#seterrorhandler) API。
 
-`status` 或 `statusCode` 属性为 `404` 的错误，会被导引到 not found 的处理函数。
-更多信息，详见 [`server.setNotFoundHandler`](https://github.com/fastify/docs-chinese/blob/master/docs/Server.md#setnotfoundhandler)
+路由生成的 not found 错误会使用 [`setNotFoundHandler`](https://github.com/fastify/fastify/blob/master/docs/Server-Methods.md#setnotfoundhandler)。
 API：
 
 ```js
 fastify.setNotFoundHandler(function (request, reply) {
-  reply.type('text/plain').send('a custom not found')
-})
-
-fastify.get('/', function (request, reply) {
-  reply.send(new httpErrors.NotFound())
+  reply
+    .code(404)
+    .type('text/plain')
+    .send('a custom not found')
 })
 ```
 
