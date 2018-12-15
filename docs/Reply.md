@@ -193,7 +193,7 @@ fastify.setErrorHandler(function (error, request, reply) {
 })
 ```
 
-路由生成的 not found 错误会使用 [`setNotFoundHandler`](https://github.com/fastify/fastify/blob/master/docs/Server-Methods.md#setnotfoundhandler)。
+路由生成的 not found 错误会使用 [`setNotFoundHandler`](https://github.com/fastify/fastify/blob/master/docs/Server.md#setnotfoundhandler)。
 API：
 
 ```js
