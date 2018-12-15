@@ -8,6 +8,7 @@
 
 通过钩子方法，你可以在 Fastify 的生命周期内直接进行交互。有四个可用的钩子 *(按执行顺序排序)*：
 - `'onRequest'`
+- `'preValidation'`
 - `'preHandler'`
 - `'onSend'`
 - `'onResponse'`
@@ -15,6 +16,11 @@
 示例：
 ```js
 fastify.addHook('onRequest', (request, reply, next) => {
+  // 其他代码
+  next()
+})
+
+fastify.addHook('preValidation', (request, reply, next) => {
   // 其他代码
   next()
 })
@@ -39,7 +45,17 @@ fastify.addHook('onResponse', (request, reply, next) => {
 fastify.addHook('onRequest', async (request, reply) => {
   // 其他代码
   await asyncMethod()
-  // 错误处理
+  // 发生错误
+  if (err) {
+    throw new Error('some errors occurred.')
+  }
+  return
+})
+
+fastify.addHook('preValidation', async (request, reply) => {
+  // 其他代码
+  await asyncMethod()
+  // 发生错误
   if (err) {
     throw new Error('some errors occurred.')
   }
@@ -49,7 +65,7 @@ fastify.addHook('onRequest', async (request, reply) => {
 fastify.addHook('preHandler', async (request, reply) => {
   // 其他代码
   await asyncMethod()
-  // 错误处理
+  // 发生错误
   if (err) {
     throw new Error('some errors occurred.')
   }
@@ -59,7 +75,7 @@ fastify.addHook('preHandler', async (request, reply) => {
 fastify.addHook('onSend', async (request, reply, payload) => {
   // 其他代码
   await asyncMethod()
-  // 错误处理
+  // 发生错误
   if (err) {
     throw new Error('some errors occurred.')
   }
@@ -69,7 +85,7 @@ fastify.addHook('onSend', async (request, reply, payload) => {
 fastify.addHook('onResponse', async (request, reply) => {
   // 其他代码
   await asyncMethod()
-  // 错误处理
+  // 发生错误
   if (err) {
     throw new Error('some errors occurred.')
   }
@@ -79,7 +95,7 @@ fastify.addHook('onResponse', async (request, reply) => {
 
 **注意：** 使用 `async`/`await` 或返回一个 `Promise` 时，`next` 回调不可用。在这种情况下，仍然使用 `next` 可能会导致难以预料的行为，例如，处理器的重复调用。
 
-**注意：** 在 `onRequest` 钩子中，`request.body` 的值总是 `null`，这是因为 body 的解析发生在 `preHandler` 钩子之前。
+**注意：** 在 `onRequest` 与 `preValidation` 钩子中，`request.body` 的值总是 `null`，这是因为 body 的解析发生在 `preHandler` 钩子之前。
 
 [Request](https://github.com/fastify/fastify/blob/master/docs/Request.md) 与 [Reply](https://github.com/fastify/fastify/blob/master/docs/Reply.md) 是 Fastify 核心的对象。<br/>
 `next` 是调用[生命周期](https://github.com/fastify/fastify/blob/master/docs/Lifecycle.md)下一阶段的函数。
@@ -207,12 +223,18 @@ fastify.addHook('onRequest', function (request, reply, next) {
 ```
 注：使用箭头函数会破坏 Fastify 实例对 this 的绑定。
 
-<a name="before-handler"></a>
-### beforeHandler
-别被 `beforeHandler` 的名字迷惑了。不像 `preHandler` 是一个标准的钩子，`beforeHandler` 只是一个在路由选项中注册的函数，仅在该路由内执行。当你想在路由层面而非钩子层面 (例如 `preHandler`) 处理身份认证时，它能派上用场。`beforeHandler` 还可以是一个函数数组。<br>
-**`beforeHandler` 总是在 `preHandler` 之后执行。**
-
+<a name="route-hooks"></a>
+## 路由层钩子
+你可以为路由声明一个或多个自定义的 `preValidation` 与 `preHandler` 钩子。
+如果你这么做，这些钩子总是会作为同一类钩子中的最后一个被执行。<br/>
+当你需要进行认证时，这会很有用，而 `preValidation` 钩子正是为此而生。
+让我们看下范例：
 ```js
+fastify.addHook('preValidation', (request, reply, done) => {
+  // 你的代码
+  done()
+})
+
 fastify.addHook('preHandler', (request, reply, done) => {
   // 你的代码
   done()
@@ -222,31 +244,17 @@ fastify.route({
   method: 'GET',
   url: '/',
   schema: { ... },
-  beforeHandler: function (request, reply, done) {
-    // 你的代码
+  preValidation: function (request, reply, done) {
+    // 该钩子总是在共享的 `preValidation` 钩子后被执行
+    done()
+  },
+  preHandler: function (request, reply, done) {
+    // 该钩子总是在共享的 `preHandler` 钩子后被执行
     done()
   },
   handler: function (request, reply) {
     reply.send({ hello: 'world' })
   }
 })
-
-fastify.route({
-  method: 'GET',
-  url: '/',
-  schema: { ... },
-  beforeHandler: [
-    function first (request, reply, done) {
-      // 你的代码
-      done()
-    },
-    function second (request, reply, done) {
-      // 你的代码
-      done()
-    }
-  ],
-  handler: function (request, reply) {
-    reply.send({ hello: 'world' })
-  }
-})
 ```
+**注**：两个选项都接受一个函数数组作为参数。
