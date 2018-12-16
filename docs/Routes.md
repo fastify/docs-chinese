@@ -226,6 +226,10 @@ module.exports = function (fastify, opts, next) {
 根据需要，你可以多次设置路由前缀，它也支持嵌套的 `register` 以及路由参数。
 请注意，当使用了 [`fastify-plugin`](https://github.com/fastify/fastify-plugin) 时，这一选项是无效的。
 
+#### 处理带前缀的 / 路由
+
+根据前缀是否以 `/` 结束，路径为 `/` 的路由的匹配模式有所不同。举例来说，前缀为 `/something/` 的 `/` 路由只会匹配 `something`，而前缀为 `/something` 则会匹配 `/something` 和 `/something/`。
+
 <a name="custom-log-level"></a>
 ### 自定义日志级别
 在 Fastify 中为路由里设置不同的日志级别是十分容易的。<br/>
