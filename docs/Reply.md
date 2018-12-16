@@ -12,7 +12,7 @@ Reply 是 Fastify 的一个核心对象。它暴露了以下函数：
 - `.type(value)` - 设置 `Content-Type` header。
 - `.redirect([code,] url)` - 重定向至指定的 url，状态码可选 (默认为 `302`)。
 - `.callNotFound()` - 调用自定义的 not found 处理函数。
-- `.serialize(payload)` - 使用默认的 json 序列化工具序列化指定的 payload，并返回处理后的结果。
+- `.serialize(payload)` - 使用默认的或自定义的 json 序列化工具序列化指定的 payload，并返回处理后的结果。
 - `.serializer(function)` - 设置自定义的 payload 序列化工具。
 - `.send(payload)` - 向用户发送 payload。类型可以是纯文本、buffer、JSON、stream，或一个 Error 对象。
 - `.sent` - 一个 boolean，检查 `send` 是否已被调用。
@@ -193,7 +193,7 @@ fastify.setErrorHandler(function (error, request, reply) {
 })
 ```
 
-路由生成的 not found 错误会使用 [`setNotFoundHandler`](https://github.com/fastify/fastify/blob/master/docs/Server-Methods.md#setnotfoundhandler)。
+路由生成的 not found 错误会使用 [`setNotFoundHandler`](https://github.com/fastify/fastify/blob/master/docs/Server.md#setnotfoundhandler)。
 API：
 
 ```js
