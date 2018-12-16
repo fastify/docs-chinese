@@ -1,7 +1,7 @@
 <h1 align="center">Fastify</h1>
 
 ## Content Type 解析
-Fastify 原生只支持 `'application/json'` content type。默认的字符集是 `utf-8`。如果你需要支持其他的 content types，你需要使用 `addContentTypeParser` API。*默认的 JSON 解析器也可以被更改.*
+Fastify 原生只支持 `'application/json'` 和 `'text/plain'` content types。默认的字符集是 `utf-8`。如果你需要支持其他的 content types，你需要使用 `addContentTypeParser` API。*默认的 JSON 或者纯文本解析器也可以被更改.*
 
 和其他的 API 一样，`addContentTypeParser` 被封装在定义它的作用域( Scope )中了。这就意味着如果你定义在了根作用域中，那么就是全局可用，如果你定义在一个注册( Register )的作用域中，那么它只能在那个作用域( Register )和子作用域中可用。
 
@@ -74,30 +74,30 @@ fastify.addContentTypeParser('*', function (req, done) {
 在这种情况下，所有的没有特定 content type 解析器的请求都会被这个方法处理。
 
 对请求流 (stream) 执行管道输送 (pipe) 操作也是有用的。你可以如下定义一个 content 解析器：
- ```js
+```js
 fastify.addContentTypeParser('*', function (req, done) {
   done()
 })
 ```
 之后通过核心 HTTP request 对象将请求流直接输送到任意位置：
- ```js
+```js
 app.post('/hello', (request, reply) => {
   reply.send(request.req)
 })
 ```
 这里有一个将来访的 [json line](http://jsonlines.org/) 对象完整输出到日志的例子：
- ```js
+```js
 const split2 = require('split2')
 const pump = require('pump')
  fastify.addContentTypeParser('*', (req, done) => {
   done(null, pump(req, split2(JSON.parse)))
 })
- fastify.route({
+fastify.route({
   method: 'POST',
   url: '/api/log/jsons',
   handler: (req, res) => {
     req.body.on('data', d => console.log(d)) // 记录每个来访的对象
   }
 })
- ```
- 关于输送上传的文件，请看[该插件](https://github.com/fastify/fastify-multipart)。
+```
+关于输送上传的文件，请看[该插件](https://github.com/fastify/fastify-multipart)。
