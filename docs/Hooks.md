@@ -10,6 +10,7 @@
 - `'onRequest'`
 - `'preValidation'`
 - `'preHandler'`
+- `'onError'`
 - `'onSend'`
 - `'onResponse'`
 
@@ -26,6 +27,11 @@ fastify.addHook('preValidation', (request, reply, next) => {
 })
 
 fastify.addHook('preHandler', (request, reply, next) => {
+  // 其他代码
+  next()
+})
+
+fastify.addHook('onError', (request, reply, error, next) => {
   // 其他代码
   next()
 })
@@ -70,6 +76,11 @@ fastify.addHook('preHandler', async (request, reply) => {
     throw new Error('some errors occurred.')
   }
   return
+})
+
+fastify.addHook('onError', async (request, reply, error) => {
+  // 当自定义错误日志时有用处
+  // 你不应该使用这个钩子去更新错误
 })
 
 fastify.addHook('onSend', async (request, reply, payload) => {
@@ -120,6 +131,27 @@ fastify.addHook('preHandler', (request, reply, next) => {
 ```
 
 *错误最终会在 [`Reply`](https://github.com/fastify/docs-chinese/blob/master/docs/Reply.md#errors) 中得到处理*
+
+#### `onError` 钩子
+
+`onError` 钩子可用于自定义错误日志，或当发生错误时添加特定的 header。<br/>
+该钩子并不是为了变更错误而设计的，且调用 `reply.send` 会抛出一个异常。<br/>
+它只会在 `customErrorHandler` 向用户发送错误之后被执行 (要注意的是，默认的 `customErrorHandler` 总是会发送错误)。
+**注意：** 与其他钩子不同，`onError` 不支持向 `next` 函数传递错误。
+
+```js
+fastify.addHook('onError', (request, reply, error, next) => {
+  // apm 代表应用性能监控 (Application Performance Monitoring)
+  apm.sendError(error)
+  next()
+})
+
+// 或使用 async
+fastify.addHook('onError', async (request, reply, error) => {
+  // apm 代表应用性能监控 (Application Performance Monitoring)
+  apm.sendError(error)
+})
+```
 
 #### `onSend` 钩子
 
