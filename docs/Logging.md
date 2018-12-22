@@ -86,3 +86,32 @@ fastify.get('/', function (request, reply) {
 ```
 
 *当前请求的日志实例在[生命周期](https://github.com/fastify/docs-chinese/blob/master/docs/Lifecycle.md)的各部分均可使用。*
+
+## 日志修订
+ 
+[Pino](https://getpino.io) 支持低开销的日志修订，以隐藏特定内容。
+举例来说，出于安全方面的考虑，我们也许想在 HTTP header 的日志中隐藏 `Authorization` 这一个 header：
+
+```js
+const fastify = Fastify({
+  logger: {
+    stream: stream,
+    redact: ['req.headers.authorization'],
+    level: 'info',
+    serializers: {
+      req (req) {
+        return {
+          method: req.method,
+          url: req.url,
+          headers: req.headers,
+          hostname: req.hostname,
+          remoteAddress: req.ip,
+          remotePort: req.connection.remotePort
+        }
+      }
+    }
+  }
+})
+```
+
+更多信息请看 https://getpino.io/#/docs/redaction。
