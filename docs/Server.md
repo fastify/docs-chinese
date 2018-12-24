@@ -183,6 +183,19 @@ fastify.get('/', (request, reply) => {
 
 + 默认值: `10000`
 
+ <a name="factory-querystring-parser"></a>
+ ### `querystringParser`
+ 
+Fastify 默认使用 Node.js 核心的 `querystring` 模块作为 query string 解析器。<br/>
+你可以通过 `querystringParser` 选项来使用自定义的解析器，例如 [`qs`](https://www.npmjs.com/package/qs)。
+
+```js
+const qs = require('qs')
+const fastify = require('fastify')({
+  querystringParser: str => qs.parse(str)
+})
+```
+
 ## 实例
 
 ### 服务器方法
