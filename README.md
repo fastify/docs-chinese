@@ -25,12 +25,8 @@
 
 ### 翻译指南
 
-如果你发现了翻译的错误，或文档的滞后，请创建一个 issue 来告诉我们，或是按如下方法直接参与翻译。感谢！
-
-* Fork https://github.com/fastify/docs-chinese
-* 创建 Git Branch
-* 开始翻译
-* 创建 PR，尽量保证一篇文档一个 commit 一个 PR
+想要参与到项目当中？欢迎！
+为了提供一致的翻译体验，请在开始翻译前参阅[翻译指南](https://github.com/fastify/docs-chinese/blob/master/docs/Contributing.md)。感谢！
 
 ### 贡献者
 * [@fralonra](https://github.com/fralonra)
