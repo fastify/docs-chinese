@@ -6,8 +6,9 @@
 
 ## 请求/响应钩子
 
-通过钩子方法，你可以在 Fastify 的生命周期内直接进行交互。有四个可用的钩子 *(按执行顺序排序)*：
+通过钩子方法，你可以在 Fastify 的生命周期内直接进行交互。有五个可用的钩子 *(按执行顺序排序)*：
 - `'onRequest'`
+- `'preParsing'`
 - `'preValidation'`
 - `'preHandler'`
 - `'onSend'`
@@ -16,6 +17,11 @@
 示例：
 ```js
 fastify.addHook('onRequest', (request, reply, next) => {
+  // 其他代码
+  next()
+})
+
+fastify.addHook('preParsing', (request, reply, next) => {
   // 其他代码
   next()
 })
@@ -43,6 +49,16 @@ fastify.addHook('onResponse', (request, reply, next) => {
 或使用 `async/await`
 ```js
 fastify.addHook('onRequest', async (request, reply) => {
+  // 其他代码
+  await asyncMethod()
+  // 发生错误
+  if (err) {
+    throw new Error('some errors occurred.')
+  }
+  return
+})
+
+fastify.addHook('preParsing', async (request, reply) => {
   // 其他代码
   await asyncMethod()
   // 发生错误
