@@ -2,7 +2,7 @@
 
 ## 回复
 处理器函数的第二个参数为 `Reply`。
-Reply 是 Fastify 的一个核心对象。它暴露了以下函数：
+Reply 是 Fastify 的一个核心对象。它暴露了以下函数及属性：
 
 - `.code(statusCode)` - 设置状态码。
 - `.status(statusCode)` - `.code(statusCode)` 的别名。
@@ -110,6 +110,27 @@ reply
 ```
 
 请看 [`.send()`](#send) 了解更多关于发送不同类型值的信息。
+
+<a name="sent"></a>
+### .sent
+
+如你所见，`.sent` 属性表明是否已通过 `reply.send()` 发送了一个响应。
+
+当控制器是一个 async 函数或返回一个 promise 时，可以手动设置 `reply.sent = true`，以防 promise resolve 时自动调用 `reply.send()`。通过设置 `reply.sent =
+true`，程序能完全掌控底层的请求，且相关钩子不会被触发。
+
+请看范例：
+
+```js
+app.get('/', (req, reply) => {
+  reply.sent = true
+  reply.res.end('hello world')
+
+  return Promise.resolve('this will be skipped') // 译注：该处会被跳过
+})
+```
+
+如果处理器 reject，将会记录一个错误。
 
 <a name="send"></a>
 ### .send(data)
