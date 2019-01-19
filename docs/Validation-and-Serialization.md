@@ -50,7 +50,7 @@ fastify.post('/the/url', { schema }, handler)
 
 <a name="shared-schema"></a>
 #### 添加共用 schema
-感谢 `addSchema` API，它让你可以向 Fastify 实例添加多个 schema，并在你程序的不同部分使用它们。*(请注意该 API 并未封装)*
+感谢 `addSchema` API，它让你可以向 Fastify 实例添加多个 schema，并在你程序的不同部分使用它们。该 API 也是封装好的。
 ```js
 const fastify = require('fastify')()
 
@@ -69,6 +69,30 @@ fastify.route({
     body: 'greetings#'
   },
   handler: () => {}
+})
+
+fastify.register((instance, opts, next) => {
+   /**
+   * 你可以在子作用域中使用在上层作用域里定义的 scheme，比如 'greetings'。
+   * 父级作用域则无法使用子作用域定义的 schema。
+   */
+  instance.addSchema({
+    $id: 'framework',
+    type: 'object',
+    properties: {
+      fastest: { type: 'string' },
+      hi: 'greetings#'
+    }
+  })
+   instance.route({
+    method: 'POST',
+    url: '/sub',
+    schema: {
+      body: 'framework#'
+    },
+    handler: () => {}
+  })
+   next()
 })
 ```
 在任意位置你都能使用共用 schema，无论是在应用顶层，还是在其他 schema 的内部：
@@ -100,9 +124,32 @@ fastify.route({
 ```
 
 <a name="get-shared-schema"></a>
-#### 获取所有共用 schema 的拷贝
+#### 获取共用 schema 的拷贝
 
-`getSchemas` 函数返回所有通过 `addSchema` 方法添加的共用 schema。
+`getSchemas` 函数返回指定作用域中的共用 schema：
+```js
+fastify.addSchema({ $id: 'one', my: 'hello' })
+fastify.get('/', (request, reply) => { reply.send(fastify.getSchemas()) })
+
+fastify.register((instance, opts, next) => {
+  instance.addSchema({ $id: 'two', my: 'ciao' })
+  instance.get('/sub', (request, reply) => { reply.send(instance.getSchemas()) })
+
+  instance.register((subinstance, opts, next) => {
+    subinstance.addSchema({ $id: 'three', my: 'hola' })
+    subinstance.get('/deep', (request, reply) => { reply.send(subinstance.getSchemas()) })
+    next()
+  })
+  next()
+})
+```
+这个例子的输出如下：
+
+|  URL  | Schemas |
+|-------|---------|
+| /     | one             |
+| /sub  | one, two        |
+| /deep | one, two, three |
 
 <a name="schema-compiler"></a>
 #### Schema 编译器
