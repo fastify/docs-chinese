@@ -12,7 +12,7 @@
 * [生命周期](https://github.com/fastify/docs-chinese/blob/master/docs/Lifecycle.md)
 * [回复](https://github.com/fastify/docs-chinese/blob/master/docs/Reply.md)
 * [请求](https://github.com/fastify/docs-chinese/blob/master/docs/Request.md)
-* [错误处理](https://github.com/fastify/docs-chinese/blob/master/docs/Error-Handling.md)
+* [错误](https://github.com/fastify/docs-chinese/blob/master/docs/Errors.md)
 * [Content-Type 解析](https://github.com/fastify/docs-chinese/blob/master/docs/ContentTypeParser.md)
 * [插件](https://github.com/fastify/docs-chinese/blob/master/docs/Plugins.md)
 * [测试](https://github.com/fastify/docs-chinese/blob/master/docs/Testing.md)
