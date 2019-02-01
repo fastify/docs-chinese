@@ -160,9 +160,10 @@ Fastify 使用的 `ajv` 基本配置如下：
 
 ```js
 {
-  removeAdditional: true,
-  useDefaults: true,
-  coerceTypes: true
+  removeAdditional: true, // 移除额外属性
+  useDefaults: true, // 当属性或项目缺失时，使用 schema 中预先定义好的 default 的值代替
+  coerceTypes: true, // 根据定义的 type 的值改变数据类型
+  allErrors: true    // 检查出所有错误（译注：为 false 时出现首个错误后即返回）
 }
 ```
 
@@ -175,7 +176,8 @@ const ajv = new Ajv({
   // fastify 使用的默认参数（如果需要）
   removeAdditional: true,
   useDefaults: true,
-  coerceTypes: true
+  coerceTypes: true,
+  allErrors: true
   // 任意其他参数
   // ...
 })
