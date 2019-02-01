@@ -22,7 +22,7 @@ fastify.route(options)
 * `preHandler(request, reply, done)`：处理请求之前调用的[钩子函数](https://github.com/fastify/fastify/blob/master/docs/Hooks.md#route-hooks)。它还可以是一个函数数组。
 * `preSerialization(request, reply, payload, done)`：序列化之前调用的[钩子函数](https://github.com/fastify/fastify/blob/master/docs/Hooks.md#route-hooks)。它还可以是一个函数数组。
 * `handler(request, reply)`：处理请求的函数。
-* `schemaCompiler(schema)`：生成校验 schema 的函数。请看[这里]。(https://github.com/fastify/docs-chinese/blob/master/docs/Validation-and-Serialization.md#schema-compiler)。
+* `schemaCompiler(schema)`：生成校验 schema 的函数。请看[这里](https://github.com/fastify/docs-chinese/blob/master/docs/Validation-and-Serialization.md#schema-compiler)。
 * `bodyLimit`：一个以字节为单位的整形数，默认值为 `1048576` (1 MiB)，防止默认的 JSON 解析器解析超过此大小的请求主体。你也可以通过 `fastify(options)`，在首次创建 Fastify 实例时全局设置该值。
 * `logLevel`：设置日志级别。详见下文。
 * `config`：存放自定义配置的对象。
