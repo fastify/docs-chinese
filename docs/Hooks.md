@@ -11,6 +11,7 @@
 - `'preParsing'`
 - `'preValidation'`
 - `'preHandler'`
+- `'preSerialization'`
 - `'onError'`
 - `'onSend'`
 - `'onResponse'`
@@ -33,6 +34,11 @@ fastify.addHook('preValidation', (request, reply, next) => {
 })
 
 fastify.addHook('preHandler', (request, reply, next) => {
+  // 其他代码
+  next()
+})
+
+fastify.addHook('preSerialization', (request, reply, payload, next) => {
   // 其他代码
   next()
 })
@@ -92,6 +98,16 @@ fastify.addHook('preHandler', async (request, reply) => {
     throw new Error('some errors occurred.')
   }
   return
+})
+
+fastify.addHook('preSerialization', async (request, reply, payload) => {
+  // 其他代码
+  await asyncMethod()
+  // 发生错误
+  if (err) {
+    throw new Error('some errors occurred.')
+  }
+  return payload
 })
 
 fastify.addHook('onError', async (request, reply, error) => {
@@ -168,6 +184,24 @@ fastify.addHook('onError', async (request, reply, error) => {
   apm.sendError(error)
 })
 ```
+
+#### `preSerialization` 钩子
+
+`preSerialization` 钩子让你可以在 payload 被序列化之前改动它。举个例子：
+
+ ```js
+fastify.addHook('preSerialization', (request, reply, payload, next) => {
+  var err = null;
+  var newPayload = { wrapped: payload }
+  next(err, newPayload)
+})
+// 或使用 async
+fastify.addHook('preSerialization', async (request, reply, payload) => {
+  return { wrapped: payload }
+})
+```
+
+payload 为 `string`、`Buffer`、`stream` 或 `null` 时，该钩子不会被调用。
 
 #### `onSend` 钩子
 
