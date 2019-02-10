@@ -54,7 +54,7 @@ fastify.addContentTypeParser('application/json', { parseAs: 'string' }, function
 ```
 你可以看到，新的方法参数变成了 `(req, body, done)` 而不是 `(req, done)`。
 
-查看例子 [`example/parser.js`](https://github.com/fastify/docs-chinese/blob/master/examples/parser.js)。
+查看例子 [`example/parser.js`](https://github.com/fastify/fastify/blob/master/examples/parser.js)。
 
 ##### 自定义解析器的选项
 + `parseAs` (string): `'string'` 或者 `'buffer'` 定义了如何收集进来的数据。默认是 `'buffer'`。
