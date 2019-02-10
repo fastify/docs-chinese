@@ -6,7 +6,7 @@
 
 Fastify 长期支持计划 (LTS) 以本文档为准：
 
-1. 主要版本发布，[语义化版本][semver] X.Y.Z 发布版本中的 "X" 发布，至少有6个月的支持。特定版本的发布日期可以从[https://github.com/fastify/docs-chinese/releases](https://github.com/fastify/docs-chinese/releases)查到。
+1. 主要版本发布，[语义化版本][semver] X.Y.Z 发布版本中的 "X" 发布，至少有6个月的支持。特定版本的发布日期可以从[https://github.com/fastify/fastify/releases](https://github.com/fastify/fastify/releases)查到。
 
 1. 主要版本将一直获得安全更新，直到下个主要版本发布后的6个月后。在这之后我们依然会发布安全补丁，只要社区有提供，且不会破坏其他约束，例如，支持的 Node.js 最低版本。
 

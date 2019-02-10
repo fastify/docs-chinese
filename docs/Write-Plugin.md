@@ -4,7 +4,7 @@
 首先，要感谢你决定为 Fastify 编写插件。Fastify 本身是一个极简的框架，插件才是它强大功能的来源，所以，谢谢你。<br>
 Fastify 的核心原则是高性能、低成本、提供优秀的用户体验。当编写插件时，这些原则应当被遵循。因此，本文我们将会分析一个优质的插件所具有的特征。
 
-*需要一些灵感？你可以在 issue 中使用 ["plugin suggestion"](https://github.com/fastify/docs-chinese/issues?q=is%3Aissue+is%3Aopen+label%3A%22plugin+suggestion%22) 标签！*
+*需要一些灵感？你可以在 issue 中使用 ["plugin suggestion"](https://github.com/fastify/fastify/issues?q=is%3Aissue+is%3Aopen+label%3A%22plugin+suggestion%22) 标签！*
 
 ## 代码
 Fastify 运用了不同的技术来优化代码，其大部分都被写入了文档。我们强烈建议你阅读 [插件指南](https://github.com/fastify/docs-chinese/blob/master/docs/Plugins-Guide.md) 一文，以了解所有可用于构建插件的 API 及其用法。
