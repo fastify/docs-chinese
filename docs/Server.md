@@ -61,6 +61,16 @@ fastify.get('/bar', function (req, reply) {
 
 + 默认值: `1048576` (1MiB)
 
+<a name="factory-on-proto-poisoning"></a>
+### `onProtoPoisoning`
+
+由 [bourne](https://github.com/hapijs/bourne) 提供的功能，指定解析带有 `__proto__` 键的 JSON 对象时框架的行为。
+更多关于原型污染 (prototype poisoning) 的内容请看 https://hueniverse.com/a-tale-of-prototype-poisoning-2610fa170061。
+
+允许的值为 `'error'`、`'remove'` 与 `'ignore'`。
+
++ 默认值：`'error'`
+
 <a name="factory-logger"></a>
 ### `logger`
 
