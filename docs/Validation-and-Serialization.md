@@ -277,7 +277,7 @@ const schema = {
  ```js
 const fastify = Fastify()
  fastify.post('/', { schema, attachValidation: true }, function (req, reply) {
-  if (req.validation) {
+  if (req.validationError) {
     // `req.validationError.validation` 包含了原始的验证错误信息
     reply.code(400).send(req.validationError)
   }
