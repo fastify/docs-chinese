@@ -18,9 +18,9 @@ fastify.route(options)
   * `params`：校验 url 参数。
   * `response`：过滤并生成用于响应的 schema，能帮助提升 10-20% 的吞吐量。
 * `attachValidation`：当 schema 校验出错时，将一个 `validationError` 对象添加到请求中，否则错误将被发送给错误处理器。
-* `preValidation(request, reply, done)`在共享的 `preValidation` 钩子之后执行的[函数]。(https://github.com/fastify/fastify/blob/master/docs/Hooks.md#route-hooks)，在路由层进行认证等场景中会有用处。它还可以是一个函数数组。
-* `preHandler(request, reply, done)`：处理请求之前调用的[钩子函数](https://github.com/fastify/fastify/blob/master/docs/Hooks.md#route-hooks)。它还可以是一个函数数组。
-* `preSerialization(request, reply, payload, done)`：序列化之前调用的[钩子函数](https://github.com/fastify/fastify/blob/master/docs/Hooks.md#route-hooks)。它还可以是一个函数数组。
+* `preValidation(request, reply, done)`在共享的 `preValidation` 钩子之后执行的[函数]。(https://github.com/fastify/docs-chinese/blob/master/docs/Hooks.md#route-hooks)，在路由层进行认证等场景中会有用处。它还可以是一个函数数组。
+* `preHandler(request, reply, done)`：处理请求之前调用的[钩子函数](https://github.com/fastify/docs-chinese/blob/master/docs/Hooks.md#route-hooks)。它还可以是一个函数数组。
+* `preSerialization(request, reply, payload, done)`：序列化之前调用的[钩子函数](https://github.com/fastify/docs-chinese/blob/master/docs/Hooks.md#route-hooks)。它还可以是一个函数数组。
 * `handler(request, reply)`：处理请求的函数。
 * `schemaCompiler(schema)`：生成校验 schema 的函数。请看[这里](https://github.com/fastify/docs-chinese/blob/master/docs/Validation-and-Serialization.md#schema-compiler)。
 * `bodyLimit`：一个以字节为单位的整形数，默认值为 `1048576` (1 MiB)，防止默认的 JSON 解析器解析超过此大小的请求主体。你也可以通过 `fastify(options)`，在首次创建 Fastify 实例时全局设置该值。
@@ -276,6 +276,7 @@ fastify.listen(3000)
 
 <a name="version"></a>
 ### 版本
+#### 默认
 需要的话，你可以提供一个版本选项，它允许你为同一个路由声明不同的版本。版本号请遵循 [semver](http://semver.org/) 规范。<br/>
 Fastify 会自动检测 `Accept-Version` header，并将请求分配给相应的路由 (当前尚不支持 semver 规范中的 advanced ranges 与 pre-releases 语法)。<br/>
 *请注意，这一特性会降低路由的性能。*
@@ -301,3 +302,5 @@ fastify.inject({
 ```
 如果你声明了多个拥有相同主版本或次版本号的版本，Fastify 总是会根据 `Accept-Version` header 的值选择最兼容的版本。<br/>
 假如请求未带有 `Accept-Version` header，那么将返回一个 404 错误。
+#### 自定义
+新建实例时，可以通过设置 [`versioning`](https://github.com/fastify/docs-chinese/blob/master/docs/Server.md#versioning) 来自定义版本号逻辑。

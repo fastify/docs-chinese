@@ -189,7 +189,7 @@ fastify.get('/', (request, reply) => {
 <a name="plugin-timeout"></a>
 ### `pluginTimeout`
 
-单个插件允许加载的最长时间，以毫秒计。如果某个插件加载超时，则 [`ready`](https://github.com/fastify/fastify/blob/master/docs/Server.md#ready) 会抛出一个含有 `'ERR_AVVIO_PLUGIN_TIMEOUT'` 代码的 `Error` 对象。
+单个插件允许加载的最长时间，以毫秒计。如果某个插件加载超时，则 [`ready`](https://github.com/fastify/docs-chinese/blob/master/docs/Server.md#ready) 会抛出一个含有 `'ERR_AVVIO_PLUGIN_TIMEOUT'` 代码的 `Error` 对象。
 
 + 默认值: `10000`
 
@@ -203,6 +203,31 @@ Fastify 默认使用 Node.js 核心的 `querystring` 模块作为 query string �
 const qs = require('qs')
 const fastify = require('fastify')({
   querystringParser: str => qs.parse(str)
+})
+```
+
+<a name="versioning"></a>
+### `versioning`
+
+默认情况下，`find-my-way` 使用 [semver 版本号规范](https://github.com/fastify/docs-chinese/blob/master/docs/Routes.md#version)来为路由设置版本号。你也可以使用自定义的版本号策略。更多信息请看 [find-my-way](https://github.com/delvedor/find-my-way#versioned-routes) 的文档。
+
+```js
+const versioning = {
+  storage: function () {
+    let versions = {}
+    return {
+      get: (version) => { return versions[version] || null },
+      set: (version, store) => { versions[version] = store },
+      del: (version) => { delete versions[version] },
+      empty: () => { versions = {} }
+    }
+  },
+  deriveVersion: (req, ctx) => {
+    return req.headers['accept']
+  }
+}
+ const fastify = require('fastify')({
+  versioning
 })
 ```
 

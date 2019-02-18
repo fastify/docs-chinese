@@ -140,8 +140,8 @@ fastify.addHook('onResponse', async (request, reply) => {
 
 **注意：** 在 `onRequest` 与 `preValidation` 钩子中，`request.body` 的值总是 `null`，这是因为 body 的解析发生在 `preHandler` 钩子之前。
 
-[Request](https://github.com/fastify/fastify/blob/master/docs/Request.md) 与 [Reply](https://github.com/fastify/fastify/blob/master/docs/Reply.md) 是 Fastify 核心的对象。<br/>
-`next` 是调用[生命周期](https://github.com/fastify/fastify/blob/master/docs/Lifecycle.md)下一阶段的函数。
+[Request](https://github.com/fastify/docs-chinese/blob/master/docs/Request.md) 与 [Reply](https://github.com/fastify/docs-chinese/blob/master/docs/Reply.md) 是 Fastify 核心的对象。<br/>
+`next` 是调用[生命周期](https://github.com/fastify/docs-chinese/blob/master/docs/Lifecycle.md)下一阶段的函数。
 
 [生命周期](https://github.com/fastify/docs-chinese/blob/master/docs/Lifecycle.md)一文清晰地展示了各个钩子执行的位置。<br>
 钩子可被封装，因此可以运用在特定的路由上。更多信息请看[作用域](#scope)一节。
@@ -252,7 +252,7 @@ fastify.addHook('preHandler', async (request, reply) => {
 })
 ```
 
-如果你想要使用流 (stream) 来响应请求，你应该避免使用 `async` 函数。必须使用 `async` 函数的话，请参考 [test/hooks-async.js](https://github.com/fastify/docs-chinese/blob/94ea67ef2d8dce8a955d510cd9081aabd036fa85/test/hooks-async.js#L269-L275) 中的示例来编写代码。
+如果你想要使用流 (stream) 来响应请求，你应该避免使用 `async` 函数。必须使用 `async` 函数的话，请参考 [test/hooks-async.js](https://github.com/fastify/fastify/blob/94ea67ef2d8dce8a955d510cd9081aabd036fa85/test/hooks-async.js#L269-L275) 中的示例来编写代码。
 
 ```js
 fastify.addHook('onRequest', (request, reply, next) => {
