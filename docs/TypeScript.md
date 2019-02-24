@@ -44,6 +44,122 @@ server.get('/ping', opts, (request, reply) => {
 })
 ```
 
+<a id="generic-parameters"></a>
+## 一般类型的参数
+你不但可以校验 querystring、url 参数、body 以及 header，你还可以覆盖 request 接口中定义的默认类型：
+
+```ts
+import * as fastify from 'fastify'
+
+const server = fastify({})
+
+interface Query {
+  foo?: number
+}
+
+interface Params {
+  bar?: string
+}
+
+interface Body {
+  baz?: string
+}
+
+interface Headers {
+  a?: string
+}
+
+const opts: fastify.RouteShorthandOptions = {
+  schema: {
+    querystring: {
+      type: 'object',
+      properties: {
+        foo: {
+          type: 'number'
+        }
+      }
+    },
+    params: {
+      type: 'object',
+      properties: {
+        bar: {
+          type: 'string'
+        }
+      }
+    },
+    body: {
+      type: 'object',
+      properties: {
+        baz: {
+          type: 'string'
+        }
+      }
+    },
+    headers: {
+      type: 'object',
+      properties: {
+        a: {
+          type: 'string'
+        }
+      }
+    }
+  }
+}
+
+server.get<Query, Params, Body, Headers>('/ping/:bar', opts, (request, reply) => {
+  console.log(request.query) // 这是 Query 类型
+  console.log(request.params) // 这是 Params 类型
+  console.log(request.body) // 这是 Body 类型
+  console.log(request.headers) // 这是 Headers 类型
+  reply.code(200).send({ pong: 'it worked!' })
+})
+```
+
+所有的一般类型都是可选的，因此你可以只传递你使用 schema 校验的类型：
+
+```ts
+import * as fastify from 'fastify'
+
+const server = fastify({})
+
+interface Params {
+  bar?: string
+}
+
+const opts: fastify.RouteShorthandOptions = {
+  schema: {
+    params: {
+      type: 'object',
+      properties: {
+        bar: {
+          type: 'string'
+        }
+      }
+    },
+  }
+}
+
+server.get<fastify.DefaultQuery, Params, unknown>('/ping/:bar', opts, (request, reply) => {
+  console.log(request.query) // 这是 fastify.DefaultQuery 类型
+  console.log(request.params) // 这是 Params 类型
+  console.log(request.body) // 这是未知的类型
+  console.log(request.headers) // 这是 fastify.DefaultHeader 类型，因为 typescript 会使用默认类型
+  reply.code(200).send({ pong: 'it worked!' })
+})
+
+// 假设你不校验 querystring、body 或者 header，
+// 最好将类型设为 `unknown`。但这个选择取决于你。
+// 下面的例子展示了这一做法，它可以避免你搬起石头砸自己的脚。
+// 换句话说，就是别使用不去校验的类型。
+server.get<unknown, Params, unknown, unknown>('/ping/:bar', opts, (request, reply) => {
+  console.log(request.query) // 这是未知的类型
+  console.log(request.params) // 这是 Params 类型
+  console.log(request.body) // 这是未知的类型
+  console.log(request.headers) // 这是未知的类型
+  reply.code(200).send({ pong: 'it worked!' })
+})
+```
+
 <a id="http-prototypes"></a>
 ## HTTP 原型
 默认情况下，Fastify 会根据你给的配置决定使用 http 的哪个版本。出于某种原因需要覆盖的话，你可以这么做：
