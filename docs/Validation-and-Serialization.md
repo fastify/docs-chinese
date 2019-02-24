@@ -13,35 +13,64 @@ Fastify 使用基于 schema 的途径，从本质上将 schema 编译成了高�
 
 示例：
 ```js
-const schema = {
-  body: {
-    type: 'object',
-    properties: {
-      someKey: { type: 'string' },
-      someOtherKey: { type: 'number' }
-    }
-  },
-
-  querystring: {
-    name: { type: 'string' },
-    excitement: { type: 'integer' }
-  },
-
-  params: {
-    type: 'object',
-    properties: {
-      par1: { type: 'string' },
-      par2: { type: 'number' }
-    }
-  },
-
-  headers: {
-    type: 'object',
-    properties: {
-      'x-foo': { type: 'string' }
+const bodyJsonSchema = {
+  type: 'object',
+  required: ['requiredKey'],
+  properties: {
+    someKey: { type: 'string' },
+    someOtherKey: { type: 'number' },
+    requiredKey: {
+      type: 'array',
+      maxItems: 3,
+      items: { type: 'integer' }
     },
-    required: ['x-foo']
+    nullableKey: { type: ['number', 'null'] },
+    multipleTypesKey: { type: ['boolean', 'number'] },
+    multipleRestrictedTypesKey: {
+      oneOf: [
+        { type: 'string', maxLength: 5 },
+        { type: 'number', minimum: 10 }
+      ]
+    },
+    enumKey: {
+      type: 'string',
+      enum: ['John', 'Foo']
+    },
+    notTypeKey: {
+      not: { type: 'array' }
+    }
   }
+}
+
+const queryStringJsonSchema = {
+  name: { type: 'string' },
+  excitement: { type: 'integer' }
+}
+
+const paramsJsonSchema = {
+  type: 'object',
+  properties: {
+    par1: { type: 'string' },
+    par2: { type: 'number' }
+  }
+}
+
+const headersJsonSchema = {
+  type: 'object',
+  properties: {
+    'x-foo': { type: 'string' }
+  },
+  required: ['x-foo']
+}
+
+const schema = {
+  body: bodyJsonSchema,
+
+  querystring: queryStringJsonSchema,
+
+  params: paramsJsonSchema,
+
+  headers: headersJsonSchema
 }
 
 fastify.post('/the/url', { schema }, handler)
