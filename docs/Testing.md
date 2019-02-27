@@ -12,6 +12,7 @@
 fastify.inject({
   method: String,
   url: String,
+  query: Object,
   payload: Object,
   headers: Object
 }, (error, response) => {
@@ -26,6 +27,7 @@ fastify
   .inject({
     method: String,
     url: String,
+    query: Object,
     payload: Object,
     headers: Object
   })
