@@ -202,65 +202,88 @@ server.get('/ping', (request, reply) => {
 <a id="plugin-types"></a>
 ### 插件类型
 
-插件的 typings 文件存放在 DefinitelyTyped 仓库中，这意味着使用插件时你还需要像下述一样安装类型文件：
+和 fastify 仓库一样，由 GitHub 上的 fastify 组织所维护的插件，应当自带 typings 文件。
+目前一些插件还没有 typings 文件，我们很欢迎你参与其中。typings 的例子请看 [fastify-cors](https://github.com/fastify/fastify-cors) 仓库。
 
-```
-npm install fastify-url-data @types/fastify-url-data
-```
+第三方插件可能自带 typings 文件，或存放于 DefinitelyTyped 之上。请记住，如果你写了一个插件，也请选择上述两种途径之一来存放 typings 文件！从 DefinitelyTyped 安装 typings 的方法可以在[这里](https://github.com/DefinitelyTyped/DefinitelyTyped#npm)找到。
 
-这之后便顺利了。一些类型可能还不可用，因此尽管去贡献吧。
+一些类型可能还不可用，因此尽管去贡献吧。
 
 <a id="authoring-plugin-types"></a>
 ### 编写插件类型
-扩展了 `FastifyRequest` 与 `FastifyReply` 对象的许多插件，可以通过如下方式获取。
+扩展了 `FastifyRequest`、`FastifyReply` 或 `FastifyInstance` 对象的许多插件，可以通过如下方式获取。
 
-该代码展示了如何给应用添加 `fastify-url-data` 的类型。
+以下代码展示了 `fastify-static` 插件的 typings。
 
 ```ts
-// 文件名: custom-types.d.ts
+// 导入 fastify typings
+import fastify = require("fastify");
+// 导入必需的 http typings
+import { Server, IncomingMessage, ServerResponse } from "http";
 
-// 核心的 typings 与它的值
-import fastify = require('fastify');
-
-// 用于插件 typings 的额外类型
-import { UrlObject } from 'url';
-
-// 通过 "fastify-url-data" 插件扩展 FastifyReply
-declare module 'fastify' {
-  interface FastifyRequest {
-    urlData (): UrlObject
-  }
+// 拓展 fastify typings
+declare module "fastify" {
+    interface FastifyReply<HttpResponse> {
+        sendFile(filename: string): FastifyReply<HttpResponse>;
+    }
 }
 
-declare function urlData (): void
+// 使用 fastify.Plugin 声明插件的类型
+declare const fastifyStatic: fastify.Plugin<Server, IncomingMessage, ServerResponse, {
+    root: string;
+    prefix?: string;
+    serve?: boolean;
+    decorateReply?: boolean;
+    schemaHide?: boolean;
+    setHeaders?: (...args: any[]) => void;
+    acceptRanges?: boolean;
+    cacheControl?: boolean;
+    dotfiles?: boolean;
+    etag?: boolean;
+    extensions?: string[];
+    immutable?: boolean;
+    index?: string[];
+    lastModified?: boolean;
+    maxAge?: string | number;
+}>;
 
-declare namespace urlData {}
-
-export = urlData;
+// 导出插件类型
+export = fastifyStatic;
 ```
 
-现在你可以如下使用 `fastify-url-data`：
+现在你便可以如此使用插件了：
 
 ```ts
-import * as fastify from 'fastify'
-import * as urlData from 'fastify-url-data'
+import * as Fastify from 'fastify'
+import * as fastifyStatic from 'fastify-static'
 
-/// <reference types="./custom-types.d.ts"/>
+const app = Fastify()
 
-const server = fastify();
-
-server.register(urlData)
-
-server.get('/data', (request, reply) => {
-  console.log(request.urlData().auth)
-  console.log(request.urlData().host)
-  console.log(request.urlData().port)
-  console.log(request.urlData().query)
-
-  reply.send({msg: 'ok'})
+// 这里的配置项会类型检查
+app.register(fastifyStatic, {
+  acceptRanges: true,
+  cacheControl: true,
+  decorateReply: true,
+  dotfiles: true,
+  etag: true,
+  extensions: ['.js'],
+  immutable: true,
+  index: ['1'],
+  lastModified: true,
+  maxAge: '',
+  prefix: '',
+  root: '',
+  schemaHide: true,
+  serve: true,
+  setHeaders: (res, pathName) => {
+    res.setHeader('some-header', pathName)
+  }
 })
 
-server.listen(3030)
+app.get('/file', (request, reply) => {
+  // 使用上文定义的 FastifyReply.sendFile 方法
+  reply.sendFile('some-file-name')
+})
 ```
 
-请记住，如果你为一个插件创建了 typings，你应该将其发布到 DefinitelyTyped 仓库中！
+给我们所有的插件加上 typings 需要社区的努力，因此尽管来贡献吧！
