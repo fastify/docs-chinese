@@ -124,12 +124,12 @@ Fastify 内在地使用 Node 原生 http server 的 API。因此，如果你使�
 
 默认值为 `true`，此时路由对大小写敏感。这就意味着 `/foo` 与 `/Foo` 是两个不同的路由。当该选项为 `false` 时，路由大小写不敏感，`/foo`、`/Foo` 以及 `/FOO` 都是一样的。
 
-将 `caseSensitive` 设置为 `false` 也会导致所有路由参数 (包括正则匹配的值) 变为小写。
+将 `caseSensitive` 设置为 `false`，会导致所有路径变为小写，除了路由参数与通配符。
 
 ```js
 fastify.get('/user/:username', (request, reply) => {
-  // 原 URL: /user/NodeJS
-  console.log(request.params.username) // -> 'nodejs'
+  // 原 URL: /USER/NodeJS
+  console.log(request.params.username) // -> 'NodeJS'
 })
 ```
 
