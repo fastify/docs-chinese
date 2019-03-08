@@ -26,7 +26,7 @@ fastify.route(options)
 * `bodyLimit`：一个以字节为单位的整形数，默认值为 `1048576` (1 MiB)，防止默认的 JSON 解析器解析超过此大小的请求主体。你也可以通过 `fastify(options)`，在首次创建 Fastify 实例时全局设置该值。
 * `logLevel`：设置日志级别。详见下文。
 * `config`：存放自定义配置的对象。
-* `version`：一个符合[语义化版本控制规范 (semver)](http://semver.org/) 的字符串。[示例](https://github.com/fastify/docs-chinese/blob/versioned-routes/docs/Routes.md#version)。
+* `version`：一个符合[语义化版本控制规范 (semver)](http://semver.org/) 的字符串。[示例](https://github.com/fastify/docs-chinese/blob/master/docs/Routes.md#version)。
 
   `request` 的相关内容请看[请求](https://github.com/fastify/docs-chinese/blob/master/docs/Request.md)一文。
 
