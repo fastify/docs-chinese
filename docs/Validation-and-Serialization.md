@@ -95,6 +95,7 @@ fastify.register((instance, opts, next) => {
    next()
 })
 ```
+
 在任意位置你都能使用共用 schema，无论是在应用顶层，还是在其他 schema 的内部：
 ```js
 const fastify = require('fastify')()
@@ -291,6 +292,130 @@ fastify.setErrorHandler(function (error, request, reply) {
      reply.status(422).send(new Error('validation failed'))
   }
 })
+```
+
+### JSON Schema 及共享 Schema (Shared Schema) 支持
+
+为了能更简单地重用 schema，JSON Schema 提供了一些功能，来结合 Fastify 的共享 schema。
+
+| 用例                          | 验证器 | 序列化器 |
+|-----------------------------------|-----------|------------|
+| 共享 schema                     | ✔️ | ✔️ |
+| 引用 (`$ref`) `$id`                   | ✔ | ✔️ |
+| 引用 (`$ref`) `/definitions`          | ✔️ | ✔️ |
+| 引用 (`$ref`) 共享 schema `$id`          | ❌ | ✔️ |
+| 引用 (`$ref`) 共享 schema `/definitions` | ❌ | ✔️ |
+
+#### 示例
+
+```js
+// 共享 Schema 的用例
+fastify.addSchema({
+  $id: 'sharedAddress',
+  type: 'object',
+  properties: {
+    city: { 'type': 'string' }
+  }
+})
+
+const sharedSchema = {
+  type: 'object',
+  properties: {
+    home: 'sharedAddress#',
+    work: 'sharedAddress#'
+  }
+}
+```
+
+```js
+// 同一 JSON Schema 内部对 $id 的引用 ($ref)
+const refToId = {
+  type: 'object',
+  definitions: {
+    foo: {
+      $id: '#address',
+      type: 'object',
+      properties: {
+        city: { 'type': 'string' }
+      }
+    }
+  },
+  properties: {
+    home: { $ref: '#address' },
+    work: { $ref: '#address' }
+  }
+}
+```
+
+
+```js
+// 同一 JSON Schema 内部对 /definitions 的引用 ($ref)
+const refToDefinitions = {
+  type: 'object',
+  definitions: {
+    foo: {
+      $id: '#address',
+      type: 'object',
+      properties: {
+        city: { 'type': 'string' }
+      }
+    }
+  },
+  properties: {
+    home: { $ref: '#/definitions/foo' },
+    work: { $ref: '#/definitions/foo' }
+  }
+}
+```
+
+```js
+// 对外部共享 schema 的 $id 的引用 ($ref)
+fastify.addSchema({
+  $id: 'http://foo/common.json',
+  type: 'object',
+  definitions: {
+    foo: {
+      $id: '#address',
+      type: 'object',
+      properties: {
+        city: { 'type': 'string' }
+      }
+    }
+  }
+})
+
+const refToSharedSchemaId = {
+  type: 'object',
+  properties: {
+    home: { $ref: 'http://foo/common.json#address' },
+    work: { $ref: 'http://foo/common.json#address' }
+  }
+}
+```
+
+
+```js
+// 对外部共享 schema 的 /definitions 的引用 ($ref)
+fastify.addSchema({
+  $id: 'http://foo/common.json',
+  type: 'object',
+  definitions: {
+    foo: {
+      type: 'object',
+      properties: {
+        city: { 'type': 'string' }
+      }
+    }
+  }
+})
+
+const refToSharedSchemaDefinitions = {
+  type: 'object',
+  properties: {
+    home: { $ref: 'http://foo/common.json#/definitions/foo' },
+    work: { $ref: 'http://foo/common.json#/definitions/foo' }
+  }
+}
 ```
 
 <a name="resources"></a>
