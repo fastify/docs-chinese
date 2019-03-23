@@ -10,7 +10,7 @@ Fastify 模块导出了一个工厂函数，可以用于创建新的<a href="htt
 
 设置为 `true`，则会使用 Node.js 原生的 [HTTP/2](https://nodejs.org/dist/latest-v8.x/docs/api/http2.html) 模块来绑定 socket。
 
-+ 默认值: `false`
++ 默认值：`false`
 
 <a name="factory-https"></a>
 ### `https`
@@ -22,7 +22,7 @@ Fastify 模块导出了一个工厂函数，可以用于创建新的<a href="htt
 <code><b>http2</b></code>
 </a> 选项设置时，`https` 选项也会被应用。
 
-+ 默认值: `null`
++ 默认值：`null`
 
 <a name="factory-ignore-slash"></a>
 ### `ignoreTrailingSlash`
@@ -30,7 +30,7 @@ Fastify 模块导出了一个工厂函数，可以用于创建新的<a href="htt
 Fastify 使用 [find-my-way](https://github.com/delvedor/find-my-way) 处理路由。该选项为 `true` 时，尾斜杠将被省略。
 这一选项应用于 server 实例上注册的*所有*路由。
 
-+ 默认值: `false`
++ 默认值：`false`
 
 ```js
 const fastify = require('fastify')({
@@ -59,7 +59,7 @@ fastify.get('/bar', function (req, reply) {
 
 定义服务器可接受的最大 payload，以字节为单位。
 
-+ 默认值: `1048576` (1MiB)
++ 默认值：`1048576` (1MiB)
 
 <a name="factory-on-proto-poisoning"></a>
 ### `onProtoPoisoning`
@@ -140,13 +140,13 @@ fastify.get('/user/:username', (request, reply) => {
 
 用来获知请求 id 的 header 名。请看[请求 id](https://github.com/fastify/docs-chinese/blob/master/docs/Logging.md#logging-request-id) 一节。
 
-+ 默认值: `'request-id'`
++ 默认值：`'request-id'`
 
 <a name="factory-gen-request-id"></a>
 ### `genReqId`
 用于生成请求 id 的函数。参数为来访的请求对象。
 
-+ 默认值: `'request-id' 的值 (当存在该 header 时) 或单调递增的整数`
++ 默认值：`'request-id' 的值 (当存在该 header 时) 或单调递增的整数`
 在分布式系统中，你可能会特别想覆盖如下默认的 id 生成行为。要生成 `UUID`，请看[hyperid](https://github.com/mcollina/hyperid)。
  ```js
 let i = 0
@@ -163,7 +163,7 @@ const fastify = require('fastify')({
 const fastify = Fastify({ trustProxy: true })
 ```
 
-+ 默认值: `false`
++ 默认值：`false`
 + `true/false`: 信任所有代理 (`true`) 或不信任任意的代理 (`false`)。
 + `string`: 只信任给定的 IP/CIDR (例如 `'127.0.0.1'`)。可以是一组用英文逗号分隔的地址 (例如 `'127.0.0.1,192.168.1.1/24'`)。
 + `Array<string>`: 只信任给定的 IP/CIDR 列表 (例如 `['127.0.0.1']`)。
@@ -177,12 +177,13 @@ const fastify = Fastify({ trustProxy: true })
 
 更多示例详见 [proxy-addr](https://www.npmjs.com/package/proxy-addr)。
 
-你还可以通过原始的 `request` 对象获取 `ip` 与 `hostname` 的值。
+你还可以通过 [`request`](https://github.com/fastify/docs-chinese/blob/master/docs/Request.md) 对象获取 `ip`、`ips` 与 `hostname` 的值。
 
 ```js
 fastify.get('/', (request, reply) => {
-  console.log(request.raw.ip)
-  console.log(request.raw.hostname)
+  console.log(request.ip)
+  console.log(request.ips)
+  console.log(request.hostname)
 })
 ```
 
@@ -191,7 +192,7 @@ fastify.get('/', (request, reply) => {
 
 单个插件允许加载的最长时间，以毫秒计。如果某个插件加载超时，则 [`ready`](https://github.com/fastify/docs-chinese/blob/master/docs/Server.md#ready) 会抛出一个含有 `'ERR_AVVIO_PLUGIN_TIMEOUT'` 代码的 `Error` 对象。
 
-+ 默认值: `10000`
++ 默认值：`10000`
 
  <a name="factory-querystring-parser"></a>
  ### `querystringParser`
@@ -228,6 +229,41 @@ const versioning = {
 }
  const fastify = require('fastify')({
   versioning
+})
+```
+
+<a name="factory-modify-core-objects"></a>
+### `modifyCoreObjects`
+
++ 默认值：`true`
+
+默认情况下，Fastify 会向 Node 原生的 request 对象添加 `ip`、`ips`、`hostname` 以及 `log` 属性 (参见 [`Request`](https://github.com/fastify/fastify/blob/master/docs/Request.md))，向原生的 response 对象添加 `log` 属性。你可以将 `modifyCoreObjects` 设为 `false` 来避免上述行为。
+
+```js
+const fastify = Fastify({ modifyCoreObjects: true }) // 默认值
+
+fastify.get('/', (request, reply) => {
+  console.log(request.raw.ip)
+  console.log(request.raw.ips)
+  console.log(request.raw.hostname)
+  request.raw.log('Hello')
+  reply.res.log('World')
+})
+```
+
+在诸如 Google Cloud Functions 等无服务器 (serverless) 环境下，禁用该选项是有用的。因为在这些环境中，`ip` 及 `ips` 并不可写。
+
+**请注意，我们不建议使用这些属性。它们将会在 Fastify 的下个主要版本中，与该选项一起去除。**作为替代，我们推荐使用 Fastify 的 [`Request`](https://github.com/fastify/docs-chinese/blob/master/docs/Request.md) 与 [`Reply`](https://github.com/fastify/docs-chinese/blob/master/docs/Reply.md) 对象上相同的属性。
+
+```js
+const fastify = Fastify({ modifyCoreObjects: false })
+
+fastify.get('/', (request, reply) => {
+  console.log(request.ip)
+  console.log(request.ips)
+  console.log(request.hostname)
+  request.log('Hello')
+  reply.log('World')
 })
 ```
 
