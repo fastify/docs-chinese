@@ -51,6 +51,34 @@ fastify.post('/the/url', { schema }, handler)
 <a name="shared-schema"></a>
 #### 添加共用 schema
 感谢 `addSchema` API，它让你可以向 Fastify 实例添加多个 schema，并在你程序的不同部分使用它们。该 API 也是封装好的。
+
+有两种方式可以复用你的共用 shema：
++ **`使用$ref`**：正如 [standard](https://tools.ietf.org/html/draft-handrews-json-schema-01#section-8) 中所述，你可以引用一份外部的 schema。做法是在 `addSchema` 的 `$id` 参数中指明外部 schema 的绝对 URI。
+
+ ```js
+fastify.addSchema({
+  $id: 'http://example.com/common.json',
+  type: 'object',
+  properties: {
+    hello: { type: 'string' }
+  }
+})
+ fastify.route({
+  method: 'POST',
+  url: '/',
+  schema: {
+    body: {
+      type: 'array',
+      items: { $ref: 'http://example.com/common.json#/properties/hello' }
+    }
+  },
+  handler: () => {}
+})
+```
+
++ **`替换方式`**：Fastify 允许你使用共用 schema 替换某些字段。
+你只需指明 `addSchema` 中的 `$id` 为相对 URI 的 fragment (译注：URI fragment是 URI 中 `#` 号后的部分) 即可，fragment 只接受字母与数字的组合`[A-Za-z0-9]`。
+
 ```js
 const fastify = require('fastify')()
 
@@ -294,22 +322,22 @@ fastify.setErrorHandler(function (error, request, reply) {
 })
 ```
 
-### JSON Schema 及共享 Schema (Shared Schema) 支持
+### JSON Schema 及共用 Schema (Shared Schema) 支持
 
-为了能更简单地重用 schema，JSON Schema 提供了一些功能，来结合 Fastify 的共享 schema。
+为了能更简单地重用 schema，JSON Schema 提供了一些功能，来结合 Fastify 的共用 schema。
 
 | 用例                          | 验证器 | 序列化器 |
 |-----------------------------------|-----------|------------|
-| 共享 schema                     | ✔️ | ✔️ |
+| 共用 schema                     | ✔️ | ✔️ |
 | 引用 (`$ref`) `$id`                   | ✔ | ✔️ |
 | 引用 (`$ref`) `/definitions`          | ✔️ | ✔️ |
-| 引用 (`$ref`) 共享 schema `$id`          | ❌ | ✔️ |
-| 引用 (`$ref`) 共享 schema `/definitions` | ❌ | ✔️ |
+| 引用 (`$ref`) 共用 schema `$id`          | ✔ | ✔️ |
+| 引用 (`$ref`) 共用 schema `/definitions` | ✔ | ✔️ |
 
 #### 示例
 
 ```js
-// 共享 Schema 的用例
+// 共用 Schema 的用例
 fastify.addSchema({
   $id: 'sharedAddress',
   type: 'object',
@@ -369,7 +397,7 @@ const refToDefinitions = {
 ```
 
 ```js
-// 对外部共享 schema 的 $id 的引用 ($ref)
+// 对外部共用 schema 的 $id 的引用 ($ref)
 fastify.addSchema({
   $id: 'http://foo/common.json',
   type: 'object',
@@ -395,7 +423,7 @@ const refToSharedSchemaId = {
 
 
 ```js
-// 对外部共享 schema 的 /definitions 的引用 ($ref)
+// 对外部共用 schema 的 /definitions 的引用 ($ref)
 fastify.addSchema({
   $id: 'http://foo/common.json',
   type: 'object',
