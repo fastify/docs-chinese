@@ -6,7 +6,7 @@
 
 Fastify 遵循不全则无的原则，旨在精而优。因此，确保正确处理错误成了开发者要考虑的问题。由于大部分的错误源于预期外的输入，我们建议为输入的数据指明 [JSON.schema 验证](https://github.com/fastify/docs-chinese/blob/master/docs/Validation-and-Serialization.md)。
 
-要注意的是，虽然 Fastify 没帮你捕获错误，但是当路由被声明为 `async` 模式时，错误会被 promise 安全地捕获，并通过 Fastify 默认的错误处理器以一般的 `Internal Server Error` 响应发送给客户端。要自定义这一行为，请看 [setErrorHandler](https://github.com/fastify/docs-chinese/blob/master/docs/Server.md#seterrorhandler)。
+要注意的是，虽然 Fastify 没帮你捕获错误，但是当路由被声明为 `async` 模式时，错误会被 promise 安全地捕获，并通过 Fastify 默认的错误处理函数以一般的 `Internal Server Error` 响应发送给客户端。要自定义这一行为，请看 [setErrorHandler](https://github.com/fastify/docs-chinese/blob/master/docs/Server.md#seterrorhandler)。
 
 <a name="fastify-error-codes"></a>
 ### Fastify 错误代码
@@ -29,7 +29,7 @@ content type 不能是一个空字符串。
 <a name="FST_ERR_CTP_INVALID_HANDLER"></a>
 #### FST_ERR_CTP_INVALID_HANDLER
 
-该 content type 接收的处理器无效。
+该 content type 接收的处理函数无效。
 
 <a name="FST_ERR_CTP_INVALID_PARSE_TYPE"></a>
 #### FST_ERR_CTP_INVALID_PARSE_TYPE

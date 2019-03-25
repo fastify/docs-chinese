@@ -17,7 +17,7 @@ fastify.route(options)
   * `querystring`：校验 querystring。可以是一个完整的 JSON Schema 对象，它包括了值为 `object` 的 `type` 属性以及包含参数的 `properties` 对象，也可以仅仅是 `properties` 对象中的值 (见下文示例)。
   * `params`：校验 url 参数。
   * `response`：过滤并生成用于响应的 schema，能帮助提升 10-20% 的吞吐量。
-* `attachValidation`：当 schema 校验出错时，将一个 `validationError` 对象添加到请求中，否则错误将被发送给错误处理器。
+* `attachValidation`：当 schema 校验出错时，将一个 `validationError` 对象添加到请求中，否则错误将被发送给错误处理函数。
 * `preValidation(request, reply, done)`在共享的 `preValidation` 钩子之后执行的[函数]。(https://github.com/fastify/docs-chinese/blob/master/docs/Hooks.md#route-hooks)，在路由层进行认证等场景中会有用处。它还可以是一个函数数组。
 * `preHandler(request, reply, done)`：处理请求之前调用的[钩子函数](https://github.com/fastify/docs-chinese/blob/master/docs/Hooks.md#route-hooks)。它还可以是一个函数数组。
 * `preSerialization(request, reply, payload, done)`：序列化之前调用的[钩子函数](https://github.com/fastify/docs-chinese/blob/master/docs/Hooks.md#route-hooks)。它还可以是一个函数数组。
@@ -88,9 +88,9 @@ fastify.get('/', opts, (request, reply) => {
 })
 ```
 
-`fastify.all(path, [options], handler)` 会给所有支持的 HTTP 方法添加相同的处理器。
+`fastify.all(path, [options], handler)` 会给所有支持的 HTTP 方法添加相同的处理函数。
 
-处理器还可以写到 `options` 对象里：
+处理函数还可以写到 `options` 对象里：
 ```js
 const opts = {
   schema: {
@@ -110,7 +110,7 @@ const opts = {
 fastify.get('/', opts)
 ```
 
-> 注：假如同时在 `options` 和简写方法的第三个参数里指明了处理器，将会抛出重复的 `handler` 错误。
+> 注：假如同时在 `options` 和简写方法的第三个参数里指明了处理函数，将会抛出重复的 `handler` 错误。
 
 <a name="url-building"></a>
 ### Url 构建
@@ -177,7 +177,7 @@ fastify.get('/', options, async function (request, reply) {
 <a name="promise-resolution"></a>
 ### Promise 取舍
 
-假如你的处理器是一个 `async` 函数，或返回了一个 promise，请注意一种必须支持回调函数和 promise 控制流的特殊情况：如果 promise 被 resolve 为 `undefined`，请求会被挂起，并触发一个*错误*日志。
+假如你的处理函数是一个 `async` 函数，或返回了一个 promise，请注意一种必须支持回调函数和 promise 控制流的特殊情况：如果 promise 被 resolve 为 `undefined`，请求会被挂起，并触发一个*错误*日志。
 
 1. 如果你想使用 `async/await` 或 promise，但通过 `reply.send` 返回值：
     - **别** `return` 任何值。
@@ -258,7 +258,7 @@ fastify.get('/', { logLevel: 'warn' }, (request, reply) => {
 
 <a name="routes-config"></a>
 ### 配置
-注册一个新的处理器，你可以向其传递一个配置对象，并在其中使用它。
+注册一个新的处理函数，你可以向其传递一个配置对象，并在其中使用它。
 
 ```js
 // server.js

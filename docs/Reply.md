@@ -1,7 +1,7 @@
 <h1 align="center">Fastify</h1>
 
 ## 回复
-处理器函数的第二个参数为 `Reply`。
+处理函数的第二个参数为 `Reply`。
 Reply 是 Fastify 的一个核心对象。它暴露了以下函数及属性：
 
 - `.code(statusCode)` - 设置状态码。
@@ -131,7 +131,7 @@ app.get('/', (req, reply) => {
 })
 ```
 
-如果处理器 reject，将会记录一个错误。
+如果处理函数 reject，将会记录一个错误。
 
 <a name="send"></a>
 ### .send(data)

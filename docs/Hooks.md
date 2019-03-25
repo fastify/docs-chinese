@@ -136,7 +136,7 @@ fastify.addHook('onResponse', async (request, reply) => {
 })
 ```
 
-**注意：** 使用 `async`/`await` 或返回一个 `Promise` 时，`next` 回调不可用。在这种情况下，仍然使用 `next` 可能会导致难以预料的行为，例如，处理器的重复调用。
+**注意：** 使用 `async`/`await` 或返回一个 `Promise` 时，`next` 回调不可用。在这种情况下，仍然使用 `next` 可能会导致难以预料的行为，例如，处理函数的重复调用。
 
 **注意：** 在 `onRequest` 与 `preValidation` 钩子中，`request.body` 的值总是 `null`，这是因为 body 的解析发生在 `preHandler` 钩子之前。
 
@@ -263,7 +263,7 @@ fastify.addHook('onRequest', (request, reply, next) => {
 
 ## 应用钩子
 
-你也可以在应用的生命周期里使用钩子方法。要格外注意的是，这些钩子并未被完全封装。钩子中的 `this` 得到了封装，但处理器可以响应封装界线外的事件。
+你也可以在应用的生命周期里使用钩子方法。要格外注意的是，这些钩子并未被完全封装。钩子中的 `this` 得到了封装，但处理函数可以响应封装界线外的事件。
 
 - `'onClose'`
 - `'onRoute'`

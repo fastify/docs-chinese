@@ -1,7 +1,7 @@
 <h1 align="center">Fastify</h1>
 
 ## Request
-第一个处理器方法的参数是 `Request`.<br>
+处理函数的第一个参数是 `Request`.<br>
 Request 是 Fastify 的核心对象，包含了一下的字段:
 - `query` - 解析后的 querystring
 - `body` - 消息主体
