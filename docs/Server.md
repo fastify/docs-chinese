@@ -457,9 +457,9 @@ fastify.register(function (instance, opts, next) {
 <a name="set-not-found-handler"></a>
 #### setNotFoundHandler
 
-`fastify.setNotFoundHandler(handler(request, reply))`：为 404 状态 (not found) 设置处理器 (handler) 函数。向 `fastify.register()` 传递不同的 [`prefix` 选项](https://github.com/fastify/docs-chinese/blob/master/docs/Plugins.md#route-prefixing-option)，就可以为不同的插件设置不同的处理器。这些处理器被视为常规的路由处理器，因此它们的请求会经历一个完整的 [Fastify 生命周期](https://github.com/fastify/docs-chinese/blob/master/docs/Lifecycle.md#lifecycle)。
+`fastify.setNotFoundHandler(handler(request, reply))`：为 404 状态 (not found) 设置处理函数 (handler)。向 `fastify.register()` 传递不同的 [`prefix` 选项](https://github.com/fastify/docs-chinese/blob/master/docs/Plugins.md#route-prefixing-option)，就可以为不同的插件设置不同的处理函数。这些处理函数被视为常规的路由处理函数，因此它们的请求会经历一个完整的 [Fastify 生命周期](https://github.com/fastify/docs-chinese/blob/master/docs/Lifecycle.md#lifecycle)。
 
-你也可以为 404 处理器注册一个 [preValidation](https://www.fastify.io/docs/latest/Hooks/#route-hooks) 或 [preHandler](https://www.fastify.io/docs/latest/Hooks/#route-hooks) 钩子。
+你也可以为 404 处理函数注册一个 [preValidation](https://www.fastify.io/docs/latest/Hooks/#route-hooks) 或 [preHandler](https://www.fastify.io/docs/latest/Hooks/#route-hooks) 钩子。
 
 ```js
 fastify.setNotFoundHandler({
@@ -472,12 +472,12 @@ fastify.setNotFoundHandler({
     next()
   }  
 }, function (request, reply) {
-    // 设置了 preValidation 与 preHandler 钩子的默认 not found 处理器
+    // 设置了 preValidation 与 preHandler 钩子的默认 not found 处理函数
 })
 
 fastify.register(function (instance, options, next) {
   instance.setNotFoundHandler(function (request, reply) {
-    // '/v1' 开头的 URL 的 not found 处理器，
+    // '/v1' 开头的 URL 的 not found 处理函数，
     // 未设置 preValidation 与 preHandler 钩子
   })
   next()
@@ -487,7 +487,7 @@ fastify.register(function (instance, options, next) {
 <a name="set-error-handler"></a>
 #### setErrorHandler
 
-`fastify.setErrorHandler(handler(error, request, reply))`：设置任意时刻的错误处理器函数。错误处理器是完全封装 (fully encapsulated) 的，因此不同插件的处理器可以不同。支持 *async-await* 语法。<br>
+`fastify.setErrorHandler(handler(error, request, reply))`：设置任意时刻的错误处理函数。错误处理函数是完全封装 (fully encapsulated) 的，因此不同插件的处理函数可以不同。支持 *async-await* 语法。<br>
 *注：假如错误的 `statusCode` 小于 400，在处理错误前 Fastify 将会自动将其设为 500。*
 
 ```js
@@ -497,7 +497,7 @@ fastify.setErrorHandler(function (error, request, reply) {
 })
 ```
 
-当没有设置错误处理器时，Fastify 会调用一个默认函数，并根据 `statusCode` 相应地记录日志：
+当没有设置错误处理函数时，Fastify 会调用一个默认函数，并根据 `statusCode` 相应地记录日志：
 ```js
 var statusCode = error.statusCode
 if (statusCode >= 500) {
