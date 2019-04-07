@@ -27,6 +27,10 @@ fastify.route(options)
 * `logLevel`：设置日志级别。详见下文。
 * `config`：存放自定义配置的对象。
 * `version`：一个符合[语义化版本控制规范 (semver)](http://semver.org/) 的字符串。[示例](https://github.com/fastify/docs-chinese/blob/master/docs/Routes.md#version)。
+`prefixTrailingSlash`：一个字符串，决定如何处理带前缀的 `/` 路由。
+  * `both` (默认值)：同时注册 `/prefix` 与 `/prefix/`。
+  * `slash`：只会注册 `/prefix/`。
+  * `no-slash`：只会注册 `/prefix`。
 
   `request` 的相关内容请看[请求](https://github.com/fastify/docs-chinese/blob/master/docs/Request.md)一文。
 
@@ -230,6 +234,8 @@ module.exports = function (fastify, opts, next) {
 #### 处理带前缀的 / 路由
 
 根据前缀是否以 `/` 结束，路径为 `/` 的路由的匹配模式有所不同。举例来说，前缀为 `/something/` 的 `/` 路由只会匹配 `something`，而前缀为 `/something` 则会匹配 `/something` 和 `/something/`。
+
+要改变这一行为，请见上文 `prefixTrailingSlash` 选项。
 
 <a name="custom-log-level"></a>
 ### 自定义日志级别
