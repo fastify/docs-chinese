@@ -6,7 +6,8 @@
 
 Fastify 遵循不全则无的原则，旨在精而优。因此，确保正确处理错误成了开发者要考虑的问题。由于大部分的错误源于预期外的输入，我们建议为输入的数据指明 [JSON.schema 验证](https://github.com/fastify/docs-chinese/blob/master/docs/Validation-and-Serialization.md)。
 
-要注意的是，虽然 Fastify 没帮你捕获错误，但是当路由被声明为 `async` 模式时，错误会被 promise 安全地捕获，并通过 Fastify 默认的错误处理函数以一般的 `Internal Server Error` 响应发送给客户端。要自定义这一行为，请看 [setErrorHandler](https://github.com/fastify/docs-chinese/blob/master/docs/Server.md#seterrorhandler)。
+要注意的是，在基于回调的路由中，Fastify 不会帮你捕获错误。因此，任何未捕获的错误都可能造成崩溃。
+但当路由被声明为 `async` 模式时，错误会被 promise 安全地捕获，并通过 Fastify 默认的错误处理器以一般的 `Internal Server Error` 响应发送给客户端。要自定义这一行为，请看 [setErrorHandler](https://github.com/fastify/docs-chinese/blob/master/docs/Server.md#seterrorhandler)。
 
 <a name="fastify-error-codes"></a>
 ### Fastify 错误代码
