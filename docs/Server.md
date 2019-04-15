@@ -6,7 +6,7 @@
 Fastify 模块导出了一个工厂函数，可以用于创建新的<a href="https://github.com/fastify/docs-chinese/blob/master/docs/Server.md"><code><b> Fastify server</b></code></a> 实例。这个工厂函数的参数是一个配置对象，用于自定义最终生成的实例。本文描述了这一对象中可用的属性。
 
 <a name="factory-http2"></a>
-### `http2` (实验性)
+### `http2`
 
 设置为 `true`，则会使用 Node.js 原生的 [HTTP/2](https://nodejs.org/dist/latest-v8.x/docs/api/http2.html) 模块来绑定 socket。
 
@@ -109,7 +109,7 @@ const serverFactory = (handler, opts) => {
   return server
 }
 
-const fastify = Fastify({ serverFactory })
+const fastify = Fastify({ serverFactory, modifyCoreObjects: false })
 
 fastify.get('/', (req, reply) => {
   reply.send({ hello: 'world' })
@@ -117,7 +117,8 @@ fastify.get('/', (req, reply) => {
 
 fastify.listen(3000)
 ```
-Fastify 内在地使用 Node 原生 http server 的 API。因此，如果你使用一个自定义的 server，你必须保证暴露了相同的 API。不这么做的话，你可以在 `serverFactory` 函数内部 `return` 语句之前，向 server 实例添加新的属性。
+Fastify 内在地使用 Node 原生 http server 的 API。因此，如果你使用一个自定义的 server，你必须保证暴露了相同的 API。不这么做的话，你可以在 `serverFactory` 函数内部 `return` 语句之前，向 server 实例添加新的属性。<br/>
+*要注意的是，我们也设置了 `modifyCoreObjects: false`。这是因为在诸如 Google Cloud Functions 等无服务器 (serverless) 环境下，一些 Node.js 核心的属性是不可写的。*
 
 <a name="factory-case-sensitive"></a>
 ### `caseSensitive`
