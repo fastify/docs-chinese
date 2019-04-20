@@ -242,6 +242,10 @@ const ajv = new Ajv({
 fastify.setSchemaCompiler(function (schema) {
   return ajv.compile(schema)
 })
+
+// -------
+// 此外，你还可以通过 setter 方法来设置 schema 编译器：
+fastify.schemaCompiler = function (schema) { return ajv.compile(schema) })
 ```
 
 你可能还想使用其他的验证库，例如 `Joi`。这时，你只要参照下面的示例，便能轻松地使用它们来校验 url 参数、请求主体与查询字符串了！
