@@ -151,8 +151,11 @@ fastify.get('/user/:username', (request, reply) => {
  ```js
 let i = 0
 const fastify = require('fastify')({
-  genReqId: function (req) { return i++ }
+  genReqId: function (req) { return req.headers['request-id'] || i++ }
 })
+```
+
+**注意：即使设置了 'request-id' header，genReqId 方法也会被调用。可以如上例所示，当存在 'request-id' 时，将 id 设为该值，反之生成新的值。**
 
 <a name="factory-trust-proxy"></a>
 ### `trustProxy`
