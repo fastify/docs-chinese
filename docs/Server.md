@@ -163,6 +163,13 @@ fastify.get('/user/:username', (request, reply) => {
 
 + 默认值：`'request-id'`
 
+<a name="factory-request-id-log-label"></a>
+### `requestIdLogLabel`
+
+定义日志中请求 id 的标签。
+
++ 默认值：`'reqId'`
+
 <a name="factory-gen-request-id"></a>
 ### `genReqId`
 用于生成请求 id 的函数。参数为来访的请求对象。
@@ -176,7 +183,7 @@ const fastify = require('fastify')({
 })
 ```
 
-**注意：即使设置了 'request-id' header，genReqId 方法也会被调用。可以如上例所示，当存在 'request-id' 时，将 id 设为该值，反之生成新的值。**
+**注意：当设置了 'request-id' header时，genReqId _不会_ 被调用。**
 
 <a name="factory-trust-proxy"></a>
 ### `trustProxy`
