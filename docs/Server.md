@@ -94,6 +94,26 @@ Fastify 依托 [Pino](https://getpino.io/) 内建了一个日志工具。该属�
         })
         ```
       用户提供的序列化函数将会覆盖对应属性默认的序列化函数。
++ `loggerInstance`：自定义日志工具实例。日志工具必须实现 Pino 的接口，即拥有如下方法：`info`, `error`, `debug`, `fatal`, `warn`, `trace`, `child`。例如：
+```js
+const pino = require('pino')();
+
+const customLogger = {
+  info: function (o, ...n) {},
+  warn: function (o, ...n) {},
+  error: function (o, ...n) {},
+  fatal: function (o, ...n) {},
+  trace: function (o, ...n) {},
+  debug: function (o, ...n) {},
+  child: function() {
+    const child = Object.create(this);
+    child.pino = pino.child(...arguments);
+    return child;
+  },
+};
+
+const fastify = require('fastify')({logger: customLogger});
+```
 
 <a name="custom-http-server"></a>
 ### `serverFactory`
