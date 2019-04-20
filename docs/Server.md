@@ -39,12 +39,12 @@ const fastify = require('fastify')({
 
 // 同时注册 "/foo" 与 "/foo/"
 fastify.get('/foo/', function (req, reply) {
-  res.send('foo')
+  reply.send('foo')
 })
 
 // 同时注册 "/bar" 与 "/bar/"
 fastify.get('/bar', function (req, reply) {
-  res.send('bar')
+  reply.send('bar')
 })
 ```
 
