@@ -1,6 +1,29 @@
 <h1 align="center">Fastify</h1>
 
 ## 回复
+- [回复](#reply)
+  - [简介](#introduction)
+  - [.code(statusCode)](#codestatuscode)
+  - [.header(key, value)](#headerkey-value)
+  - [.getHeader(key)](#getheaderkey)
+  - [.removeHeader(key)](#removeheaderkey)
+  - [.hasHeader(key)](#hasheaderkey)
+  - [.redirect(dest)](#redirectdest)
+  - [.callNotFound()](#callnotfound)
+  - [.type(contentType)](#typecontenttype)
+  - [.serializer(func)](#serializerfunc)
+  - [.sent](#sent)
+  - [.send(data)](#senddata)
+    - [对象](#objects)
+    - [字符串](#strings)
+    - [Streams](#streams)
+    - [Buffers](#buffers)
+    - [Errors](#errors)
+    - [最终 payload 的类型](#type-of-the-final-payload)
+    - [Async-Await 与 Promise](#async-await-and-promises)
+
+<a name="introduction"></a>
+### 简介
 处理函数的第二个参数为 `Reply`。
 Reply 是 Fastify 的一个核心对象。它暴露了以下函数及属性：
 
@@ -8,6 +31,7 @@ Reply 是 Fastify 的一个核心对象。它暴露了以下函数及属性：
 - `.status(statusCode)` - `.code(statusCode)` 的别名。
 - `.header(name, value)` - 设置响应 header。
 - `.getHeader(name)` - 获取某个 header 的值。
+- `.removeHeader(key)` - 清除已设置的 header 的值。
 - `.hasHeader(name)` - 检查某个 header 是否设置。
 - `.type(value)` - 设置 `Content-Type` header。
 - `.redirect([code,] url)` - 重定向至指定的 url，状态码可选 (默认为 `302`)。
