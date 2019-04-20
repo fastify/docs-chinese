@@ -267,6 +267,7 @@ fastify.addHook('onRequest', (request, reply, next) => {
 
 - `'onClose'`
 - `'onRoute'`
+- `'onRegister''`
 
 <a name="on-close"></a>
 **'onClose'**<br>
@@ -293,6 +294,37 @@ fastify.addHook('onRoute', (routeOptions) => {
   routeOptions.prefix
 })
 ```
+<a name="on-register"></a>
+**'onRegister'**<br>
+当注册一个新的插件，或创建了新的封装好的上下文后被触发。该钩子在插件的代码**之前**被执行。<br/>
+当你的插件需要知晓上下文何时创建完毕，并操作它们时，可以使用这一钩子。<br/>
+**注意：**被 [`fastify-plugin`](https://github.com/fastify/fastify-plugin) 所封装的插件不会触发该钩子。
+```js
+fastify.decorate('data', [])
+
+fastify.register(async (instance, opts) => {
+  instance.data.push('hello')
+  console.log(instance.data) // ['hello']
+
+  instance.register(async (instance, opts) => {
+    instance.data.push('world')
+    console.log(instance.data) // ['hello', 'world']
+  })
+})
+
+fastify.register(async (instance, opts) => {
+  console.log(instance.data) // []
+})
+
+fastify.addHook('onRegister', (instance) => {
+  // 从旧数组浅拷贝，
+  // 生成一个新数组，
+  // 使用户获得一个
+  // 封装好的 `data` 的实例
+  instance.data = instance.data.slice()
+})
+```
+
 <a name="scope"></a>
 ### 作用域
 除了[应用钩子](#application-hooks)，所有的钩子都是封装好的。这意味着你可以通过 `register` 来决定在何处运行它们，正如[插件指南](https://github.com/fastify/docs-chinese/blob/master/docs/Plugins-Guide.md)所述。如果你传递一个函数，那么该函数会获得 Fastify 的上下文，如此你便能使用 Fastify 的 API 了。
