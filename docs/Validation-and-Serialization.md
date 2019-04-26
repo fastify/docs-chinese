@@ -83,8 +83,26 @@ fastify.post('/the/url', { schema }, handler)
 
 有两种方式可以复用你的共用 shema：
 + **`使用$ref`**：正如 [standard](https://tools.ietf.org/html/draft-handrews-json-schema-01#section-8) 中所述，你可以引用一份外部的 schema。做法是在 `addSchema` 的 `$id` 参数中指明外部 schema 的绝对 URI。
++ **`替换方式`**：Fastify 允许你使用共用 schema 替换某些字段。
+你只需指明 `addSchema` 中的 `$id` 为相对 URI 的 fragment (译注：URI fragment是 URI 中 `#` 号后的部分) 即可，fragment 只接受字母与数字的组合`[A-Za-z0-9]`。
 
- ```js
+以下展示了你可以 _如何_ 设置 `$id` 以及 _如何_ 引用它：
+
++ `替换方式`
+  + `myField: 'foobar#'` 会搜寻带 `$id: 'foobar'` 的共用 schema
++ `使用$ref`
+  + `myField: { $ref: '#foo'}` 会在当前 schema 内搜寻带 `$id: '#foo'` 的字段
+  + `myField: { $ref: '#/definitions/foo'}` 会在当前 schema 内搜寻 `definitions.foo` 字段
+  + `myField: { $ref: 'http://url.com/sh.json#'}` 会搜寻带 `$id: 'http://url.com/sh.json'` 的共用 schema
+  + `myField: { $ref: 'http://url.com/sh.json#/definitions/foo'}` 会搜寻带 `$id: 'http://url.com/sh.json'` 的共用 schema，并使用其 `definitions.foo` 字段
+  + `myField: { $ref: 'http://url.com/sh.json#foo'}` 会搜寻带 `$id: 'http://url.com/sh.json'` 的共用 schema，并使用其内部带 `$id: '#foo'` 的对象
+
+
+更多例子：
+
+**`使用$ref`** 的例子：
+
+```js
 fastify.addSchema({
   $id: 'http://example.com/common.json',
   type: 'object',
@@ -92,7 +110,8 @@ fastify.addSchema({
     hello: { type: 'string' }
   }
 })
- fastify.route({
+
+fastify.route({
   method: 'POST',
   url: '/',
   schema: {
@@ -105,8 +124,7 @@ fastify.addSchema({
 })
 ```
 
-+ **`替换方式`**：Fastify 允许你使用共用 schema 替换某些字段。
-你只需指明 `addSchema` 中的 `$id` 为相对 URI 的 fragment (译注：URI fragment是 URI 中 `#` 号后的部分) 即可，fragment 只接受字母与数字的组合`[A-Za-z0-9]`。
+**`替换方式`** 的例子：
 
 ```js
 const fastify = require('fastify')()
@@ -129,10 +147,10 @@ fastify.route({
 })
 
 fastify.register((instance, opts, next) => {
-   /**
-   * 你可以在子作用域中使用在上层作用域里定义的 scheme，比如 'greetings'。
-   * 父级作用域则无法使用子作用域定义的 schema。
-   */
+  /**
+  * 你可以在子作用域中使用在上层作用域里定义的 scheme，比如 'greetings'。
+  * 父级作用域则无法使用子作用域定义的 schema。
+  */
   instance.addSchema({
     $id: 'framework',
     type: 'object',
@@ -141,7 +159,7 @@ fastify.register((instance, opts, next) => {
       hi: 'greetings#'
     }
   })
-   instance.route({
+  instance.route({
     method: 'POST',
     url: '/sub',
     schema: {
@@ -149,7 +167,7 @@ fastify.register((instance, opts, next) => {
     },
     handler: () => {}
   })
-   next()
+  next()
 })
 ```
 
