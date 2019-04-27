@@ -271,6 +271,28 @@ module.exports = fp(dbPlugin)
 ```
 你还可以告诉 `fastify-plugin` 去检查安装的 Fastify 版本, 万一你需要特定的 api.
 
+正如前面所述，Fastify 在 `.listen()`、`.inject()` 以及 `.ready()` 被调用，也即插件被声明 __之后__ 才开始加载插件。这么一来，即使插件通过 [`decorate`](https://github.com/fastify/docs-chinese/blob/master/docs/Decorators.md) 向外部的 fastify 实例注入了变量，在调用 `.listen()`、`.inject()` 和 `.ready()` 之前，这些变量是获取不到的。
+
+当你需要在 `register` 方法的 `options` 参数里使用另一个插件注入的变量时，你可以向 `options` 传递一个函数参数，而不是对象：
+```js
+const fastify = require('fastify')()
+const fp = require('fastify-plugin')
+const dbClient = require('db-client')
+
+function dbPlugin (fastify, opts, next) {
+  dbClient.connect(opts.url, (err, conn) => {
+    fastify.decorate('db', conn)
+    next()
+  })
+}
+
+fastify.register(fp(dbPlugin), { url: 'https://example.com' })
+fastify.register(require('your-plugin'), parent => {
+  return { connection: parent.db, otherOption: 'foo-bar' }
+})
+```
+在上面的例子中，`register` 方法的第二个参数的 `parent` 变量是注册了插件的**外部 fastify 实例**的一份拷贝。这就意味着我们可以获取到之前声明的插件所注入的变量了。
+
 <a name="handle-errors"></a>
 ## 错误处理
 你的插件也可能在启动的时候失败. 或许你预料到这个并且在这种情况下有特定的处理逻辑. 你该怎么实现呢?
