@@ -18,7 +18,7 @@ fastify.route(options)
   * `params`：校验 url 参数。
   * `response`：过滤并生成用于响应的 schema，能帮助提升 10-20% 的吞吐量。
 * `attachValidation`：当 schema 校验出错时，将一个 `validationError` 对象添加到请求中，否则错误将被发送给错误处理函数。
-* `preValidation(request, reply, done)`在共享的 `preValidation` 钩子之后执行的[函数]。(https://github.com/fastify/docs-chinese/blob/master/docs/Hooks.md#route-hooks)，在路由层进行认证等场景中会有用处。它还可以是一个函数数组。
+* `preValidation(request, reply, done)`在共享的 `preValidation` 钩子之后执行的[函数](https://github.com/fastify/docs-chinese/blob/master/docs/Hooks.md#route-hooks)，在路由层进行认证等场景中会有用处。它还可以是一个函数数组。
 * `preHandler(request, reply, done)`：处理请求之前调用的[钩子函数](https://github.com/fastify/docs-chinese/blob/master/docs/Hooks.md#route-hooks)。它还可以是一个函数数组。
 * `preSerialization(request, reply, payload, done)`：序列化之前调用的[钩子函数](https://github.com/fastify/docs-chinese/blob/master/docs/Hooks.md#route-hooks)。它还可以是一个函数数组。
 * `handler(request, reply)`：处理请求的函数。
