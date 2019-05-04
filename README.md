@@ -22,6 +22,7 @@
 * [HTTP2](https://github.com/fastify/docs-chinese/blob/master/docs/HTTP2.md)
 * [长期支持计划](https://github.com/fastify/docs-chinese/blob/master/docs/LTS.md)
 * [TypeScript 与类型支持](https://github.com/fastify/docs-chinese/blob/master/docs/TypeScript.md)
+* [Serverless](https://github.com/fastify/docs-chinese/blob/master/docs/Serverless.md)
 
 ### 翻译指南
 
