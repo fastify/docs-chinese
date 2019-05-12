@@ -444,6 +444,16 @@ fastify.listen(3000, '0.0.0.0', (err, address) => {
 `fastify.close(callback)`：调用这个函数来关闭服务器实例，并触发 [`'onClose'`](https://github.com/fastify/docs-chinese/blob/master/docs/Hooks.md#on-close) 钩子。<br>
 服务器会向所有新的请求发送 `503` 错误，并销毁它们。
 
+如果无参调用，它会返回一个 Promise：
+
+ ```js
+fastify.close().then(() => {
+  console.log('successfully closed!')
+}, (err) => {
+  console.log('an error happened', err)
+})
+```
+
 <a name="decorate"></a>
 #### decorate*
 向 Fastify 实例、响应或请求添加装饰器函数。参阅[这里](https://github.com/fastify/docs-chinese/blob/master/docs/Decorators.md)了解更多。
