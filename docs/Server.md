@@ -115,6 +115,25 @@ const customLogger = {
 const fastify = require('fastify')({logger: customLogger});
 ```
 
+<a name="factory-disable-request-logging"></a>
+### `disableRequestLogging`
+默认情况下当开启日志时，Fastify 会在收到请求与发送该请求的响应时记录 `info` 级别的日志。你可以设置该选项为 `true` 来禁用该功能。这时，通过自定义 `onRequest` 和 `onResponse` 钩子，你能更灵活地记录一个请求的开始与结束。
+
++ 默认值：`false`
+
+```js
+// 例子：通过钩子再造被禁用的请求日志功能。
+fastify.addHook('onRequest', (req, reply, next) => {
+  req.log.info({ url: req.req.url, id: req.id }, 'received request')
+  next()
+})
+
+fastify.addHook('onResponse', (req, reply, next) => {
+  req.log.info({ url: req.req.originalUrl, statusCode: res.res.statusCode }, 'request completed')
+  next()
+})
+```
+
 <a name="custom-http-server"></a>
 ### `serverFactory`
 通过 `serverFactory` 选项，你可以向 Fastify 传递一个自定义的 http server。<br/>
