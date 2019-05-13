@@ -373,6 +373,8 @@ fastify.setErrorHandler(function (error, request, reply) {
 })
 ```
 
+假如你想轻松愉快地自定义错误响应，可以看[这里](https://github.com/epoberezkin/ajv-errors)。
+
 ### JSON Schema 及共用 Schema (Shared Schema) 支持
 
 为了能更简单地重用 schema，JSON Schema 提供了一些功能，来结合 Fastify 的共用 schema。
@@ -503,3 +505,6 @@ const refToSharedSchemaDefinitions = {
 - [理解 JSON schema](https://spacetelescope.github.io/understanding-json-schema/)
 - [fast-json-stringify 文档](https://github.com/fastify/fast-json-stringify)
 - [Ajv 文档](https://github.com/epoberezkin/ajv/blob/master/README.md)
+- [Ajv i18n](https://github.com/epoberezkin/ajv-i18n)
+- [Ajv 自定义错误](https://github.com/epoberezkin/ajv-errors)
+- 使用核心方法自定义错误处理，并实现错误文件转储的[例子](https://github.com/fastify/example/tree/master/validation-messages)
