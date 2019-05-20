@@ -75,7 +75,7 @@ fastify.get('/', {config: {foo: 'bar'}}, function (request, reply) {
 ### .getHeader(key)
 获取已设置的 header 的值。
 ```js
-reply.header('x-foo', 'foo')
+reply.header('x-foo', 'foo') // 设置 x-foo header 的值为 foo
 reply.getHeader('x-foo') // 'foo'
 ```
 
