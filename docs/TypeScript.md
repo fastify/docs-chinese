@@ -2,10 +2,10 @@
 
 <a id="typescript"></a>
 ## TypeScript
-尽管 Fastify 自带了 typings 声明文件，你仍然需要根据所使用的 Node.js 的版本来安装 `@types/node`。
+尽管 Fastify 自带了 typings 声明文件，你可能仍然需要根据所使用的 Node.js 版本来安装 `@types/node`。
 
 ## Types 支持
-我们关注 TypeScript 社区。然而现状是 Fastify 由纯 JavaScript 写就，当前也没有一名核心团队的成员是 TypeScript 的使用者，仅有一名贡献者是。
+我们关注 TypeScript 社区，当前也有一名团队的核心成员正在重做所有的 types。
 我们尽自己最大的努力来保证 typings 文件与最新的 API 同步，但并不能完全避免不同步的情况发生。<br/>
 幸运的是这是个开源项目，你可以参与修复。我们十分欢迎你的贡献，并会尽快发布补丁。请看 [贡献](#contributing) 指南吧！
 
