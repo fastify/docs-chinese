@@ -65,6 +65,45 @@ const fastify = require('fastify')({
   }
 })
 ```
+响应的 payload 与 header 可以按如下方式记录日志 (即便这是 *不* 推荐的做法)：
+
+```js
+const fastify = require('fastify')({
+  logger: {
+    prettyPrint: true,
+    serializers: {
+      res(res) {
+        // 默认
+        return {
+          statusCode: res.statusCode
+        }
+      },
+      req(req) {
+        return {
+          method: req.method,
+          url: req.url,
+          path: req.path,
+          parameters: req.parameters,
+          // 记录 header 可能会触犯隐私法律，例如 GDPR (译注：General Data Protection Regulation)。你应该用 "redact" 选项来移除敏感的字段。此外，验证数据也可能在日志中泄露。
+          headers: req.headers
+        };
+      }
+    }
+  }
+});
+```
+**注**：在 `req` 方法中，body 无法被序列化。因为请求是在创建子日志时就序列化了，而此时 body 尚未被解析。
+
+以下是记录 `req.body` 的一个方法
+
+```js
+app.addHook('preHandler', function (req, reply, next) {
+  if (req.body) {
+    req.log.info({ body: req.body }, 'parsed body')
+  }
+  next()
+})
+```
 
 *Pino 之外的日志工具会忽略该选项。*
 
