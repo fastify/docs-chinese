@@ -65,7 +65,7 @@ const fastify = require('fastify')({
   }
 })
 ```
-响应的 payload 与 header 可以按如下方式记录日志 (即便这是 *不* 推荐的做法)：
+响应的 payload 与 header 可以按如下方式记录日志 (即便这是*不推荐*的做法)：
 
 ```js
 const fastify = require('fastify')({
