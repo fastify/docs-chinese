@@ -10,6 +10,7 @@
   - [.hasHeader(key)](#hasheaderkey)
   - [.redirect(dest)](#redirectdest)
   - [.callNotFound()](#callnotfound)
+  - [.getResponseTime()](#getresponsetime)
   - [.type(contentType)](#typecontenttype)
   - [.serializer(func)](#serializerfunc)
   - [.sent](#sent)
@@ -105,6 +106,14 @@ reply.redirect('/home')
 调用自定义的 not found 处理函数。
 ```js
 reply.callNotFound()
+```
+
+<a name="getResponseTime"></a>
+### .getResponseTime()
+调用自定义响应时间获取函数，来计算自收到请求起的时间。
+
+```js
+const milliseconds = reply.getResponseTime()
 ```
 
 <a name="type"></a>
