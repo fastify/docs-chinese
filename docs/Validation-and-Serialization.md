@@ -7,7 +7,7 @@ Fastify 使用基于 schema 的途径，从本质上将 schema 编译成了高�
 ### 验证
 路由的验证是依赖 [Ajv](https://www.npmjs.com/package/ajv) 实现的。这是一个高性能的 JSON schema 校验工具。验证输入十分简单，只需将字段加入路由的 schema 中即可！支持的验证类型如下：
 - `body`：当请求方法为 POST 或 PUT 时，验证请求主体。
-- `querystring`：验证查询字符串。可以是一个完整的 JSON Schema 对象 (包括值为 `object` 的 `type` 属性以及包含参数的 `properties` 对象)，也可以是一个只带有查询参数 (无 `type` 与 `properties` 对象) 的简单对象 (见下文示例)。
+- `querystring` 或 `query`：验证查询字符串。可以是一个完整的 JSON Schema 对象 (包括值为 `object` 的 `type` 属性以及包含参数的 `properties` 对象)，也可以是一个只带有查询参数 (无 `type` 与 `properties` 对象) 的简单对象 (见下文示例)。
 - `params`：验证路由参数。
 - `headers`：验证请求头部 (request headers)。
 

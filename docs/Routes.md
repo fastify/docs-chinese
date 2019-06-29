@@ -14,7 +14,7 @@ fastify.route(options)
 必须符合 [JSON Schema](http://json-schema.org/) 格式。请看[这里](https://github.com/fastify/docs-chinese/blob/master/docs/Validation-and-Serialization.md)了解更多信息。
 
   * `body`：当为 POST 或 PUT 方法时，校验请求主体。
-  * `querystring`：校验 querystring。可以是一个完整的 JSON Schema 对象，它包括了值为 `object` 的 `type` 属性以及包含参数的 `properties` 对象，也可以仅仅是 `properties` 对象中的值 (见下文示例)。
+  * `querystring` 或 `query`：校验 querystring。可以是一个完整的 JSON Schema 对象，它包括了值为 `object` 的 `type` 属性以及包含参数的 `properties` 对象，也可以仅仅是 `properties` 对象中的值 (见下文示例)。
   * `params`：校验 url 参数。
   * `response`：过滤并生成用于响应的 schema，能帮助提升 10-20% 的吞吐量。
 * `attachValidation`：当 schema 校验出错时，将一个 `validationError` 对象添加到请求中，否则错误将被发送给错误处理函数。
