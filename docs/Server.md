@@ -510,6 +510,19 @@ fastify.register(function (instance, opts, next) {
 #### addSchema
 `fastify.addSchema(schemaObj)`，向 Fastify 实例添加可共用的 schema，用于验证数据。你可以通过该 schema 的 id 在应用的任意位置使用它。<br/>
 请看[验证和序列化](https://github.com/fastify/docs-chinese/blob/master/docs/Validation-and-Serialization.md)一文中的[范例](https://github.com/fastify/docs-chinese/blob/master/docs/Validation-and-Serialization.md#shared-schema)。
+
+<a name="set-reply-serializer"></a>
+#### setReplySerializer
+作用于未设置 [Reply.serializer(func)](https://github.com/fastify/docs-chinese/blob/master/docs/Reply.md#serializerfunc) 的所有路由的默认序列化方法。这个处理函数是完全封装的，因此，不同的插件允许有不同的错误处理函数。
+注：仅当状态码为 `2xx` 时才被调用。关于错误处理，请看 [`setErrorHandler`](https://github.com/fastify/docs-chinese/blob/master/docs/Server.md#seterrorhandler)。
+
+ ```js
+fastify.setReplySerializer(function (payload, statusCode){
+  // 使用同步函数序列化 payload
+  return `my serialized ${statusCode} content: ${payload}`
+})
+```
+
 <a name="set-schema-compiler"></a>
 #### setSchemaCompiler
 为所有的路由设置 schema 编译器 (schema compiler)，请看[这里](https://github.com/fastify/docs-chinese/blob/master/docs/Validation-and-Serialization.md#schema-compiler)了解更多信息。
