@@ -39,10 +39,10 @@ const headersJsonSchema = S.object()
   .prop('x-foo', S.string().required())
 
 const schema = {
-  body: bodyJsonSchema.valueOf(),
-  querystring: queryStringJsonSchema.valueOf(), // (或) query: queryStringJsonSchema.valueOf()
-  params: paramsJsonSchema.valueOf(),
-  headers: headersJsonSchema.valueOf()
+  body: bodyJsonSchema,
+  querystring: queryStringJsonSchema, // (或) query: queryStringJsonSchema
+  params: paramsJsonSchema,
+  headers: headersJsonSchema
 }
 
 fastify.post('/the/url', { schema }, handler)
@@ -65,20 +65,17 @@ const addressSchema = S.object()
   .prop('country').required()
   .prop('city').required()
   .prop('zipcode').required()
-  .valueOf()
 
 const commonSchemas = S.object()
   .id('https://fastify/demo')
   .definition('addressSchema', addressSchema)
   .definition('otherSchema', otherSchema) // 你可以任意添加需要的 schema
-  .valueOf()
 
 fastify.addSchema(commonSchemas)
 
 const bodyJsonSchema = S.object()
   .prop('residence', S.ref('https://fastify/demo#address')).required()
   .prop('office', S.ref('https://fastify/demo#/definitions/addressSchema')).required()
-  .valueOf()
 
 const schema = { body: bodyJsonSchema }
 
