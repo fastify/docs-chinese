@@ -3,6 +3,12 @@
 ## 验证和序列化
 Fastify 使用基于 schema 的途径，从本质上将 schema 编译成了高性能的函数，来实现路由的验证与输出的序列化。我们推荐使用 [JSON Schema](http://json-schema.org/)，虽然这并非必要。
 
+> ## ⚠  安全须知
+> 应当将 schema 的定义写入代码。
+> 因为不管是验证还是序列化，都会使用 `new Function()` 来动态生成代码并执行。
+> 所以，用户提供的 schema 是不安全的。
+> 更多内容，请看 [Ajv](http://npm.im/ajv) 与 [fast-json-stringify](http://npm.im/fast-json-stringify)。
+
 <a name="validation"></a>
 ### 验证
 路由的验证是依赖 [Ajv](https://www.npmjs.com/package/ajv) 实现的。这是一个高性能的 JSON schema 校验工具。验证输入十分简单，只需将字段加入路由的 schema 中即可！支持的验证类型如下：
@@ -24,7 +30,7 @@ const bodyJsonSchema = {
       maxItems: 3,
       items: { type: 'integer' }
     },
-    nullableKey: { type: ['number', 'null'] },
+    nullableKey: { type: ['number', 'null'] }, // 或 { type: 'number', nullable: true }
     multipleTypesKey: { type: ['boolean', 'number'] },
     multipleRestrictedTypesKey: {
       oneOf: [
@@ -239,7 +245,8 @@ Fastify 使用的 `ajv` 基本配置如下：
   removeAdditional: true, // 移除额外属性
   useDefaults: true, // 当属性或项目缺失时，使用 schema 中预先定义好的 default 的值代替
   coerceTypes: true, // 根据定义的 type 的值改变数据类型
-  allErrors: true    // 检查出所有错误（译注：为 false 时出现首个错误后即返回）
+  allErrors: true,   // 检查出所有错误（译注：为 false 时出现首个错误后即返回）
+  nullable: true     // 支持 OpenAPI Specification 3.0 版本的 "nullable" 关键字
 }
 ```
 
@@ -253,7 +260,8 @@ const ajv = new Ajv({
   removeAdditional: true,
   useDefaults: true,
   coerceTypes: true,
-  allErrors: true
+  allErrors: true,
+  nullable: true,
   // 任意其他参数
   // ...
 })
