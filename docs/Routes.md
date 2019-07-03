@@ -185,10 +185,10 @@ fastify.get('/', options, async function (request, reply) {
 
 1. 如果你想使用 `async/await` 或 promise，但通过 `reply.send` 返回值：
     - **别** `return` 任何值。
-    - **别** 忘了 `reply.send`。
+    - **别**忘了 `reply.send`。
 2. 如果你想使用 `async/await` 或 promise：
-    - **别** 使用 `reply.send`。
-    - **别** 返回 `undefined`。
+    - **别**使用 `reply.send`。
+    - **别**返回 `undefined`。
 
 通过这一方法，我们便可以最小代价同时支持 `回调函数风格` 以及 `async-await`。尽管这么做十分自由，我们还是强烈建议仅使用其中的一种，因为应用的错误处理方式应当保持一致。
 
