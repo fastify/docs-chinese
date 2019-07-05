@@ -136,9 +136,9 @@ fastify.addHook('onResponse', async (request, reply) => {
 })
 ```
 
-**注意：**使用 `async`/`await` 或返回一个 `Promise` 时，`next` 回调不可用。在这种情况下，仍然使用 `next` 可能会导致难以预料的行为，例如，处理函数的重复调用。
+**注意**：使用 `async`/`await` 或返回一个 `Promise` 时，`next` 回调不可用。在这种情况下，仍然使用 `next` 可能会导致难以预料的行为，例如，处理函数的重复调用。
 
-**注意：**在 `onRequest` 与 `preValidation` 钩子中，`request.body` 的值总是 `null`，这是因为 body 的解析发生在 `preHandler` 钩子之前。
+**注意**：在 `onRequest` 与 `preValidation` 钩子中，`request.body` 的值总是 `null`，这是因为 body 的解析发生在 `preHandler` 钩子之前。
 
 [Request](https://github.com/fastify/docs-chinese/blob/master/docs/Request.md) 与 [Reply](https://github.com/fastify/docs-chinese/blob/master/docs/Reply.md) 是 Fastify 核心的对象。<br/>
 `next` 是调用[生命周期](https://github.com/fastify/docs-chinese/blob/master/docs/Lifecycle.md)下一阶段的函数。
@@ -169,7 +169,7 @@ fastify.addHook('preHandler', (request, reply, next) => {
 `onError` 钩子可用于自定义错误日志，或当发生错误时添加特定的 header。<br/>
 该钩子并不是为了变更错误而设计的，且调用 `reply.send` 会抛出一个异常。<br/>
 它只会在 `customErrorHandler` 向用户发送错误之后被执行 (要注意的是，默认的 `customErrorHandler` 总是会发送错误)。
-**注意：**与其他钩子不同，`onError` 不支持向 `next` 函数传递错误。
+**注意**：与其他钩子不同，`onError` 不支持向 `next` 函数传递错误。
 
 ```js
 fastify.addHook('onError', (request, reply, error, next) => {

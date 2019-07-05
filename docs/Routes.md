@@ -162,7 +162,7 @@ fastify.get('/', options, async function (request, reply) {
   return processed
 })
 ```
-**警告:**不能返回 `undefined`。更多细节请看 [promise 取舍](#promise-resolution)。
+**警告**：不能返回 `undefined`。更多细节请看 [promise 取舍](#promise-resolution)。
 
 如你所见，我们不再使用 `reply.send` 向用户发送数据，只需返回消息主体就可以了！
 
