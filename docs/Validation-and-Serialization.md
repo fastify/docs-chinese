@@ -106,7 +106,7 @@ fastify.post('/the/url', { schema }, handler)
 
 更多例子：
 
-**`使用$ref`** 的例子：
+**`使用$ref`**的例子：
 
 ```js
 fastify.addSchema({
@@ -130,7 +130,7 @@ fastify.route({
 })
 ```
 
-**`替换方式`** 的例子：
+**`替换方式`**的例子：
 
 ```js
 const fastify = require('fastify')()
