@@ -101,7 +101,7 @@ tap.test('GET `/` route', t => {
 
 使用之前例子的 **app.js**。
 
-**test-listen.js**(用 [`Request`](https://www.npmjs.com/package/request) 测试)
+**test-listen.js** (用 [`Request`](https://www.npmjs.com/package/request) 测试)
 ```js
 const tap = require('tap')
 const request = require('request')
@@ -130,7 +130,7 @@ tap.test('GET `/` route', t => {
 })
 ```
 
-**test-ready.js**(用 [`SuperTest`](https://www.npmjs.com/package/supertest) 测试)
+**test-ready.js** (用 [`SuperTest`](https://www.npmjs.com/package/supertest) 测试)
 ```js
 const tap = require('tap')
 const supertest = require('supertest')
