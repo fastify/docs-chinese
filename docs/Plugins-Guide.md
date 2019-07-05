@@ -37,7 +37,7 @@ Fastify 在这个层面上可以帮助你很多, 多亏了封装模型, 它完�
 ```js
 module.exports = function (fastify, options, next) {}
 ```
-`fastify` 就是封装的 Fastify 实例, `options` 就是选项对象, 而 `next` 是一个在插件准备好了之后 **必须** 要调用的方法.
+`fastify` 就是封装的 Fastify 实例, `options` 就是选项对象, 而 `next` 是一个在插件准备好了之后**必须**要调用的方法.
 
 Fastify 的插件模型是完全可重入的和基于图(数据结构)的, 它能够处理任何异步代码并且保证插件的加载顺序, 甚至是关闭顺序! *如何做到的?* 很高兴你发问了, 查看下 [`avvio`](https://github.com/mcollina/avvio)! Fastify 在 `.listen()`, `.inject()` 或者 `.ready()` 被调用了之后开始加载插件.
 
