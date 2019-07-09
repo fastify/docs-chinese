@@ -198,7 +198,7 @@ fastify.get('/user/:username', (request, reply) => {
  ```js
 let i = 0
 const fastify = require('fastify')({
-  genReqId: function (req) { return req.headers['request-id'] || i++ }
+  genReqId: function (req) { return i++ }
 })
 ```
 
