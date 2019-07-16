@@ -321,7 +321,7 @@ fastify.get('/', (request, reply) => {
 ### `return503OnClosing`
 
 调用 `close` 方法后返回 503 状态码。
-如果为 `false`，服务器会如常处理来访的请求。
+如果为 `false`，服务器会正常处理请求。
 
 + 默认值：`true`
 
