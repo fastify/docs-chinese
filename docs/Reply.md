@@ -275,17 +275,15 @@ fastify.setNotFoundHandler(function (request, reply) {
 Fastify 原生地处理 promise 并支持 async-await。<br>
 *请注意，在下面的例子中我们没有使用 reply.send。*
 ```js
+const delay = promisify(setTimeout)
+
 fastify.get('/promises', options, function (request, reply) {
-  return new Promise(function (resolve) {
-    setTimeout(resolve, 200, { hello: 'world' })
-  })
+  return delay(200).then(() => { return { hello: 'world' }})
 })
 
 fastify.get('/async-await', options, async function (request, reply) {
-  var res = await new Promise(function (resolve) {
-    setTimeout(resolve, 200, { hello: 'world' })
-  })
-  return res
+  await delay(200)
+  return { hello: 'world' }
 })
 ```
 
