@@ -339,7 +339,7 @@ fastify.addHook('onRequest', function (request, reply, next) {
 
 <a name="route-hooks"></a>
 ## 路由层钩子
-你可以为路由声明一个或多个自定义的 `onRequest`、`preParsing`、`preHandler`、`preValidation` 与 `preSerialization` 钩子。
+你可以为**单个**路由声明一个或多个自定义的 `onRequest`、`preParsing`、`preHandler`、`preValidation` 与 `preSerialization` 钩子。
 如果你这么做，这些钩子总是会作为同一类钩子中的最后一个被执行。<br/>
 当你需要进行认证时，这会很有用，而 `preParsing` 与 `preValidation` 钩子正是为此而生。
 你也可以通过数组定义多个路由层钩子。
@@ -367,7 +367,7 @@ fastify.addHook('preHandler', (request, reply, done) => {
   done()
 })
 
-fastify.addHook('preSerialization', (request, reply, done) => {
+fastify.addHook('preSerialization', (request, reply, payload, done) => {
   // 你的代码
   done()
 })
@@ -398,9 +398,9 @@ fastify.route({
   //   // 该钩子总是在共享的 `preHandler` 钩子后被执行
   //   done()
   // }],
-  preSerialization: (request, reply, payload, next) => {
+  preSerialization: (request, reply, payload, done) => {
     // 操作 payload
-    next(null, payload)
+    done(null, payload)
   },
   handler: function (request, reply) {
     reply.send({ hello: 'world' })
