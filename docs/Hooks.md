@@ -267,7 +267,7 @@ fastify.addHook('onRequest', (request, reply, next) => {
 
 - `'onClose'`
 - `'onRoute'`
-- `'onRegister''`
+- `'onRegister'`
 
 <a name="on-close"></a>
 **'onClose'**<br>
