@@ -298,7 +298,7 @@ fastify.addHook('onRoute', (routeOptions) => {
 **'onRegister'**<br>
 当注册一个新的插件，或创建了新的封装好的上下文后被触发。该钩子在插件的代码**之前**被执行。<br/>
 当你的插件需要知晓上下文何时创建完毕，并操作它们时，可以使用这一钩子。<br/>
-**注意：**被 [`fastify-plugin`](https://github.com/fastify/fastify-plugin) 所封装的插件不会触发该钩子。
+**注意**：被 [`fastify-plugin`](https://github.com/fastify/fastify-plugin) 所封装的插件不会触发该钩子。
 ```js
 fastify.decorate('data', [])
 
