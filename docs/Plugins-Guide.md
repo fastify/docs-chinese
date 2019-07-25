@@ -35,20 +35,20 @@ Fastify 在这个层面上可以帮助你很多, 多亏了封装模型, 它完�
 *让我们回到如何正确地使用 `register`.*<br>
 插件必须输出一个有以下参数的方法
 ```js
-module.exports = function (fastify, options, next) {}
+module.exports = function (fastify, options, done) {}
 ```
-`fastify` 就是封装的 Fastify 实例, `options` 就是选项对象, 而 `next` 是一个在插件准备好了之后**必须**要调用的方法.
+`fastify` 就是封装的 Fastify 实例, `options` 就是选项对象, 而 `done` 是一个在插件准备好了之后**必须**要调用的方法.
 
 Fastify 的插件模型是完全可重入的和基于图(数据结构)的, 它能够处理任何异步代码并且保证插件的加载顺序, 甚至是关闭顺序! *如何做到的?* 很高兴你发问了, 查看下 [`avvio`](https://github.com/mcollina/avvio)! Fastify 在 `.listen()`, `.inject()` 或者 `.ready()` 被调用了之后开始加载插件.
 
-在插件里面你可以做任何想要做的事情, 注册路由, 工具方法 (我们马上会看到这个) 和进行嵌套的注册, 只要记住当所有都设置好了后调用 `next`!
+在插件里面你可以做任何想要做的事情, 注册路由, 工具方法 (我们马上会看到这个) 和进行嵌套的注册, 只要记住当所有都设置好了后调用 `done`!
 ```js
-module.exports = function (fastify, options, next) {
+module.exports = function (fastify, options, done) {
   fastify.get('/plugin', (request, reply) => {
     reply.send({ hello: 'world' })
   })
 
-  next()
+  done()
 }
 ```
 
@@ -77,38 +77,38 @@ fastify.decorate('util', (a, b) => a + b)
 现在你可以在任意地方通过 `fastify.util` 调用你的方法, 甚至在你的测试中.<br>
 这里神奇的是: 你还记得之前我们讨论的封装? 同时使用 `register` 和 `decorate` 可以实现, 让我用例子来阐明这个事情:
 ```js
-fastify.register((instance, opts, next) => {
+fastify.register((instance, opts, done) => {
   instance.decorate('util', (a, b) => a + b)
   console.log(instance.util('that is ', ' awesome'))
 
-  next()
+  done()
 })
 
-fastify.register((instance, opts, next) => {
+fastify.register((instance, opts, done) => {
   console.log(instance.util('that is ', ' awesome')) // 这里会抛错
 
-  next()
+  done()
 })
 ```
 在第二个注册器中调用 `instance.util` 会抛错, 因为 `util` 只存在第一个注册器的上下文中.<br>
 让我们更深入地看一下: 当使用 `register` api 每次都会创建一个新的上下文而且这避免了上文提到的这个状况. 但是注意, 封装只会在父级和同级中有效, 不会在子级中有效.
 ```js
-fastify.register((instance, opts, next) => {
+fastify.register((instance, opts, done) => {
   instance.decorate('util', (a, b) => a + b)
   console.log(instance.util('that is ', ' awesome'))
 
-  fastify.register((instance, opts, next) => {
+  fastify.register((instance, opts, done) => {
     console.log(instance.util('that is ', ' awesome')) // 这里不会抛错
-    next()
+    done()
   })
 
-  next()
+  done()
 })
 
-fastify.register((instance, opts, next) => {
+fastify.register((instance, opts, done) => {
   console.log(instance.util('that is ', ' awesome')) // 这里会抛错 
 
-  next()
+  done()
 })
 ```
 *PS: 如果你需要全局的工具方法, 请注意要声明在应用根作用域上. 或者你可以使用 `fastify-plugin` 工具, [参考](#distribution).*
@@ -214,7 +214,7 @@ fastify.get('/plugin2', (request, reply) => {
 你希望只在一个路由子集中执行钩子方法, 这个怎么做到?  对了, 封装!
 
 ```js
-fastify.register((instance, opts, next) => {
+fastify.register((instance, opts, done) => {
   instance.decorate('util', (request, key, value) => { request.key = value })
 
   instance.addHook('preHandler', (request, reply, done) => {
@@ -226,7 +226,7 @@ fastify.register((instance, opts, next) => {
     reply.send(request)
   })
 
-  next()
+  done()
 })
 
 fastify.get('/plugin2', (request, reply) => {
@@ -260,10 +260,10 @@ fastify.use(yourMiddleware)
 const fp = require('fastify-plugin')
 const dbClient = require('db-client')
 
-function dbPlugin (fastify, opts, next) {
+function dbPlugin (fastify, opts, done) {
   dbClient.connect(opts.url, (err, conn) => {
     fastify.decorate('db', conn)
-    next()
+    done()
   })
 }
 
@@ -279,10 +279,10 @@ const fastify = require('fastify')()
 const fp = require('fastify-plugin')
 const dbClient = require('db-client')
 
-function dbPlugin (fastify, opts, next) {
+function dbPlugin (fastify, opts, done) {
   dbClient.connect(opts.url, (err, conn) => {
     fastify.decorate('db', conn)
-    next()
+    done()
   })
 }
 

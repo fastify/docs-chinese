@@ -152,7 +152,7 @@ fastify.route({
   handler: () => {}
 })
 
-fastify.register((instance, opts, next) => {
+fastify.register((instance, opts, done) => {
   /**
   * 你可以在子作用域中使用在上层作用域里定义的 scheme，比如 'greetings'。
   * 父级作用域则无法使用子作用域定义的 schema。
@@ -173,7 +173,7 @@ fastify.register((instance, opts, next) => {
     },
     handler: () => {}
   })
-  next()
+  done()
 })
 ```
 
@@ -213,16 +213,16 @@ fastify.route({
 fastify.addSchema({ $id: 'one', my: 'hello' })
 fastify.get('/', (request, reply) => { reply.send(fastify.getSchemas()) })
 
-fastify.register((instance, opts, next) => {
+fastify.register((instance, opts, done) => {
   instance.addSchema({ $id: 'two', my: 'ciao' })
   instance.get('/sub', (request, reply) => { reply.send(instance.getSchemas()) })
 
-  instance.register((subinstance, opts, next) => {
+  instance.register((subinstance, opts, done) => {
     subinstance.addSchema({ $id: 'three', my: 'hola' })
     subinstance.get('/deep', (request, reply) => { reply.send(subinstance.getSchemas()) })
-    next()
+    done()
   })
-  next()
+  done()
 })
 ```
 这个例子的输出如下：

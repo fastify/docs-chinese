@@ -127,9 +127,9 @@ console.log(fastify.foo) // 'a getter'
 fastify.decorateRequest('user', '')
 
 // 更新属性
-fastify.addHook('preHandler', (req, reply, next) => {
+fastify.addHook('preHandler', (req, reply, done) => {
   req.user = 'Bob Dylan'
-  next()
+  done()
 })
 // 最后，访问装饰器
 fastify.get('/', (req, reply) => {

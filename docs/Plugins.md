@@ -45,10 +45,10 @@ fastify.register(require('fastify-foo'), {
 ```js
 const fp = require('fastify-plugin')
 
-fastify.register(fp((fastify, opts, next) => {
+fastify.register(fp((fastify, opts, done) => {
   fastify.decorate('foo_bar', { hello: 'world' })
 
-  next()
+  done()
 }))
 
 // fastify-foo 的 options 参数会是 { hello: 'world' }
@@ -67,7 +67,7 @@ fastify.register(require('fastify-foo'), parent => parent.foo_bar)
 <a name="error-handling"></a>
 #### 错误处理
 错误处理是由 [avvio](https://github.com/mcollina/avvio#error-handling) 解决的。<br>
-一个通用的原则, 我们建议在下一个 `next` 或 `ready` 代码块中处理错误, 否则错误将出现在 `listen` 回调里。
+一个通用的原则, 我们建议在下一个 `after` 或 `ready` 代码块中处理错误, 否则错误将出现在 `listen` 回调里。
 
 ```js
 fastify.register(require('my-plugin'))
@@ -95,27 +95,27 @@ await fastify.listen(3000)
 ```
 <a name="create-plugin"></a>
 ### 创建插件
-创建插件非常简单, 你只需要创建一个方法, 这个方法接收三个参数: `fastify` 实例, 选项( Options )对象 和 `next` 回调。<br>
+创建插件非常简单, 你只需要创建一个方法, 这个方法接收三个参数: `fastify` 实例、`options` 选项和 `done` 回调。<br>
 例子:
 ```js
-module.exports = function (fastify, opts, next) {
+module.exports = function (fastify, opts, done) {
   fastify.decorate('utility', () => {})
 
   fastify.get('/', handler)
 
-  next()
+  done()
 }
 ```
 你也可以在一个 `register` 内部添加其他 `register`:
 ```js
-module.exports = function (fastify, opts, next) {
+module.exports = function (fastify, opts, done) {
   fastify.decorate('utility', () => {})
 
   fastify.get('/', handler)
 
   fastify.register(require('./other-plugin'))
 
-  next()
+  done()
 }
 ```
 有时候, 你需要知道这个服务器何时即将关闭, 例如在你必须关闭数据库连接的时候。 要知道什么时候发生这种情况, 你可以用 [`'onClose'`](https://github.com/fastify/docs-chinese/blob/master/docs/Hooks.md#on-close) 钩子。
@@ -134,18 +134,18 @@ module.exports = function (fastify, opts, next) {
 ```js
 const fp = require('fastify-plugin')
 
-module.exports = fp(function (fastify, opts, next) {
+module.exports = fp(function (fastify, opts, done) {
   fastify.decorate('utility', () => {})
-  next()
+  done()
 }, '0.x')
 ```
 参考 [`fastify-plugin`](https://github.com/fastify/fastify-plugin) 文档了解更多这个模块。
 
 如果你不用 `fastify-plugin` 模块, 可以使用 `'skip-override'` 隐藏属性, 但我们不推荐这么做。 如果将来 Fastify API 改变了, 你需要去更新你的模块, 如果使用 `fastify-plugin`, 你可以对向后兼容放心。
 ```js
-function yourPlugin (fastify, opts, next) {
+function yourPlugin (fastify, opts, done) {
   fastify.decorate('utility', () => {})
-  next()
+  done()
 }
 yourPlugin[Symbol.for('skip-override')] = true
 module.exports = yourPlugin
