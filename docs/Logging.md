@@ -97,11 +97,11 @@ const fastify = require('fastify')({
 以下是记录 `req.body` 的一个方法
 
 ```js
-app.addHook('preHandler', function (req, reply, next) {
+app.addHook('preHandler', function (req, reply, done) {
   if (req.body) {
     req.log.info({ body: req.body }, 'parsed body')
   }
-  next()
+  done()
 })
 ```
 

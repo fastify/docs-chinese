@@ -18,44 +18,44 @@
 
 示例：
 ```js
-fastify.addHook('onRequest', (request, reply, next) => {
+fastify.addHook('onRequest', (request, reply, done) => {
   // 其他代码
-  next()
+  done()
 })
 
-fastify.addHook('preParsing', (request, reply, next) => {
+fastify.addHook('preParsing', (request, reply, done) => {
   // 其他代码
-  next()
+  done()
 })
 
-fastify.addHook('preValidation', (request, reply, next) => {
+fastify.addHook('preValidation', (request, reply, done) => {
   // 其他代码
-  next()
+  done()
 })
 
-fastify.addHook('preHandler', (request, reply, next) => {
+fastify.addHook('preHandler', (request, reply, done) => {
   // 其他代码
-  next()
+  done()
 })
 
-fastify.addHook('preSerialization', (request, reply, payload, next) => {
+fastify.addHook('preSerialization', (request, reply, payload, done) => {
   // 其他代码
-  next()
+  done()
 })
 
-fastify.addHook('onError', (request, reply, error, next) => {
+fastify.addHook('onError', (request, reply, error, done) => {
   // 其他代码
-  next()
+  done()
 })
 
-fastify.addHook('onSend', (request, reply, payload, next) => {
+fastify.addHook('onSend', (request, reply, payload, done) => {
   // 其他代码
-  next()
+  done()
 })
 
-fastify.addHook('onResponse', (request, reply, next) => {
+fastify.addHook('onResponse', (request, reply, done) => {
   // 其他代码
-  next()
+  done()
 })
 ```
 或使用 `async/await`
@@ -136,29 +136,29 @@ fastify.addHook('onResponse', async (request, reply) => {
 })
 ```
 
-**注意**：使用 `async`/`await` 或返回一个 `Promise` 时，`next` 回调不可用。在这种情况下，仍然使用 `next` 可能会导致难以预料的行为，例如，处理函数的重复调用。
+**注意**：使用 `async`/`await` 或返回一个 `Promise` 时，`done` 回调不可用。在这种情况下，仍然使用 `done` 可能会导致难以预料的行为，例如，处理函数的重复调用。
 
 **注意**：在 `onRequest` 与 `preValidation` 钩子中，`request.body` 的值总是 `null`，这是因为 body 的解析发生在 `preHandler` 钩子之前。
 
 [Request](https://github.com/fastify/docs-chinese/blob/master/docs/Request.md) 与 [Reply](https://github.com/fastify/docs-chinese/blob/master/docs/Reply.md) 是 Fastify 核心的对象。<br/>
-`next` 是调用[生命周期](https://github.com/fastify/docs-chinese/blob/master/docs/Lifecycle.md)下一阶段的函数。
+`done` 是调用[生命周期](https://github.com/fastify/docs-chinese/blob/master/docs/Lifecycle.md)下一阶段的函数。
 
 [生命周期](https://github.com/fastify/docs-chinese/blob/master/docs/Lifecycle.md)一文清晰地展示了各个钩子执行的位置。<br>
 钩子可被封装，因此可以运用在特定的路由上。更多信息请看[作用域](#scope)一节。
 
-在钩子的执行过程中如果发生了错误，只需将错误传递给 `next()`，Fastify 就会自动关闭请求，并发送一个相应的错误码给用户。
+在钩子的执行过程中如果发生了错误，只需将错误传递给 `done()`，Fastify 就会自动关闭请求，并发送一个相应的错误码给用户。
 
 ```js
-fastify.addHook('onRequest', (request, reply, next) => {
-  next(new Error('some error'))
+fastify.addHook('onRequest', (request, reply, done) => {
+  done(new Error('some error'))
 })
 ```
 
 如果你想自定义发送给用户的错误码，使用 `reply.code()` 即可：
 ```js
-fastify.addHook('preHandler', (request, reply, next) => {
+fastify.addHook('preHandler', (request, reply, done) => {
   reply.code(400)
-  next(new Error('some error'))
+  done(new Error('some error'))
 })
 ```
 
@@ -169,13 +169,13 @@ fastify.addHook('preHandler', (request, reply, next) => {
 `onError` 钩子可用于自定义错误日志，或当发生错误时添加特定的 header。<br/>
 该钩子并不是为了变更错误而设计的，且调用 `reply.send` 会抛出一个异常。<br/>
 它只会在 `customErrorHandler` 向用户发送错误之后被执行 (要注意的是，默认的 `customErrorHandler` 总是会发送错误)。
-**注意**：与其他钩子不同，`onError` 不支持向 `next` 函数传递错误。
+**注意**：与其他钩子不同，`onError` 不支持向 `done` 函数传递错误。
 
 ```js
-fastify.addHook('onError', (request, reply, error, next) => {
+fastify.addHook('onError', (request, reply, error, done) => {
   // apm 代表应用性能监控 (Application Performance Monitoring)
   apm.sendError(error)
-  next()
+  done()
 })
 
 // 或使用 async
@@ -190,10 +190,10 @@ fastify.addHook('onError', async (request, reply, error) => {
 `preSerialization` 钩子让你可以在 payload 被序列化之前改动它。举个例子：
 
  ```js
-fastify.addHook('preSerialization', (request, reply, payload, next) => {
+fastify.addHook('preSerialization', (request, reply, payload, done) => {
   var err = null;
   var newPayload = { wrapped: payload }
-  next(err, newPayload)
+  done(err, newPayload)
 })
 // 或使用 async
 fastify.addHook('preSerialization', async (request, reply, payload) => {
@@ -208,10 +208,10 @@ payload 为 `string`、`Buffer`、`stream` 或 `null` 时，该钩子不会被�
 使用 `onSend` 钩子可以改变 payload。例如：
 
 ```js
-fastify.addHook('onSend', (request, reply, payload, next) => {
+fastify.addHook('onSend', (request, reply, payload, done) => {
   var err = null;
   var newPayload = payload.replace('some-text', 'some-new-text')
-  next(err, newPayload)
+  done(err, newPayload)
 })
 
 // 或者使用 async
@@ -224,10 +224,10 @@ fastify.addHook('onSend', async (request, reply, payload) => {
 你也可以通过将 payload 置为 `null`，发送一个空消息主体的响应：
 
 ```js
-fastify.addHook('onSend', (request, reply, payload, next) => {
+fastify.addHook('onSend', (request, reply, payload, done) => {
   reply.code(304)
   const newPayload = null
-  next(null, newPayload)
+  done(null, newPayload)
 })
 ```
 
@@ -242,7 +242,7 @@ fastify.addHook('onSend', (request, reply, payload, next) => {
 需要的话，你可以在路由控制器执行前响应一个请求。一个例子便是身份验证的钩子。如果你在 `onRequest` 或 `preHandler` 中发出响应，请使用 `reply.send`。如果是在中间件中，使用 `res.end`。
 
 ```js
-fastify.addHook('onRequest', (request, reply, next) => {
+fastify.addHook('onRequest', (request, reply, done) => {
   reply.send('early response')
 })
 
@@ -255,7 +255,7 @@ fastify.addHook('preHandler', async (request, reply) => {
 如果你想要使用流 (stream) 来响应请求，你应该避免使用 `async` 函数。必须使用 `async` 函数的话，请参考 [test/hooks-async.js](https://github.com/fastify/fastify/blob/94ea67ef2d8dce8a955d510cd9081aabd036fa85/test/hooks-async.js#L269-L275) 中的示例来编写代码。
 
 ```js
-fastify.addHook('onRequest', (request, reply, next) => {
+fastify.addHook('onRequest', (request, reply, done) => {
   const stream = fs.createReadStream('some-file', 'utf8')
   reply.send(stream)
 })
@@ -330,9 +330,9 @@ fastify.addHook('onRegister', (instance) => {
 除了[应用钩子](#application-hooks)，所有的钩子都是封装好的。这意味着你可以通过 `register` 来决定在何处运行它们，正如[插件指南](https://github.com/fastify/docs-chinese/blob/master/docs/Plugins-Guide.md)所述。如果你传递一个函数，那么该函数会获得 Fastify 的上下文，如此你便能使用 Fastify 的 API 了。
 
 ```js
-fastify.addHook('onRequest', function (request, reply, next) {
+fastify.addHook('onRequest', function (request, reply, done) {
   const self = this // Fastify 上下文
-  next()
+  done()
 })
 ```
 注：使用箭头函数会破坏 Fastify 实例对 this 的绑定。

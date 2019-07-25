@@ -210,16 +210,16 @@ fastify.listen(3000)
 ```
 ```js
 // routes/v1/users.js
-module.exports = function (fastify, opts, next) {
+module.exports = function (fastify, opts, done) {
   fastify.get('/user', handler_v1)
-  next()
+  done()
 }
 ```
 ```js
 // routes/v2/users.js
-module.exports = function (fastify, opts, next) {
+module.exports = function (fastify, opts, done) {
   fastify.get('/user', handler_v2)
-  next()
+  done()
 }
 ```
 在编译时 Fastify 自动处理了前缀，因此两个不同路由使用相同的路径名并不会产生问题。*(这也意味着性能一点儿也不受影响！)*。

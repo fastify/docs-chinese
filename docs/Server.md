@@ -123,14 +123,14 @@ const fastify = require('fastify')({logger: customLogger});
 
 ```js
 // 例子：通过钩子再造被禁用的请求日志功能。
-fastify.addHook('onRequest', (req, reply, next) => {
+fastify.addHook('onRequest', (req, reply, done) => {
   req.log.info({ url: req.req.url, id: req.id }, 'received request')
-  next()
+  done()
 })
 
-fastify.addHook('onResponse', (req, reply, next) => {
+fastify.addHook('onResponse', (req, reply, done) => {
   req.log.info({ url: req.req.originalUrl, statusCode: res.res.statusCode }, 'request completed')
-  next()
+  done()
 })
 ```
 
@@ -339,16 +339,16 @@ fastify.get('/', (request, reply) => {
 
 ```js
 fastify
-  .register((instance, opts, next) => {
+  .register((instance, opts, done) => {
     console.log('当前插件')
-    next()
+    done()
   })
   .after(err => {
     console.log('当前插件之后')
   })
-  .register((instance, opts, next) => {
+  .register((instance, opts, done) => {
     console.log('下一个插件')
-    next()
+    done()
   })
   .ready(err => {
     console.log('万事俱备')
@@ -486,24 +486,24 @@ Fastify 允许用户通过插件扩展功能。插件可以是一组路由、装
 示例：
 
 ```js
-fastify.register(function (instance, opts, next) {
+fastify.register(function (instance, opts, done) {
   instance.get('/foo', function (request, reply) {
     // 输出："prefix: /v1"
     request.log.info('prefix: %s', instance.prefix)
     reply.send({prefix: instance.prefix})
   })
 
-  instance.register(function (instance, opts, next) {
+  instance.register(function (instance, opts, done) {
     instance.get('/bar', function (request, reply) {
       // 输出："prefix: /v1/v2"
       request.log.info('prefix: %s', instance.prefix)
       reply.send({prefix: instance.prefix})
     })
 
-    next()
+    done()
   }, { prefix: '/v2' })
 
-  next()
+  done()
 }, { prefix: '/v1' })
 ```
 
@@ -549,24 +549,24 @@ fastify.setReplySerializer(function (payload, statusCode){
 
 ```js
 fastify.setNotFoundHandler({
-  preValidation: (req, reply, next) => {
+  preValidation: (req, reply, done) => {
     // 你的代码
-    next()
+    done()
   } ,
-  preHandler: (req, reply, next) => {
+  preHandler: (req, reply, done) => {
     // 你的代码
-    next()
+    done()
   }  
 }, function (request, reply) {
     // 设置了 preValidation 与 preHandler 钩子的默认 not found 处理函数
 })
 
-fastify.register(function (instance, options, next) {
+fastify.register(function (instance, options, done) {
   instance.setNotFoundHandler(function (request, reply) {
     // '/v1' 开头的 URL 的 not found 处理函数，
     // 未设置 preValidation 与 preHandler 钩子
   })
-  next()
+  done()
 }, { prefix: '/v1' })
 ```
 
