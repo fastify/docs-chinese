@@ -56,15 +56,15 @@ const awsLambdaFastify = require('aws-lambda-fastify')
 const init = require('./app');
 
 const proxy = awsLambdaFastify(init())
-// or
+// 或
 // const proxy = awsLambdaFastify(init(), { binaryMimeTypes: ['application/octet-stream'] })
 
 exports.handler = proxy;
-// or
+// 或
 // exports.handler = (event, context, callback) => proxy(event, context, callback);
-// or
+// 或
 // exports.handler = (event, context) => proxy(event, context);
-// or
+// 或
 // exports.handler = async (event, context) => proxy(event, context);
 ```
 
