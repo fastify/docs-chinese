@@ -15,15 +15,15 @@ Fastify 框架的设计初衷是轻松地实现一个传统的 HTTP/S 服务器�
 
 以下是使用 Fastify 在 AWS Lambda 和 Amazon API Gateway 架构上构建无服务器 web 应用/服务的示例。
 
-*注：这仅是一种可行方案。*
+*注：使用 [aws-lambda-fastify](https://github.com/fastify/aws-lambda-fastify) 仅是一种可行方案。*
 
 ### app.js
 
 ```js
 const fastify = require('fastify');
 
-function init(serverFactory) {
-  const app = fastify({ serverFactory });
+function init() {
+  const app = fastify();
   app.get('/', (request, reply) => reply.send({ hello: 'world' }));
   return app;
 }
@@ -43,7 +43,7 @@ if (require.main !== module) {
 你可以简单地把初始化代码包裹于可选的 [serverFactory](https://www.fastify.io/docs/latest/Server/#serverfactory) 选项里。
 
 当执行 lambda 函数时，我们不需要监听特定的端口，因此，在这个例子里我们只要导出 `init` 函数即可。
-在 [`lambda.js`](https://www.fastify.io/docs/latest/Server/#lambda.js) 里，我们会用到它。
+在 [`lambda.js`](https://www.fastify.io/docs/latest/Serverless/#lambda-js) 里，我们会用到它。
 
 当像往常一样运行 Fastify 应用，
 比如执行 `node app.js` 时 *(可以用 `require.main === module` 来判断)*，
@@ -52,29 +52,25 @@ if (require.main !== module) {
 ### lambda.js
 
 ```js
-const awsServerlessExpress = require('aws-serverless-express');
+const awsLambdaFastify = require('aws-lambda-fastify')
 const init = require('./app');
 
-let server;
-const serverFactory = (handler) => {
-  server = awsServerlessExpress.createServer(handler);
-  return server;
-}
-const app = init(serverFactory);
+const proxy = awsLambdaFastify(init())
+// or
+// const proxy = awsLambdaFastify(init(), { binaryMimeTypes: ['application/octet-stream'] })
 
-exports.handler = (event, context, callback) => {
-  context.callbackWaitsForEmptyEventLoop = false;
-  app.ready((e) => {
-    if (e) return console.error(e.stack || e);
-    awsServerlessExpress.proxy(server, event, context, 'CALLBACK', callback);
-  });
-};
+exports.handler = proxy;
+// or
+// exports.handler = (event, context, callback) => proxy(event, context, callback);
+// or
+// exports.handler = (event, context) => proxy(event, context);
+// or
+// exports.handler = async (event, context) => proxy(event, context);
 ```
 
-我们自定义了一个 `serverFactory` 函数，在该函数内通过 [`aws-serverless-express`](https://github.com/awslabs/aws-serverless-express) 创建了新的服务器 (请确保安装了这个依赖 `npm i --save aws-serverless-express`)。
-之后，我们调用从 [`app.js`](https://www.fastify.io/docs/latest/Server/#app.js) 导入的 `init` 函数，并传入唯一参数 `serverFactory`。
-最后，在 lambda `handler` 函数中，我们等待 Fastify 应用 `ready`，再将所有请求事件 (API Gateway 的请求) 代理到 [`aws-serverless-express`](https://github.com/awslabs/aws-serverless-express) 的 `proxy` 函数。
-
+我们只需要引入 [aws-lambda-fastify](https://github.com/fastify/aws-lambda-fastify) (请确保安装了该依赖 `npm i --save aws-lambda-fastify`) 以及我们写的 [`app.js`](https://www.fastify.io/docs/latest/Serverless/#app-js)，并使用 `app` 作为唯一参数调用导出的 `awsLambdaFastify` 函数。
+以上步骤返回的 `proxy` 函数拥有正确的签名，可作为 lambda 的处理函数。
+如此，所有的请求事件 (API Gateway 的请求) 都会被代理到 [aws-lambda-fastify](https://github.com/fastify/aws-lambda-fastify) 的 `proxy` 函数。
 
 ### 示例
 
