@@ -62,7 +62,7 @@ fastify.decorateRequest('utility', function () {
 下面的示例会抛出异常：
  ```js
 const server = require('fastify')()
-  server.decorateReply('view', function (template, args) {
+server.decorateReply('view', function (template, args) {
   // 页面渲染引擎的代码。
 })
 server.get('/', (req, reply) => {
