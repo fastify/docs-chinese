@@ -2,6 +2,11 @@
 
 使用现有的 Fastify 应用运行无服务器 (serverless) 应用与 REST API。
 
+### 目录
+
+- [AWS Lambda](#aws-lambda)
+- [Google Cloud Run](#google-cloud-run)
+
 ### 读者须知：
 > Fastify 并不是为无服务器环境准备的。
 Fastify 框架的设计初衷是轻松地实现一个传统的 HTTP/S 服务器。
@@ -9,7 +14,6 @@ Fastify 框架的设计初衷是轻松地实现一个传统的 HTTP/S 服务器�
 因此，我们不保证在无服务器环境下，Fastify 也能如预期般运转。
 尽管如此，参照本文中的示例，你仍然可以在无服务器环境中运行 Fastify。
 再次提醒，无服务器环境不是 Fastify 的目标所在，我们不会在这样的集成情景下进行测试。
-
 
 ## AWS Lambda
 
@@ -81,3 +85,103 @@ exports.handler = proxy;
 
 - 你没法操作 [stream](https://www.fastify.io/docs/latest/Reply/#streams)，因为 API Gateway 还不支持它。
 - API Gateway 的超时时间为 29 秒，请务必在此时限内回复。
+
+## Google Cloud Run
+
+与 AWS Lambda 和 Google Cloud Functions 不同，Google Cloud Run 是一个无服务器**容器**环境。它的首要目的是提供一个能运行任意容器的底层抽象 (infrastucture-abstracted) 的环境。因此，你能将 Fastify 部署在 Google Cloud Run 上，而且相比正常的写法，只需要改动极少的代码。
+
+*参照以下步骤部署 Google Cloud Run。如果你对 gcloud 还不熟悉，请看其[入门文档](https://cloud.google.com/run/docs/quickstarts/build-and-deploy)*。
+
+### 调整 Fastfiy 服务器
+
+为了让 Fastify 能正确地在容器里监听请求，请确保设置了正确的端口与地址：
+
+```js
+function build() {
+  const fastify = Fastify({ trustProxy: true })
+  return fastify
+}
+
+async function start() {
+  // Google Cloud Run 会设置这一环境变量，
+  // 因此，你可以使用它判断程序是否运行在 Cloud Run 之中
+  const IS_GOOGLE_CLOUD_RUN = process.env.K_SERVICE !== undefined
+
+  // 监听 Cloud Run 提供的端口
+  const port = process.env.PORT || 3000
+
+  // 监听 Cloud Run 中所有的 IPV4 地址
+  const address = IS_GOOGLE_CLOUD_RUN ? "0.0.0.0" : undefined
+
+  try {
+    const server = build()
+    const address = await server.listen(port, address)
+    console.log(`Listening on ${address}`)
+  } catch (err) {
+    console.error(err)
+    process.exit(1)
+  }
+}
+
+module.exports = build
+
+if (require.main === module) {
+  start()
+}
+```
+
+### 添加 Dockerfile
+
+你可以添加任意合法的 `Dockerfile`，用于打包运行 Node 程序。在 [gcloud 官方文档](https://github.com/knative/docs/blob/2d654d1fd6311750cc57187a86253c52f273d924/docs/serving/samples/hello-world/helloworld-nodejs/Dockerfile)中，你能找到一份基本的 `Dockerfile`。
+
+```Dockerfile
+# 使用官方 Node.js 10 镜像。
+# https://hub.docker.com/_/node
+FROM node:10
+
+# 创建并切换到应用目录。
+WORKDIR /usr/src/app
+
+# 拷贝应用依赖清单至容器镜像。
+# 使用通配符来确保 package.json 和 package-lock.json 均被复制。
+# 独立地拷贝这些文件，能防止代码改变时重复执行 npm install。
+COPY package*.json ./
+
+# 安装生产环境依赖。
+RUN npm install --only=production
+
+# 复制本地代码到容器镜像。
+COPY . .
+
+# 启动容器时运行服务。
+CMD [ "npm", "start" ]
+```
+
+### 添加 .dockerignore
+
+添加一份如下的 `.dockerignore`，可以将构建所需的文件排除在容器之外 (能减小容器大小，加快构建速度)：
+
+```.dockerignore
+Dockerfile
+README.md
+node_modules
+npm-debug.log
+```
+
+### 提交构建
+
+接下来，使用以下命令将你的应用构建成一个 Docker 镜像 (将 `PROJECT-ID` 和 `APP-NAME` 替换为 Google 云平台的项目 id 和 app 名称)：
+
+```bash
+gcloud builds submit --tag gcr.io/PROJECT-ID/APP-NAME
+```
+
+### 部署镜像
+
+镜像构建之后，使用如下命令部署它：
+
+```bash
+gcloud beta run deploy --image gcr.io/PROJECT-ID/APP-NAME --platform managed
+```
+
+如此，便能从 Google 云平台提供的链接访问你的应用了。
