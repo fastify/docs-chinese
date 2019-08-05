@@ -163,7 +163,7 @@ CMD [ "npm", "start" ]
 
 ### 添加 .dockerignore
 
-添加一份如下的 `.dockerignore`，可以将构建所需的文件排除在容器之外 (能减小容器大小，加快构建速度)：
+添加一份如下的 `.dockerignore`，可以将仅用于构建的文件排除在容器之外 (能减小容器大小，加快构建速度)：
 
 ```.dockerignore
 Dockerfile
