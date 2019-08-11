@@ -42,7 +42,8 @@ Reply 是 Fastify 的一个核心对象。它暴露了以下函数及属性：
 - `.send(payload)` - 向用户发送 payload。类型可以是纯文本、buffer、JSON、stream，或一个 Error 对象。
 - `.sent` - 一个 boolean，检查 `send` 是否已被调用。
 - `.res` - Node 原生的 [`http.ServerResponse`](https://nodejs.org/dist/latest/docs/api/http.html#http_class_http_serverresponse) 对象。
-- `.log` - 请求的日志实例
+- `.log` - 请求的日志实例。
+- `.request` - 请求。
 
 ```js
 fastify.get('/', options, function (request, reply) {
