@@ -28,7 +28,7 @@ function init(serverFactory) {
   return app;
 }
 
-if (require.main !== module) {
+if (require.main === module) {
   // 直接调用，即执行 "node app"
   init().listen(3000, (err) => {
     if (err) console.error(err);
