@@ -106,7 +106,7 @@ const opts: fastify.RouteShorthandOptions = {
   }
 }
 
-server.get<Query, Params, Body, Headers>('/ping/:bar', opts, (request, reply) => {
+server.get<Query, Params, Headers, Body>('/ping/:bar', opts, (request, reply) => {
   console.log(request.query) // 这是 Query 类型
   console.log(request.params) // 这是 Params 类型
   console.log(request.body) // 这是 Body 类型
