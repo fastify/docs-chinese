@@ -4,7 +4,7 @@
 
 钩子 (hooks) 让你能够监听应用或请求/响应生命周期之上的特定事件。使用 `fastify.addHook` 可以注册钩子。你必须在事件被触发之前注册相应的钩子，否则，事件将得不到处理。
 
-通过钩子方法，你可以在 Fastify 的生命周期内直接进行交互。有七个可用的钩子 *(按执行顺序排序)*：
+通过钩子方法，你可以在 Fastify 的生命周期内直接进行交互。有用于请求/响应的钩子，也有应用级钩子：
 
 - [请求/响应钩子](#requestreply-hooks)
   - [onRequest](#onRequest)
@@ -29,6 +29,8 @@
 
 [生命周期](https://github.com/fastify/docs-chinese/blob/master/docs/Lifecycle.md)一文清晰地展示了各个钩子执行的位置。<br>
 钩子可被封装，因此可以运用在特定的路由上。更多信息请看[作用域](#scope)一节。
+
+在请求/响应中，有八个可用的钩子 *(按执行顺序排序)*：
 
 ### onRequest
 ```js
