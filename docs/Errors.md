@@ -105,7 +105,12 @@ content type 不能是一个空字符串。
 <a name="FST_ERR_SCH_NOT_PRESENT"></a>
 #### FST_ERR_SCH_NOT_PRESENT
 
-不存在 `$id` 为提供的值的 schema.
+不存在 `$id` 为提供的值的 schema。
+
+<a name="FST_ERR_SCH_BUILD"></a>
+#### FST_ERR_SCH_BUILD
+
+某个路由的 JSON schema 不合法。
 
 <a name="FST_ERR_PROMISE_NOT_FULLFILLED"></a>
 #### FST_ERR_PROMISE_NOT_FULLFILLED
