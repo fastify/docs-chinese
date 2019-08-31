@@ -6,6 +6,7 @@
 
 - [AWS Lambda](#aws-lambda)
 - [Google Cloud Run](#google-cloud-run)
+- [Zeit Now](#zeit-now)
 
 ### 读者须知：
 > Fastify 并不是为无服务器环境准备的。
@@ -185,3 +186,64 @@ gcloud beta run deploy --image gcr.io/PROJECT-ID/APP-NAME --platform managed
 ```
 
 如此，便能从 Google 云平台提供的链接访问你的应用了。
+
+## Zeit Now
+
+[now](https://zeit.co/home) 针对 Node.js 应用提供了零配置部署方案。要使用 now，只需要如下配置你的 `now.json` 文件：
+
+```json
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "api/serverless.js",
+      "use": "@now/node",
+      "config": {
+        "helpers": false
+      }
+    }
+  ],
+  "routes": [
+    { "src": "/.*", "dest": "/api/serverless.js"}
+  ]
+}
+```
+
+之后，写一个 `api/serverless.js` 文件：
+
+```js
+'use strict'
+const build = require('./index')
+const app = build()
+module.exports = async function (req, res) {
+  await app.ready()
+  app.server.emit('request', req, res)
+}
+```
+
+以及一个 `api/index.js` 文件：
+
+```js
+'use strict'
+const fastify = require('fastify')
+function build () {
+  const app = fastify({
+    logger: true
+  })
+  app.get('/', async (req, res) => {
+    const { name = 'World' } = req.query
+    req.log.info({ name }, 'hello world!')
+    return `Hello ${name}!`
+  })
+  return app
+}
+module.exports = build
+```
+
+要注意的是，你得在 `package.json` 中使用 Node 10：
+
+```js
+  "engines": {
+    "node": "10.x"
+  },
+```
