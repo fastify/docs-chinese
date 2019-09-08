@@ -507,6 +507,18 @@ fastify.register(function (instance, opts, done) {
 }, { prefix: '/v1' })
 ```
 
+<a name="pluginName"></a>
+#### pluginName
+当前插件的名称。有三种定义插件名称的方式（按顺序）。
+
+1. 如果插件使用 [fastify-plugin](https://github.com/fastify/fastify-plugin)，那么名称为元数据 (metadata) 中的 `name`。
+2. 如果插件通过 `module.exports` 导出，使用文件名。
+3. 如果插件通过常规的 [函数定义](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Functions#Defining_functions)，则使用函数名。
+
+*回退方案*：插件函数的头两行将作为插件名，并使用 `--` 替代换行符。这有助于在处理涉及许多插件的问题时，找到根源。
+
+重点：如果你要处理一些通过 [fastify-plugin](https://github.com/fastify/fastify-plugin) 包装的嵌套的异名插件，由于没有生成新的定义域，因此不会去覆盖上下文数据，而是将各插件名加入一个数组。在这种情况下，会按涉及到的插件的启动顺序，以 `plugin-A -> plugin-B` 的格式来展示插件名称。
+
 <a name="log"></a>
 #### log
 日志的实例，详见[这里](https://github.com/fastify/docs-chinese/blob/master/docs/Logging.md)。
