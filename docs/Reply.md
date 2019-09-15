@@ -218,11 +218,12 @@ fastify.get('/streams', function (request, reply) {
 ```js
 {
   error: String        // http 错误信息
+  code: String         // Fastify 的错误代码
   message: String      // 用户错误信息
   statusCode: Number   // http 状态码
 }
 ```
-你可以向 Error 对象添加自定义属性，例如 `statusCode` 或 `headers`，这可以用来增强 http 响应。<br>
+你可以向 Error 对象添加自定义属性，例如 `headers`，这可以用来增强 http 响应。<br>
 *注意：如果 `send` 一个错误，但状态码小于 400，Fastify 会自动将其设为 500。*
 
 贴士：你可以通过 [`http-errors`](https://npm.im/http-errors) 或 [`fastify-sensible`](https://github.com/fastify/fastify-sensible) 来简化生成的错误：
