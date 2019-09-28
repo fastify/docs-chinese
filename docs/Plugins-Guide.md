@@ -17,7 +17,7 @@ Fastify 从一开始就搭建成非常模块化的系统. 我们搭建了非常�
 <a name="register"></a>
 ## 注册器
 就像在 JavaScript 万物都是对象, 在 Fastify 万物都是插件.<br>
-你的路由, 你的工具方法等等都是插件. 无论添加什么功能的插件, 你都可以使用 Fastify 优秀又独一无二的 api: [`register`](https://github.com/fastify/docs-chinese/blob/master/docs/Plugins.md).
+你的路由, 你的工具方法等等都是插件. 无论添加什么功能的插件, 你都可以使用 Fastify 优秀又独一无二的 API: [`register`](https://github.com/fastify/docs-chinese/blob/master/docs/Plugins.md).
 ```js
 fastify.register(
   require('./my-plugin'),
@@ -26,9 +26,8 @@ fastify.register(
 ```
 `register` 创建一个新的 Fastify 上下文, 这意味着如果你对 Fastify 的实例做任何改动, 这些改动不会反映到上下文的父级上. 换句话说, 封装!
 
-
 *为什么封装这么重要?*<br>
-那么, 假设你创建了一个具有开创性的初创公司, 你会怎么做? 你创建了一个包含所有东西的 api 服务器, 所有东西都在同一个地方, 一个庞然大物!<br>
+那么, 假设你创建了一个具有开创性的初创公司, 你会怎么做? 你创建了一个包含所有东西的 API 服务器, 所有东西都在同一个地方, 一个庞然大物!<br>
 现在, 你增长得非常迅速, 想要改变架构去尝试微服务. 通常这意味着非常多的工作, 因为交叉依赖和缺少关注点的分离.<br>
 Fastify 在这个层面上可以帮助你很多, 多亏了封装模型, 它完全避免了交叉依赖, 并且帮助你将组织成高聚合的代码块.
 
@@ -52,7 +51,7 @@ module.exports = function (fastify, options, done) {
 }
 ```
 
-那么现在你已经知道了如何使用 `register` api 并且知道它是怎么工作的, 但我们如何给 Fastify 添加新的功能, 并且分享给其他的开发者?
+那么现在你已经知道了如何使用 `register` API 并且知道它是怎么工作的, 但我们如何给 Fastify 添加新的功能, 并且分享给其他的开发者?
 
 <a name="decorators"></a>
 ## 装饰器
@@ -65,12 +64,12 @@ module.exports = function (a, b) {
 ```
 ```js
 const util = require('./your-awesome-utility')
-console.log(util('that is ', ' awesome'))
+console.log(util('that is ', 'awesome'))
 ```
 现在你需要在所有需要这个方法的文件中引入它. (别忘了你可能在测试中也需要它).
 
 Fastify 提供了一个更优雅的方法, *装饰器*.
-创建一个装饰器非常简单, 只要使用 [`decorate`](https://github.com/fastify/docs-chinese/blob/master/docs/Decorators.md) api:
+创建一个装饰器非常简单, 只要使用 [`decorate`](https://github.com/fastify/docs-chinese/blob/master/docs/Decorators.md) API:
 ```js
 fastify.decorate('util', (a, b) => a + b)
 ```
@@ -79,26 +78,28 @@ fastify.decorate('util', (a, b) => a + b)
 ```js
 fastify.register((instance, opts, done) => {
   instance.decorate('util', (a, b) => a + b)
-  console.log(instance.util('that is ', ' awesome'))
+  console.log(instance.util('that is ', 'awesome'))
 
   done()
 })
 
 fastify.register((instance, opts, done) => {
-  console.log(instance.util('that is ', ' awesome')) // 这里会抛错
+  console.log(instance.util('that is ', 'awesome')) // 这里会抛错
 
   done()
 })
 ```
 在第二个注册器中调用 `instance.util` 会抛错, 因为 `util` 只存在第一个注册器的上下文中.<br>
-让我们更深入地看一下: 当使用 `register` api 每次都会创建一个新的上下文而且这避免了上文提到的这个状况. 但是注意, 封装只会在父级和同级中有效, 不会在子级中有效.
+让我们更深入地看一下: 当使用 `register` API 每次都会创建一个新的上下文而且这避免了上文提到的这个状况.
+
+但是注意, 封装只会在父级和同级中有效, 不会在子级中有效.
 ```js
 fastify.register((instance, opts, done) => {
   instance.decorate('util', (a, b) => a + b)
-  console.log(instance.util('that is ', ' awesome'))
+  console.log(instance.util('that is ', 'awesome'))
 
   fastify.register((instance, opts, done) => {
-    console.log(instance.util('that is ', ' awesome')) // 这里不会抛错
+    console.log(instance.util('that is ', 'awesome')) // 这里不会抛错
     done()
   })
 
@@ -106,14 +107,14 @@ fastify.register((instance, opts, done) => {
 })
 
 fastify.register((instance, opts, done) => {
-  console.log(instance.util('that is ', ' awesome')) // 这里会抛错 
+  console.log(instance.util('that is ', 'awesome')) // 这里会抛错 
 
   done()
 })
 ```
 *PS: 如果你需要全局的工具方法, 请注意要声明在应用根作用域上. 或者你可以使用 `fastify-plugin` 工具, [参考](#distribution).*
 
-`decorate` 不是唯一可以用来扩展服务器的功能的 api, 你还可以使用 `decorateRequest` 和 `decorateReply`.
+`decorate` 不是唯一可以用来扩展服务器的功能的 API, 你还可以使用 `decorateRequest` 和 `decorateReply`.
 
 *`decorateRequest` 和 `decorateReply`? 为什么我们已经有了 `decorate` 还需要它们?*<br>
 好问题, 是为了让开发者更方便地使用 Fastify. 让我们看看这个例子:
@@ -211,7 +212,7 @@ fastify.get('/plugin2', (request, reply) => {
 })
 ```
 现在每个请求都会运行工具方法, 很显然你可以注册任意多的需要的钩子方法.<br>
-你希望只在一个路由子集中执行钩子方法, 这个怎么做到?  对了, 封装!
+有时, 你希望只在一个路由子集中执行钩子方法, 这个怎么做到?  对了, 封装!
 
 ```js
 fastify.register((instance, opts, done) => {
@@ -237,9 +238,9 @@ fastify.get('/plugin2', (request, reply) => {
 
 你可能已经注意到, `request` and `reply` 不是标准的 Nodejs *request* 和 *response* 对象, 而是 Fastify 对象.<br>
 
-<a name="middlewares"></a>
+<a name="middleware"></a>
 ## 中间件
-Fastify [支持](https://github.com/fastify/docs-chinese/blob/master/docs/Middlewares.md) 开箱即用的 Express/Restify/Connect 中间件, 这意味着你可以直接插入你原来的代码而不会有任何问题! *(当然, 更快)*<br>
+Fastify [支持](https://github.com/fastify/docs-chinese/blob/master/docs/Middleware.md) 开箱即用的 Express/Restify/Connect 中间件, 这意味着你可以直接插入你原来的代码而不会有任何问题! *(当然, 更快)*<br>
 假设你是从 Express 或者 Restify 这类框架过来的, 并且你已经知道哪些中间件是你需要的, 你也不想重写这块工作, Fastify 正好可以帮助你实现目标.
 我们是怎么做到的? 请查看我们的中间件引擎, [middie](https://github.com/fastify/middie).
 ```js
@@ -249,10 +250,9 @@ fastify.use(yourMiddleware)
 
 <a name="distribution"></a>
 ## 如何处理封装与分发
-完美, 现在你知道了(几乎)所有的扩展 Fastify 的工具. 但可能在你尝试写代码的时候有些是需要注意的.<br>
-如何分发你的代码?
+完美, 现在你知道了(几乎)所有的扩展 Fastify 的工具. 但可能你遇到了一个大问题: 如何分发你的代码?
 
-我们推荐将所有代码包裹在一个`注册器`中分发, 这样你的插件可以支持异步启动 *(`decorate` 是一个同步 api)*, 例如建立数据库链接.
+我们推荐将所有代码包裹在一个`注册器`中分发, 这样你的插件可以支持异步启动 *(`decorate` 是一个同步 API)*, 例如建立数据库链接.
 
 *等等? 你不是告诉我 `register` 会创建封装的上下文, 那么我创建的不是就外层不可见了?*<br>
 是的, 我是说过. 但我没告诉你的是, 你可以通过 [`fastify-plugin`](https://github.com/fastify/fastify-plugin) 模块告诉 Fastify 不要进行封装.
@@ -269,7 +269,7 @@ function dbPlugin (fastify, opts, done) {
 
 module.exports = fp(dbPlugin)
 ```
-你还可以告诉 `fastify-plugin` 去检查安装的 Fastify 版本, 万一你需要特定的 api.
+你还可以告诉 `fastify-plugin` 去检查安装的 Fastify 版本, 万一你需要特定的 API.
 
 正如前面所述，Fastify 在 `.listen()`、`.inject()` 以及 `.ready()` 被调用，也即插件被声明 __之后__ 才开始加载插件。这么一来，即使插件通过 [`decorate`](https://github.com/fastify/docs-chinese/blob/master/docs/Decorators.md) 向外部的 fastify 实例注入了变量，在调用 `.listen()`、`.inject()` 和 `.ready()` 之前，这些变量是获取不到的。
 
@@ -296,7 +296,7 @@ fastify.register(require('your-plugin'), parent => {
 <a name="handle-errors"></a>
 ## 错误处理
 你的插件也可能在启动的时候失败. 或许你预料到这个并且在这种情况下有特定的处理逻辑. 你该怎么实现呢?
-`after` api 就是你需要的. `after` 注册一个回调, 在注册之后就会调用这个回调, 它可以有三个参数.<br>
+`after` API 就是你需要的. `after` 注册一个回调, 在注册之后就会调用这个回调, 它可以有三个参数.<br>
 回调会基于不同的参数而变化:
 
 1. 如果没有参数并且有个错误, 这个错误会传递到下一个错误处理.

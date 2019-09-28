@@ -473,7 +473,7 @@ Fastify 允许用户通过插件扩展功能。插件可以是一组路由、装
 
 <a name="use"></a>
 #### use
-向 Fastify 添加中间件，请看[这里](https://github.com/fastify/docs-chinese/blob/master/docs/Middlewares.md)。
+向 Fastify 添加中间件，请看[这里](https://github.com/fastify/docs-chinese/blob/master/docs/Middleware.md)。
 
 <a name="addHook"></a>
 #### addHook

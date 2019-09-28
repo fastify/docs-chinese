@@ -5,7 +5,7 @@
 * [服务器方法](https://github.com/fastify/docs-chinese/blob/master/docs/Server.md)
 * [路由](https://github.com/fastify/docs-chinese/blob/master/docs/Routes.md)
 * [日志](https://github.com/fastify/docs-chinese/blob/master/docs/Logging.md)
-* [中间件](https://github.com/fastify/docs-chinese/blob/master/docs/Middlewares.md)
+* [中间件](https://github.com/fastify/docs-chinese/blob/master/docs/Middleware.md)
 * [钩子方法](https://github.com/fastify/docs-chinese/blob/master/docs/Hooks.md)
 * [装饰器](https://github.com/fastify/docs-chinese/blob/master/docs/Decorators.md)
 * [验证和序列化](https://github.com/fastify/docs-chinese/blob/master/docs/Validation-and-Serialization.md)

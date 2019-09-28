@@ -2,14 +2,14 @@
 
 ## 中间件
 
-Fastify 提供了一个开箱即用、兼容 [Express](https://expressjs.com/) 与 [Restify](http://restify.com/) 的中间件的异步[中间件引擎](https://github.com/fastify/middie)。
+Fastify 提供了一个开箱即用的异步[中间件引擎](https://github.com/fastify/middie)。它兼容 [Express](https://expressjs.com/) 与 [Restify](http://restify.com/) 的中间件。
 
-*假如你需要可视化反馈来明白中间件何时执行，请看[生命周期](https://github.com/fastify/docs-chinese/blob/master/docs/Lifecycle.md)一文。*
+*想知道中间件何时执行，请看[生命周期](https://github.com/fastify/docs-chinese/blob/master/docs/Lifecycle.md)一文。*
 
 Fastify 的中间件不支持 `middleware(err, req, res, next)` 这一完整语法，因为错误在 Fastify 内部就被解决了。
 此外，Express 和 Restify 添加在 `req` 和 `res` 对象之上的方法，Fastify 也不支持。
 
-为了性能考虑，我们不推荐你使用一个打包了多个更小的中间件的中间件，例如 [*helmet*](https://helmetjs.github.io/)。我们建议你使用单个的模块：
+假如你使用一个打包了多个更小的中间件的中间件，例如 [*helmet*](https://helmetjs.github.io/)，为了性能考虑，我们建议你使用单个模块：
 
 ```js
 fastify.use(require('cors')())
@@ -56,4 +56,4 @@ fastify.use(['/css', '/js'], serveStatic(path.join(__dirname, '/assets')))
 
 <a name="express-middleware"></a>
 #### Express 中间件兼容性
-Express 很大程度上修改了 Node 原生的 `Request` 和 `Response` 对象，所以 Fastify 无法确保中间件一定完全兼容。一些 Express 特殊的功能，例如 `res.sendFile()`、`res.send()` 或者 `express.Router()` 的实例将无法在 Fastify 中正常工作。举个例子，[cors](https://github.com/expressjs/cors) 可以正常兼容但是 [passport](https://github.com/jaredhanson/passport) 就不可以。
+Express 很大程度上修改了 Node 原生的 Request 和 Response 对象，所以 Fastify 无法确保中间件一定完全兼容。一些 Express 特殊的功能，例如 `res.sendFile()`、`res.send()` 或者 `express.Router()` 的实例将无法在 Fastify 中正常工作。举个例子，[cors](https://github.com/expressjs/cors) 可以正常兼容但是 [passport](https://github.com/jaredhanson/passport) 就不可以。

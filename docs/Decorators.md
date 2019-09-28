@@ -4,13 +4,14 @@
 
 想给 Fastify 实例新增功能？`decorate` 正是你所需要的 API！
 
-`decorate` 允许你向 Fastify 实例添加新的属性。属性的值并不限于函数，它也可以是对象、字符串等。
+`decorate` 允许你向 Fastify 实例添加新的属性。属性的值的类型没有限制，可以是函数、对象、字符串等。
 
 <a name="usage"></a>
 ### 使用方法
 <a name="decorate"></a>
 **decorate**
 你只需调用 `decorate` 函数，并将新属性的名称与值作为参数传递即可。
+
 ```js
 fastify.decorate('utility', () => {
   // 新功能的代码
@@ -34,25 +35,27 @@ console.log(fastify.conf.db)
 
 <a name="decorate-reply"></a>
 **decorateReply**
-顾名思义，当你需要向 `Reply` 核心对象添加新方法时，使用 `decorateReply` API。同 `decorate` 一样，将新属性与其值作为参数传递便大功告成了：
+顾名思义，`decorateReply` API允许你向 `Reply` 核心对象添加新方法。同 `decorate` 一样，将新属性与其值作为参数传递便大功告成了：
+
 ```js
 fastify.decorateReply('utility', function () {
   // 新功能的代码
 })
 ```
 
-注：使用箭头函数会破坏 `this` 和 Fastify `reply` 实例的绑定。
+注：使用箭头函数会破坏 `this` 和 Fastify `Reply` 实例的绑定。
 
 <a name="decorate-request"></a>
 **decorateRequest**
 同理，使用 `decorateRequest` 可向 `Request` 核心对象新增方法。传递的参数同样也是新属性的名称以及值：
+
 ```js
 fastify.decorateRequest('utility', function () {
   // 新功能的代码
 })
 ```
 
-注：使用箭头函数会破坏 `this` 和 Fastify `reply` 实例的绑定。
+注：使用箭头函数会破坏 `this` 和 Fastify `Request` 实例的绑定。
 
 <a name="decorators-encapsulation"></a>
 #### 装饰器与封装
