@@ -162,7 +162,6 @@ fastify.get('/', options, async function (request, reply) {
   return processed
 })
 ```
-**警告**：不能返回 `undefined`。更多细节请看 [promise 取舍](#promise-resolution)。
 
 如你所见，我们不再使用 `reply.send` 向用户发送数据，只需返回消息主体就可以了！
 
@@ -174,8 +173,31 @@ fastify.get('/', options, async function (request, reply) {
   reply.send(processed)
 })
 ```
+
+假如在路由中，`reply.send()` 脱离了 promise 链，在一个基于回调的 API 中被调用，你可以使用 `await reply`：
+
+```js
+fastify.get('/', options, async function (request, reply) {
+  setImmediate(() => {
+    reply.send({ hello: 'world' })
+  })
+  await reply
+})
+```
+
+返回回复也是可行的：
+
+```js
+fastify.get('/', options, async function (request, reply) {
+  setImmediate(() => {
+    reply.send({ hello: 'world' })
+  })
+  return reply
+})
+```
+
 **警告:**
-* 如果你同时使用 `return` 与 `reply.send`，那么只会发送第一次，同时还会触发警告日志，因为你试图发送两次响应。
+* 如果你同时使用 `return value` 与 `reply.send(value)`，那么只会发送第一次，同时还会触发警告日志，因为你试图发送两次响应。
 * 不能返回 `undefined`。更多细节请看 [promise 取舍](#promise-resolution)。
 
 <a name="promise-resolution"></a>
