@@ -18,6 +18,8 @@ fastify.register(plugin, [options])
 + [`日志级别`](https://github.com/fastify/docs-chinese/blob/master/docs/Routes.md#custom-log-level)
 + [`前缀`](https://github.com/fastify/docs-chinese/blob/master/docs/Plugins.md#route-prefixing-options)
 
+**注意：当使用 fastify-plugin 时，这些选项会被忽略**
+
 Fastify 有可能在将来会直接支持其他的选项。 因此为了避免冲突, 插件应该考虑给选项加入命名空间。 举个例子, 插件 `foo` 可以像以下代码一样注册:
 
 ```js
