@@ -4,7 +4,7 @@
 
 钩子 (hooks) 让你能够监听应用或请求/响应生命周期之上的特定事件。使用 `fastify.addHook` 可以注册钩子。你必须在事件被触发之前注册相应的钩子，否则，事件将得不到处理。
 
-通过钩子方法，你可以在 Fastify 的生命周期内直接进行交互。有用于请求/响应的钩子，也有应用级钩子：
+通过钩子方法，你可以与 Fastify 的生命周期直接进行交互。有用于请求/响应的钩子，也有应用级钩子：
 
 - [请求/响应钩子](#requestreply-hooks)
   - [onRequest](#onRequest)
@@ -46,7 +46,7 @@ fastify.addHook('onRequest', async (request, reply) => {
   await asyncMethod()
   // 发生错误
   if (err) {
-    throw new Error('some errors occurred.')
+    throw new Error('Some errors occurred.')
   }
   return
 })
@@ -68,7 +68,7 @@ fastify.addHook('preParsing', async (request, reply) => {
   await asyncMethod()
   // 发生错误
   if (err) {
-    throw new Error('some errors occurred.')
+    throw new Error('Some errors occurred.')
   }
   return
 })
@@ -87,7 +87,7 @@ fastify.addHook('preValidation', async (request, reply) => {
   await asyncMethod()
   // 发生错误
   if (err) {
-    throw new Error('some errors occurred.')
+    throw new Error('Some errors occurred.')
   }
   return
 })
@@ -108,7 +108,7 @@ fastify.addHook('preHandler', async (request, reply) => {
   await asyncMethod()
   // 发生错误
   if (err) {
-    throw new Error('some errors occurred.')
+    throw new Error('Some errors occurred.')
   }
   return
 })
@@ -119,15 +119,15 @@ fastify.addHook('preHandler', async (request, reply) => {
 
 ```js
 fastify.addHook('preSerialization', (request, reply, payload, done) => {
-  var err = null;
-  var newPayload = { wrapped: payload }
+  const err = null;
+  const newPayload = { wrapped: payload }
   done(err, newPayload)
 })
 ```
 或使用 `async/await`
 ```js
 fastify.addHook('preSerialization', async (request, reply, payload) => {
-  return {wrapped: payload }
+  return { wrapped: payload }
 })
 ```
 
@@ -157,15 +157,15 @@ fastify.addHook('onError', async (request, reply, error) => {
 
 ```js
 fastify.addHook('onSend', (request, reply, payload, done) => {
-  var err = null;
-  var newPayload = payload.replace('some-text', 'some-new-text')
+  const err = null;
+  const newPayload = payload.replace('some-text', 'some-new-text')
   done(err, newPayload)
 })
 ```
 或使用 `async/await`：
 ```js
 fastify.addHook('onSend', async (request, reply, payload) => {
-  var newPayload = payload.replace('some-text', 'some-new-text')
+  const newPayload = payload.replace('some-text', 'some-new-text')
   return newPayload
 })
 ```
@@ -200,20 +200,20 @@ fastify.addHook('onResponse', async (request, reply) => {
   await asyncMethod()
   // 发生错误
   if (err) {
-    throw new Error('some errors occurred.')
+    throw new Error('Some errors occurred.')
   }
   return
 })
 ```
 
-当响应发出后，`onResponse` 钩子即被执行，因此在该钩子中你无法再向客户端发送数据了。但是你可以在此向外部服务发送数据，或是执行一些统计工作。
+`onResponse` 钩子在响应发出后被执行，因此在该钩子中你无法再向客户端发送数据了。但是你可以在此向外部服务发送数据，比如收集数据。
 
 ### 在钩子中管理错误
 在钩子的执行过程中如果发生了错误，只需将错误传递给 `done()`，Fastify 就会自动关闭请求，并发送一个相应的错误码给用户。
 
 ```js
 fastify.addHook('onRequest', (request, reply, done) => {
-  done(new Error('some error'))
+  done(new Error('Some error'))
 })
 ```
 
@@ -221,7 +221,7 @@ fastify.addHook('onRequest', (request, reply, done) => {
 ```js
 fastify.addHook('preHandler', (request, reply, done) => {
   reply.code(400)
-  done(new Error('some error'))
+  done(new Error('Some error'))
 })
 ```
 
@@ -229,11 +229,11 @@ fastify.addHook('preHandler', (request, reply, done) => {
 
 
 ### 在钩子中响应请求
-需要的话，你可以在路由控制器执行前响应一个请求。一个例子便是身份验证的钩子。如果你在 `onRequest` 或 `preHandler` 中发出响应，请使用 `reply.send`。如果是在中间件中，使用 `res.end`。
+需要的话，你可以在路由控制器执行前响应一个请求，例如进行身份验证。如果你在 `onRequest` 或 `preHandler` 中发出响应，请使用 `reply.send`。如果是在中间件中，使用 `res.end`。
 
 ```js
 fastify.addHook('onRequest', (request, reply, done) => {
-  reply.send('early response')
+  reply.send('Early response')
 })
 
 // 也可使用 async 函数
@@ -262,7 +262,7 @@ fastify.addHook('onRequest', (request, reply, done) => {
 <a name="on-close"></a>
 
 ### onClose
-使用 `fastify.close()` 停止服务器时被触发。当[插件](https://github.com/fastify/docs-chinese/blob/master/docs/Plugins.md)需要一个 "shutdown" 事件时有用，例如一个用于连接数据库的插件。<br>
+使用 `fastify.close()` 停止服务器时被触发。当[插件](https://github.com/fastify/docs-chinese/blob/master/docs/Plugins.md)需要一个 "shutdown" 事件时有用，例如关闭一个数据库连接。<br>
 该钩子的第一个参数是 Fastify 实例，第二个为 `done` 回调函数。
 ```js
 fastify.addHook('onClose', (instance, done) => {
@@ -286,7 +286,7 @@ fastify.addHook('onRoute', (routeOptions) => {
 ```
 <a name="on-register"></a>
 ### onRegister
-当注册一个新的插件，或创建了新的封装好的上下文后被触发。该钩子在插件的代码**之前**被执行。<br/>
+当注册一个新的插件，或创建了新的封装好的上下文后被触发。该钩子在注册的代码**之前**被执行。<br/>
 当你的插件需要知晓上下文何时创建完毕，并操作它们时，可以使用这一钩子。<br/>
 **注意**：被 [`fastify-plugin`](https://github.com/fastify/fastify-plugin) 所封装的插件不会触发该钩子。
 ```js

@@ -62,7 +62,7 @@ start()
 
 如此简单，棒极了！<br>
 可是，一个复杂的应用需要比上例多得多的代码。当你从头开始构建一个应用时，会遇到一些典型的问题，如多个文件的操作、异步引导，以及代码结构的布置。<br>
-幸运的是，Fastify 提供了一个易于使用的平台，它能帮助你解决不限于上述的诸多问题。
+幸运的是，Fastify 提供了一个易于使用的平台，它能帮助你解决不限于上述的诸多问题！
 
 > ## 注
 > 本文档中的示例，默认情况下只监听本地 `127.0.0.1` 端口。要监听所有有效的 IPv4 端口，需要将代码修改为监听 `0.0.0.0`，如下所示：
@@ -113,7 +113,7 @@ async function routes (fastify, options) {
 
 module.exports = routes
 ```
-这个例子调用了 `register` API。这一 API 是 Fastify 框架的核心，也是注册路由、插件等的唯一方法。
+这个例子调用了 `register` API，它是 Fastify 框架的核心，也是添加路由、插件等的唯一方法。
 
 在本文的开头，我们提到 Fastify 提供了帮助应用异步引导的基础功能。为什么这一功能十分重要呢？
 考虑一下，当存在数据库操作时，数据库连接显然要在服务器接受外部请求之前完成。该如何解决这一问题呢？<br>
@@ -184,7 +184,7 @@ module.exports = routes
 哇，真是快啊！<br>
 介绍了一些新概念后，让我们回顾一下迄今为止都做了些什么吧。<br>
 如你所见，我们可以使用 `register` 来注册数据库连接器或者路由。
-这是 Fastify 最棒的特性之一了。它使得插件按声明的顺序来加载，唯有当前插件加载完毕后，才会加载下一个插件。如此，我们便可以在第一个插件中注册数据库连接器，并在第二个插件中使用它。*(参见 [这里](https://github.com/fastify/docs-chinese/blob/master/docs/Plugins.md#handle-the-scope) 了解如何处理插件的作用域)*。
+这是 Fastify 最棒的特性之一了！它使得插件按声明的顺序来加载，唯有当前插件加载完毕后，才会加载下一个插件。如此，我们便可以在第一个插件中注册数据库连接器，并在第二个插件中使用它。*(参见 [这里](https://github.com/fastify/docs-chinese/blob/master/docs/Plugins.md#handle-the-scope) 了解如何处理插件的作用域)*。
 当调用函数 `fastify.listen()`、`fastify.inject()` 或 `fastify.ready()` 时，插件便开始加载了。
 
 我们还用到了 `decorate` API。现在来看看这一 API 是什么，以及它是如何运作的吧。
@@ -254,7 +254,7 @@ fastify.post('/', opts, async (request, reply) => {
 
 <a name="serialize-data"></a>
 ### 序列化数据
-Fastify 对 JSON 提供了优异的支持，极大地优化了解析 JSON 与序列化 JSON 输出的过程。<br>
+Fastify 对 JSON 提供了优异的支持，极大地优化了解析 JSON body 与序列化 JSON 输出的过程。<br>
 在 schema 的选项中设置 `response` 的值，能够加快 JSON 的序列化 (没错，这很慢！)，就像这样：
 ```js
 const opts = {
@@ -274,7 +274,7 @@ fastify.get('/', opts, async (request, reply) => {
   return { hello: 'world' }
 })
 ```
-就这么简单，序列化的过程达到了原先 2 倍甚至 3 倍的速度。这么做同时也保护了敏感数据不被泄露，因为 Fastify 仅对 schema 里出现的数据进行序列化。
+简单地指明 schema，序列化的过程就达到了原先 2-3 倍的速度。这么做同时也保护了潜在的敏感数据不被泄露，因为 Fastify 仅对 schema 里出现的数据进行序列化。
 请参阅 [验证与序列化](https://github.com/fastify/docs-chinese/blob/master/docs/Validation-and-Serialization.md)获取更多信息。
 
 <a name="extend-server"></a>

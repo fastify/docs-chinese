@@ -20,7 +20,7 @@ Fastify 遵循不全则无的原则，旨在精而优。因此，确保正确处
 <a name="FST_ERR_CTP_INVALID_TYPE"></a>
 #### FST_ERR_CTP_INVALID_TYPE
 
-content type 应为一个字符串。
+`Content-Type` 应为一个字符串。
 
 <a name="FST_ERR_CTP_EMPTY_TYPE"></a>
 #### FST_ERR_CTP_EMPTY_TYPE
@@ -45,7 +45,7 @@ content type 不能是一个空字符串。
 <a name="FST_ERR_CTP_INVALID_MEDIA_TYPE"></a>
 #### FST_ERR_CTP_INVALID_MEDIA_TYPE
 
-收到的 media type 不支持 (例如，不存在合适的 content-type 解析器)。
+收到的 media type 不支持 (例如，不存在合适的 `Content-Type` 解析器)。
 
 <a name="FST_ERR_CTP_INVALID_CONTENT_LENGTH"></a>
 #### FST_ERR_CTP_INVALID_CONTENT_LENGTH
