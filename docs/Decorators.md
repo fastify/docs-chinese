@@ -11,7 +11,6 @@
 <a name="decorate"></a>
 **decorate**
 你只需调用 `decorate` 函数，并将新属性的名称与值作为参数传递即可。
-
 ```js
 fastify.decorate('utility', () => {
   // 新功能的代码
