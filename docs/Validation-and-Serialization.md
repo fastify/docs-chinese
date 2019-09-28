@@ -293,6 +293,62 @@ fastify.post('/the/url', {
 * `error`：一个 `Error` 实例，或一个描述验证错误信息的字符串
 * `value`：通过了验证的数据
 
+<a name="schema-resolver"></a>
+#### Schema 解析器
+
+`schemaResolver` 需要与 `schemaCompiler` 结合起来使用，你不能在使用默认的 schema 编译器时使用它。当你的路由中有包含 `#ref` 关键字的复杂 schema 时，且使用自定义校验器时，它能派上用场。
+
+这是因为，对于 Fastify 而言，添加到自定义编译器的 schema 都是未知的，但是 `$ref` 路径却需要被解析。
+
+```js
+const fastify = require('fastify')()
+const Ajv = require('ajv')
+const ajv = new Ajv()
+ajv.addSchema({
+  $id: 'urn:schema:foo',
+  definitions: {
+    foo: { type: 'string' }
+  },
+  type: 'object',
+  properties: {
+    foo: { $ref: '#/definitions/foo' }
+  }
+})
+ajv.addSchema({
+  $id: 'urn:schema:response',
+  type: 'object',
+  required: ['foo'],
+  properties: {
+    foo: { $ref: 'urn:schema:foo#/definitions/foo' }
+  }
+})
+ajv.addSchema({
+  $id: 'urn:schema:request',
+  type: 'object',
+  required: ['foo'],
+  properties: {
+    foo: { $ref: 'urn:schema:foo#/definitions/foo' }
+  }
+})
+fastify.setSchemaCompiler(schema => ajv.compile(schema))
+fastify.setSchemaResolver((ref) => {
+  return ajv.getSchema(ref).schema
+})
+fastify.route({
+  method: 'POST',
+  url: '/',
+  schema: {
+    body: ajv.getSchema('urn:schema:request').schema,
+    response: {
+      '2xx': ajv.getSchema('urn:schema:response').schema
+    }
+  },
+  handler (req, reply) {
+    reply.send({ foo: 'bar' })
+  }
+})
+```
+
 <a name="serialization"></a>
 ### 序列化
 通常，你会通过 JSON 格式将数据发送至客户端。鉴于此，Fastify 提供了一个强大的工具——[fast-json-stringify](https://www.npmjs.com/package/fast-json-stringify) 来帮助你。当你提供了输出的 schema 时，它能派上用场。我们推荐你编写一个输出的 schema，因为这能让应用的吞吐量提升 100-400% (根据 payload 的不同而有所变化)，也能防止敏感信息的意外泄露。

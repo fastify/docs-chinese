@@ -548,6 +548,10 @@ fastify.setReplySerializer(function (payload, statusCode){
 #### setSchemaCompiler
 为所有的路由设置 schema 编译器 (schema compiler)，请看[这里](https://github.com/fastify/docs-chinese/blob/master/docs/Validation-and-Serialization.md#schema-compiler)了解更多信息。
 
+<a name="set-schema-resolver"></a>
+#### setSchemaResolver
+为所有的路由设置 schema `$ref` 解析器 (schema `$ref` resolver)，请看[这里](https://github.com/fastify/docs-chinese/blob/master/docs/Validation-and-Serialization.md#schema-resolver)了解更多信息。
+
 <a name="schema-compiler"></a>
 #### schemaCompiler
 `setSchemaCompiler` 方法的简写。用于设置 schema 编译器函数，也可用于返回全部路由的 schema 编译器。
