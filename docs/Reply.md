@@ -4,6 +4,7 @@
 - [回复](#reply)
   - [简介](#introduction)
   - [.code(statusCode)](#codestatuscode)
+  - [.statusCode](#statusCode)
   - [.header(key, value)](#headerkey-value)
   - [.getHeader(key)](#getheaderkey)
   - [.removeHeader(key)](#removeheaderkey)
@@ -31,6 +32,7 @@ Reply 是 Fastify 的一个核心对象。它暴露了以下函数及属性：
 
 - `.code(statusCode)` - 设置状态码。
 - `.status(statusCode)` - `.code(statusCode)` 的别名。
+- `.statusCode` - 获取或设置 HTTP 状态码。
 - `.header(name, value)` - 设置响应 header。
 - `.getHeader(name)` - 获取某个 header 的值。
 - `.removeHeader(key)` - 清除已设置的 header 的值。
@@ -67,6 +69,15 @@ fastify.get('/', {config: {foo: 'bar'}}, function (request, reply) {
 <a name="code"></a>
 ### .code(statusCode)
 如果没有设置 `reply.code`，`statusCode` 会是 `200`。
+
+<a name="statusCode"></a>
+### .statusCode
+获取或设置 HTTP 状态码。作为 setter 使用时，是 `reply.code()` 的别名。
+```js
+if (reply.statusCode >= 299) {
+  reply.statusCode = 500
+}
+```
 
 <a name="header"></a>
 ### .header(key, value)
