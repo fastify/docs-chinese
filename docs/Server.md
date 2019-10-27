@@ -64,12 +64,22 @@ fastify.get('/bar', function (req, reply) {
 <a name="factory-on-proto-poisoning"></a>
 ### `onProtoPoisoning`
 
-由 [bourne](https://github.com/hapijs/bourne) 提供的功能，指定解析带有 `__proto__` 键的 JSON 对象时框架的行为。
+由 [secure-json-parse](https://github.com/fastify/secure-json-parse) 提供的功能，指定解析带有 `__proto__` 键的 JSON 对象时框架的行为。
 更多关于原型污染 (prototype poisoning) 的内容请看 https://hueniverse.com/a-tale-of-prototype-poisoning-2610fa170061。
 
 允许的值为 `'error'`、`'remove'` 与 `'ignore'`。
 
 + 默认值：`'error'`
+
+<a name="factory-on-constructor-poisoning"></a>
+### `onConstructorPoisoning`
+
+由 [secure-json-parse](https://github.com/fastify/secure-json-parse) 提供的功能，指定解析带有 `constructor` 的 JSON 对象时框架的行为。
+更多关于原型污染的内容请看 https://hueniverse.com/a-tale-of-prototype-poisoning-2610fa170061。
+
+允许的值为 `'error'`、`'remove'` 与 `'ignore'`。
+
++ 默认值：`'ignore'`
 
 <a name="factory-logger"></a>
 ### `logger`
