@@ -11,7 +11,7 @@ Request 是 Fastify 的核心对象，包含了一下的字段:
 - `id` - 请求 id
 - `log` - 请求的日志实例
 - `ip` - 请求方的 ip 地址
-- `ips` - x-forwarder-for header 中保存的请求源 ip 数组 (仅当 [`trustProxy`](https://github.com/fastify/fastify/blob/master/docs/Server.md#factory-trust-proxy) 开启时有效)
+- `ips` - x-forwarder-for header 中保存的请求源 ip 数组 (仅当 [`trustProxy`](https://github.com/fastify/docs-chinese/blob/master/docs/Server.md#factory-trust-proxy) 开启时有效)
 - `hostname` - 请求方的主机名
 
 ```js

@@ -297,7 +297,7 @@ const versioning = {
 
 + 默认值：`true`
 
-默认情况下，Fastify 会向 Node 原生的 request 对象添加 `ip`、`ips`、`hostname` 以及 `log` 属性 (参见 [`Request`](https://github.com/fastify/fastify/blob/master/docs/Request.md))，向原生的 response 对象添加 `log` 属性。你可以将 `modifyCoreObjects` 设为 `false` 来避免上述行为。
+默认情况下，Fastify 会向 Node 原生的 request 对象添加 `ip`、`ips`、`hostname` 以及 `log` 属性 (参见 [`Request`](https://github.com/fastify/docs-chinese/blob/master/docs/Request.md))，向原生的 response 对象添加 `log` 属性。你可以将 `modifyCoreObjects` 设为 `false` 来避免上述行为。
 
 ```js
 const fastify = Fastify({ modifyCoreObjects: true }) // 默认值
