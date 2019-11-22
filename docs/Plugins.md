@@ -16,6 +16,7 @@ fastify.register(plugin, [options])
 `fastify.register` 可选参数列表支持一组预定义的 Fastify 可用的参数, 除了当插件使用了 [fastify-plugin](https://github.com/fastify/fastify-plugin)。 选项对象会在插件被调用传递进去, 无论这个插件是否用了 fastify-plugin。 当前支持的选项有:
 
 + [`日志级别`](https://github.com/fastify/docs-chinese/blob/master/docs/Routes.md#custom-log-level)
++ [`日志序列化器`](https://github.com/fastify/docs-chinese/blob/master/docs/Routes.md#custom-log-serializer)
 + [`前缀`](https://github.com/fastify/docs-chinese/blob/master/docs/Plugins.md#route-prefixing-options)
 
 **注意：当使用 fastify-plugin 时，这些选项会被忽略**
