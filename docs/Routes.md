@@ -1,14 +1,34 @@
 <h1 align="center">Fastify</h1>
 
 ## 路由
-Fastify 支持简写定义与完整定义两种方式来设定路由。让我们先从第二种开始吧：
+
+路由方法设置你程序的终点。
+你可以使用简写定义与完整定义两种方式来设定路由。
+
+- [完整定义](#full-declaration)
+- [路由选项](#options)
+- [简写定义](#shorthand-declaration)
+- [URL 参数](#url-building)
+- [使用 `async`/`await`](#async-await)
+- [Promise 取舍](#promise-resolution)
+- [路由前缀](#route-prefixing)
+- 日志
+  - [自定义日志级别](#custom-log-level)
+  - [自定义日志序列化器](#custom-log-serializer)
+- [配置路由的处理函数](#routes-config)
+- [路由版本](#version)
+
 <a name="full-declaration"></a>
 ### 完整定义
+
 ```js
 fastify.route(options)
 ```
-* `method`：支持的 HTTP 请求方法。目前支持 `'DELETE'`、`'GET'`、`'HEAD'`、`'PATCH'`、`'POST'`、`'PUT'` 以及 `'OPTIONS'`。它还可以是一个 HTTP 方法的数组。
 
+<a name="options"></a>
+### 路由选项
+
+* `method`：支持的 HTTP 请求方法。目前支持 `'DELETE'`、`'GET'`、`'HEAD'`、`'PATCH'`、`'POST'`、`'PUT'` 以及 `'OPTIONS'`。它还可以是一个 HTTP 方法的数组。
 * `url`：路由匹配的 url 路径 (别名：`path`)。
 * `schema`：用于验证请求与回复的 schema 对象。
 必须符合 [JSON Schema](http://json-schema.org/) 格式。请看[这里](https://github.com/fastify/docs-chinese/blob/master/docs/Validation-and-Serialization.md)了解更多信息。
@@ -18,13 +38,17 @@ fastify.route(options)
   * `params`：校验 url 参数。
   * `response`：过滤并生成用于响应的 schema，能帮助提升 10-20% 的吞吐量。
 * `attachValidation`：当 schema 校验出错时，将一个 `validationError` 对象添加到请求中，否则错误将被发送给错误处理函数。
-* `preValidation(request, reply, done)`在共享的 `preValidation` 钩子之后执行的[函数](https://github.com/fastify/docs-chinese/blob/master/docs/Hooks.md#route-hooks)，在路由层进行认证等场景中会有用处。它还可以是一个函数数组。
-* `preHandler(request, reply, done)`：处理请求之前调用的[钩子函数](https://github.com/fastify/docs-chinese/blob/master/docs/Hooks.md#route-hooks)。它还可以是一个函数数组。
-* `preSerialization(request, reply, payload, done)`：序列化之前调用的[钩子函数](https://github.com/fastify/docs-chinese/blob/master/docs/Hooks.md#route-hooks)。它还可以是一个函数数组。
+* `onRequest(request, reply, done)`: 每当接收到一个请求时触发的[函数](https://github.com/fastify/docs-chinese/blob/master/docs/Hooks.md#onrequest)。可以是一个函数数组。
+* `preParsing(request, reply, done)`: 解析请求前调用的[函数](https://github.com/fastify/docs-chinese/blob/master/docs/Hooks.md#preparsing)。可以是一个函数数组。
+* `preValidation(request, reply, done)`：在共享的 `preValidation` 钩子之后执行的[函数](https://github.com/fastify/docs-chinese/blob/master/docs/Hooks.md#route-hooks)，在路由层进行认证等场景中会有用处。可以是一个函数数组。
+* `preHandler(request, reply, done)`：处理请求之前调用的[函数](https://github.com/fastify/docs-chinese/blob/master/docs/Hooks.md#route-hooks)。可以是一个函数数组。
+* `preSerialization(request, reply, payload, done)`：序列化之前调用的[函数](https://github.com/fastify/docs-chinese/blob/master/docs/Hooks.md#route-hooks)。可以是一个函数数组。
+* `onResponse(request, reply, payload, done)`: 当响应发送后调用的[函数](https://github.com/fastify/docs-chinese/blob/master/docs/Hooks.md#onresponse)。因此，在这个函数内部，不允许再向客户端发送数据。可以是一个函数数组。
 * `handler(request, reply)`：处理请求的函数。
 * `schemaCompiler(schema)`：生成校验 schema 的函数。请看[这里](https://github.com/fastify/docs-chinese/blob/master/docs/Validation-and-Serialization.md#schema-compiler)。
 * `bodyLimit`：一个以字节为单位的整形数，默认值为 `1048576` (1 MiB)，防止默认的 JSON 解析器解析超过此大小的请求主体。你也可以通过 `fastify(options)`，在首次创建 Fastify 实例时全局设置该值。
 * `logLevel`：设置日志级别。详见下文。
+* `logSerializers`：设置当前路由的日志序列化器。
 * `config`：存放自定义配置的对象。
 * `version`：一个符合[语义化版本控制规范 (semver)](http://semver.org/) 的字符串。[示例](https://github.com/fastify/docs-chinese/blob/master/docs/Routes.md#version)。
 `prefixTrailingSlash`：一个字符串，决定如何处理带前缀的 `/` 路由。
@@ -35,7 +59,6 @@ fastify.route(options)
   `request` 的相关内容请看[请求](https://github.com/fastify/docs-chinese/blob/master/docs/Request.md)一文。
 
   `reply` 请看[回复](https://github.com/fastify/docs-chinese/blob/master/docs/Reply.md)一文。
-
 
 示例：
 ```js
@@ -230,6 +253,7 @@ fastify.register(require('./routes/v2/users'), { prefix: '/v2' })
 
 fastify.listen(3000)
 ```
+
 ```js
 // routes/v1/users.js
 module.exports = function (fastify, opts, done) {
@@ -237,6 +261,7 @@ module.exports = function (fastify, opts, done) {
   done()
 }
 ```
+
 ```js
 // routes/v2/users.js
 module.exports = function (fastify, opts, done) {
@@ -275,6 +300,7 @@ fastify.register(require('./routes/events'), { logLevel: 'debug' })
 
 fastify.listen(3000)
 ```
+
 你也可以直接将其传给路由：
 ```js
 fastify.get('/', { logLevel: 'warn' }, (request, reply) => {
@@ -283,6 +309,59 @@ fastify.get('/', { logLevel: 'warn' }, (request, reply) => {
 ```
 *自定义的日志级别仅对路由生效，通过 `fastify.log` 访问的全局日志并不会受到影响。*
 
+<a name="custom-log-serializer"></a>
+### 自定义日志序列化器
+
+在某些上下文里，你也许需要记录一个大型对象，但这在其他路由中是个负担。这时，你可以定义一些[`序列化器 (serializer)`](https://github.com/pinojs/pino/blob/master/docs/api.md#bindingsserializers-object)，并将它们设置在正确的上下文之上！
+
+```js
+const fastify = require('fastify')({ logger: true })
+fastify.register(require('./routes/user'), { 
+  logSerializers: {
+    user: (value) => `My serializer one - ${value.name}`
+  } 
+})
+fastify.register(require('./routes/events'), {
+  logSerializers: {
+    user: (value) => `My serializer two - ${value.name} ${value.surname}`
+  }
+})
+fastify.listen(3000)
+```
+
+你可以通过上下文来继承序列化器：
+
+```js
+const fastify = Fastify({ 
+  logger: {
+    level: 'info',
+    serializers: {
+      user (req) {
+        return {
+          method: req.method,
+          url: req.url,
+          headers: req.headers,
+          hostname: req.hostname,
+          remoteAddress: req.ip,
+          remotePort: req.connection.remotePort
+        }
+      }
+    }
+  } 
+})
+fastify.register(context1, { 
+  logSerializers: {
+    user: value => `My serializer father - ${value}`
+  } 
+})
+async function context1 (fastify, opts) {
+  fastify.get('/', (req, reply) => {
+    req.log.info({ user: 'call father serializer', key: 'another key' }) // 打印结果： { user: 'My serializer father - call father  serializer', key: 'another key' }
+    reply.send({})
+  })
+}
+fastify.listen(3000)
+```
 
 <a name="routes-config"></a>
 ### 配置
@@ -304,10 +383,12 @@ fastify.listen(3000)
 
 <a name="version"></a>
 ### 版本
+
 #### 默认
 需要的话，你可以提供一个版本选项，它允许你为同一个路由声明不同的版本。版本号请遵循 [semver](http://semver.org/) 规范。<br/>
 Fastify 会自动检测 `Accept-Version` header，并将请求分配给相应的路由 (当前尚不支持 semver 规范中的 advanced ranges 与 pre-releases 语法)。<br/>
 *请注意，这一特性会降低路由的性能。*
+
 ```js
 fastify.route({
   method: 'GET',
@@ -328,7 +409,9 @@ fastify.inject({
   // { hello: 'world' }
 })
 ```
+
 如果你声明了多个拥有相同主版本或次版本号的版本，Fastify 总是会根据 `Accept-Version` header 的值选择最兼容的版本。<br/>
 假如请求未带有 `Accept-Version` header，那么将返回一个 404 错误。
+
 #### 自定义
 新建实例时，可以通过设置 [`versioning`](https://github.com/fastify/docs-chinese/blob/master/docs/Server.md#versioning) 来自定义版本号逻辑。
