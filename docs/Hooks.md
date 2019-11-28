@@ -284,6 +284,20 @@ fastify.addHook('onRoute', (routeOptions) => {
   routeOptions.prefix
 })
 ```
+
+如果在编写插件时，需要自定义程序的路由，比如修改选项或添加新的路由层钩子，你可以在这里添加。
+
+```js
+fastify.addHook('onRoute', (routeOptions) => {
+  function onPreSerialization(request, reply, payload, done) {
+    // 其他代码
+    done(null, payload)
+  }
+  
+  routeOptions.preSerialization = [...routeOptions.preSerialization, onPreSerialization]
+})
+```
+
 <a name="on-register"></a>
 ### onRegister
 当注册一个新的插件，或创建了新的封装好的上下文后被触发。该钩子在注册的代码**之前**被执行。<br/>
@@ -364,7 +378,7 @@ fastify.addHook('preHandler', (request, reply, done) => {
 
 fastify.addHook('preSerialization', (request, reply, payload, done) => {
   // 你的代码
-  done()
+  done(null, payload)
 })
 
 fastify.route({
@@ -398,7 +412,7 @@ fastify.route({
   //   done()
   // }],
   preSerialization: (request, reply, payload, done) => {
-    // 操作 payload
+    // 该钩子总是在共享的 `preSerialization` 钩子后被执行
     done(null, payload)
   },
   handler: function (request, reply) {
