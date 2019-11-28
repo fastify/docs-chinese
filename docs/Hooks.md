@@ -343,13 +343,12 @@ fastify.addHook('onRequest', function (request, reply, done) {
 注：使用箭头函数会破坏 Fastify 实例对 this 的绑定。
 
 <a name="route-hooks"></a>
+
 ## 路由层钩子
 你可以为**单个**路由声明一个或多个自定义的 [onRequest](#onRequest)、[onReponse](#onResponse)、[preParsing](#preParsing)、[preValidation](#preValidation)、[preHandler](#preHandler) 与 [preSerialization](#preSerialization) 钩子。
 如果你这么做，这些钩子总是会作为同一类钩子中的最后一个被执行。<br/>
 当你需要进行认证时，这会很有用，而 [preParsing](#preParsing) 与 [preValidation](#preValidation) 钩子正是为此而生。
 你也可以通过数组定义多个路由层钩子。
-
-让我们看下范例：
 
 ```js
 fastify.addHook('onRequest', (request, reply, done) => {
