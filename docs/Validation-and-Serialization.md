@@ -320,7 +320,7 @@ Fastify 使用的 `ajv` 基本配置如下：
 
 上述配置可通过 [`ajv.customOptions`](https://github.com/fastify/docs-chinese/blob/master/docs/Server.md#factory-ajv) 修改。
 
-假如你需要改变或增加额外的选项，创建一个自定义的实例，并覆盖已存在的实例：
+假如你想改变或增加额外的选项，你需要创建一个自定义的实例，并覆盖已存在的实例：
 
 ```js
 const fastify = require('fastify')()
