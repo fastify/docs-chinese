@@ -295,7 +295,8 @@ fastify.addHook('onRoute', (routeOptions) => {
     done(null, payload)
   }
   
-  routeOptions.preSerialization = [...routeOptions.preSerialization, onPreSerialization]
+  // preSerialization 可以是数组或 undefined
+  routeOptions.preSerialization = [...(routeOptions.preSerialization || []), onPreSerialization]
 })
 ```
 
