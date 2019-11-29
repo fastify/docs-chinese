@@ -297,7 +297,7 @@ const versioning = {
 
 + 默认值：`true`
 
-默认情况下，Fastify 会向 Node 原生的 request 对象添加 `ip`、`ips`、`hostname` 以及 `log` 属性 (参见 [`Request`](https://github.com/fastify/fastify/blob/master/docs/Request.md))，向原生的 response 对象添加 `log` 属性。你可以将 `modifyCoreObjects` 设为 `false` 来避免上述行为。
+默认情况下，Fastify 会向 Node 原生的 request 对象添加 `ip`、`ips`、`hostname` 以及 `log` 属性 (参见 [`Request`](https://github.com/fastify/docs-chinese/blob/master/docs/Request.md))，向原生的 response 对象添加 `log` 属性。你可以将 `modifyCoreObjects` 设为 `false` 来避免上述行为。
 
 ```js
 const fastify = Fastify({ modifyCoreObjects: true }) // 默认值
@@ -334,6 +334,42 @@ fastify.get('/', (request, reply) => {
 如果为 `false`，服务器会正常处理请求。
 
 + 默认值：`true`
+
+<a name="factory-ajv"></a>
+### `ajv`
+
+配置 Fastify 使用的 ajv 实例。这使得你无需提供一个自定义的实例。
+
++ 默认值：
+
+```js
+{
+  customOptions: {
+    removeAdditional: true,
+    useDefaults: true,
+    coerceTypes: true,
+    allErrors: true,
+    nullable: true
+  },
+  plugins: []
+}
+```
+
+```js
+const fastify = require('fastify')({
+  ajv: {
+    customOptions: {
+      nullable: false // 参见 [ajv 的配置选项](https://ajv.js.org/#options)
+    },
+    plugins: [
+      require('ajv-merge-patch')
+      [require('ajv-keywords'), 'instanceof'];
+      // 用法： [plugin, pluginOptions] - 插件与选项
+      // 用法： plugin - 仅插件
+    ]
+  }
+})
+```
 
 ## 实例
 
