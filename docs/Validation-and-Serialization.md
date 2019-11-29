@@ -233,6 +233,74 @@ fastify.register((instance, opts, done) => {
 | /sub  | one, two        |
 | /deep | one, two, three |
 
+<a name="ajv-plugins"></a>
+#### Ajv 插件
+
+你可以提供一组用于 Ajv 的插件：
+
+> 插件格式参见 [`ajv 选项`](https://github.com/fastify/docs-chinese/blob/master/docs/Server.md#factory-ajv)
+```js
+const fastify = require('fastify')({
+  ajv: {
+    plugins: [
+      require('ajv-merge-patch')
+    ]
+  }
+})
+fastify.route({
+  method: 'POST',
+  url: '/',
+  schema: {
+    body: {
+      $patch: {
+        source: {
+          type: 'object',
+          properties: {
+            q: {
+              type: 'string'
+            }
+          }
+        },
+        with: [
+          {
+            op: 'add',
+            path: '/properties/q',
+            value: { type: 'number' }
+          }
+        ]
+      }
+    }
+  },
+  handler (req, reply) {
+    reply.send({ ok: 1 })
+  }
+})
+fastify.route({
+  method: 'POST',
+  url: '/',
+  schema: {
+    body: {
+      $merge: {
+        source: {
+          type: 'object',
+          properties: {
+            q: {
+              type: 'string'
+            }
+          }
+        },
+        with: {
+          required: ['q']
+        }
+      }
+    }
+  },
+  handler (req, reply) {
+    reply.send({ ok: 1 })
+  }
+})
+```
+
 <a name="schema-compiler"></a>
 #### Schema 编译器
 
@@ -250,7 +318,9 @@ Fastify 使用的 `ajv` 基本配置如下：
 }
 ```
 
-上述配置无法被修改。假如你想改变或新增配置选项，你需要创建一个自定义的实例，并覆盖已存在的实例：
+上述配置可通过 [`ajv.customOptions`](https://github.com/fastify/docs-chinese/blob/master/docs/Server.md#factory-ajv) 修改。
+
+假如你需要改变或增加额外的选项，创建一个自定义的实例，并覆盖已存在的实例：
 
 ```js
 const fastify = require('fastify')()

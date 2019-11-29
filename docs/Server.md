@@ -335,6 +335,42 @@ fastify.get('/', (request, reply) => {
 
 + 默认值：`true`
 
+<a name="factory-ajv"></a>
+### `ajv`
+
+配置 Fastify 使用的 ajv 实例。这使得你无需提供一个自定义的实例。
+
++ 默认值：
+
+```js
+{
+  customOptions: {
+    removeAdditional: true,
+    useDefaults: true,
+    coerceTypes: true,
+    allErrors: true,
+    nullable: true
+  },
+  plugins: []
+}
+```
+
+```js
+const fastify = require('fastify')({
+  ajv: {
+    customOptions: {
+      nullable: false // 参见 [ajv 的配置选项](https://ajv.js.org/#options)
+    },
+    plugins: [
+      require('ajv-merge-patch')
+      [require('ajv-keywords'), 'instanceof'];
+      // 用法： [plugin, pluginOptions] - 插件与选项
+      // 用法： plugin - 仅插件
+    ]
+  }
+})
+```
+
 ## 实例
 
 ### 服务器方法
