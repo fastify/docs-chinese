@@ -319,7 +319,7 @@ fastify.register(async (instance, opts) => {
 
 fastify.register(async (instance, opts) => {
   console.log(instance.data) // []
-})
+}), { prefix: '/hello' })
 
 fastify.addHook('onRegister', (instance, opts) => {
   // 从旧数组浅拷贝，
