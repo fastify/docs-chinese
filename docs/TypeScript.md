@@ -216,26 +216,42 @@ server.get('/ping', (request, reply) => {
 以下代码展示了 `fastify-static` 插件的 typings。
 
 ```ts
+/// <reference types="node" />
+
 // 导入 fastify typings
-import fastify = require("fastify");
-// 导入必需的 http typings
+import * as fastify from 'fastify';
+
+// 导入必需的 http, http2, https typings
 import { Server, IncomingMessage, ServerResponse } from "http";
+import { Http2SecureServer, Http2Server, Http2ServerRequest, Http2ServerResponse } from "http2";
+import * as https from "https";
+type HttpServer = Server | Http2Server | Http2SecureServer | https.Server;
+type HttpRequest = IncomingMessage | Http2ServerRequest;
+type HttpResponse = ServerResponse | Http2ServerResponse;
 
 // 拓展 fastify typings
 declare module "fastify" {
-    interface FastifyReply<HttpResponse> {
-        sendFile(filename: string): FastifyReply<HttpResponse>;
-    }
+  interface FastifyReply<HttpResponse> {
+    sendFile(filename: string): FastifyReply<HttpResponse>;
+  }
 }
 
 // 使用 fastify.Plugin 声明插件的类型
-declare const fastifyStatic: fastify.Plugin<Server, IncomingMessage, ServerResponse, {
+declare function fastifyStatic(): fastify.Plugin<
+  Server,
+  IncomingMessage,
+  ServerResponse,
+  {
     root: string;
     prefix?: string;
     serve?: boolean;
     decorateReply?: boolean;
     schemaHide?: boolean;
     setHeaders?: (...args: any[]) => void;
+    redirect?: boolean;
+    wildcard?: boolean | string;
+
+    // `send` 的选项
     acceptRanges?: boolean;
     cacheControl?: boolean;
     dotfiles?: boolean;
@@ -245,7 +261,12 @@ declare const fastifyStatic: fastify.Plugin<Server, IncomingMessage, ServerRespo
     index?: string[];
     lastModified?: boolean;
     maxAge?: string | number;
-}>;
+  }
+>;
+
+declare namespace fastifyStatic {
+  interface FastifyStaticOptions {}
+}
 
 // 导出插件类型
 export = fastifyStatic;
