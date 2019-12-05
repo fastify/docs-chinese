@@ -40,9 +40,10 @@ fastify.route(options)
 * `attachValidation`：当 schema 校验出错时，将一个 `validationError` 对象添加到请求中，否则错误将被发送给错误处理函数。
 * `onRequest(request, reply, done)`: 每当接收到一个请求时触发的[函数](https://github.com/fastify/docs-chinese/blob/master/docs/Hooks.md#onrequest)。可以是一个函数数组。
 * `preParsing(request, reply, done)`: 解析请求前调用的[函数](https://github.com/fastify/docs-chinese/blob/master/docs/Hooks.md#preparsing)。可以是一个函数数组。
-* `preValidation(request, reply, done)`：在共享的 `preValidation` 钩子之后执行的[函数](https://github.com/fastify/docs-chinese/blob/master/docs/Hooks.md#route-hooks)，在路由层进行认证等场景中会有用处。可以是一个函数数组。
-* `preHandler(request, reply, done)`：处理请求之前调用的[函数](https://github.com/fastify/docs-chinese/blob/master/docs/Hooks.md#route-hooks)。可以是一个函数数组。
-* `preSerialization(request, reply, payload, done)`：序列化之前调用的[函数](https://github.com/fastify/docs-chinese/blob/master/docs/Hooks.md#route-hooks)。可以是一个函数数组。
+* `preValidation(request, reply, done)`：在共享的 `preValidation` 钩子之后执行的[函数](https://github.com/fastify/docs-chinese/blob/master/docs/Hooks.md#prevalidation)，在路由层进行认证等场景中会有用处。可以是一个函数数组。
+* `preHandler(request, reply, done)`：处理请求之前调用的[函数](https://github.com/fastify/docs-chinese/blob/master/docs/Hooks.md#prehandler)。可以是一个函数数组。
+* `preSerialization(request, reply, payload, done)`：序列化之前调用的[函数](https://github.com/fastify/docs-chinese/blob/master/docs/Hooks.md#preserialization)。可以是一个函数数组。
+* `onSend(request, reply, payload, done)`: 响应即将发送前调用的[函数](https://github.com/fastify/docs-chinese/blob/master/docs/Hooks.md#route-hooks)。可以是一个函数数组。
 * `onResponse(request, reply, payload, done)`: 当响应发送后调用的[函数](https://github.com/fastify/docs-chinese/blob/master/docs/Hooks.md#onresponse)。因此，在这个函数内部，不允许再向客户端发送数据。可以是一个函数数组。
 * `handler(request, reply)`：处理请求的函数。
 * `schemaCompiler(schema)`：生成校验 schema 的函数。请看[这里](https://github.com/fastify/docs-chinese/blob/master/docs/Validation-and-Serialization.md#schema-compiler)。
