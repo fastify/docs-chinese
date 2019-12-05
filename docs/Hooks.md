@@ -315,19 +315,22 @@ fastify.register(async (instance, opts) => {
   instance.register(async (instance, opts) => {
     instance.data.push('world')
     console.log(instance.data) // ['hello', 'world']
-  })
-})
+  }), { prefix: '/hola' })
+}), { prefix: '/ciao' })
 
 fastify.register(async (instance, opts) => {
   console.log(instance.data) // []
 })
 
-fastify.addHook('onRegister', (instance) => {
+fastify.addHook('onRegister', (instance, opts) => {
   // 从旧数组浅拷贝，
   // 生成一个新数组，
   // 使用户获得一个
   // 封装好的 `data` 的实例
   instance.data = instance.data.slice()
+
+  // 新注册实例的选项
+  console.log(opts.prefix)
 })
 ```
 
