@@ -21,6 +21,7 @@ import { Server, IncomingMessage, ServerResponse } from 'http'
 // 创建一个 http 服务器，将 http 对应版本所使用的 typings 传递过去。
 // 这么做我们便能获知路由底层 http 对象的结构。
 // 如果使用 http2，你应该传递 <http2.Http2Server, http2.Http2ServerRequest, http2.Http2ServerResponse>
+// 如果使用 https，则是 http2.Http2SecureServer 或 http.SecureServer，而不是 Server。
 const server: fastify.FastifyInstance<Server, IncomingMessage, ServerResponse> = fastify({})
 
 const opts: fastify.RouteShorthandOptions = {
