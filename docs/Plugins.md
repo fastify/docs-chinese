@@ -96,6 +96,31 @@ await fastify.ready()
 
 await fastify.listen(3000)
 ```
+
+<a name="error-handling"></a>
+#### ESM 的支持
+
+自 [Node.js `v13.3.0`](https://nodejs.org/api/esm.html) 开始， ESM 也被支持了！
+
+```js
+// main.mjs
+import Fastify from 'fastify'
+const fastify = Fastify()
+
+fastify.register(import('./plugin.mjs'))
+
+fastify.listen(3000, console.log)
+
+// plugin.mjs
+async function plugin (fastify, opts) {
+  fastify.get('/', async (req, reply) => {
+    return { hello: 'world' }
+  })
+}
+
+export default plugin
+```
+
 <a name="create-plugin"></a>
 ### 创建插件
 创建插件非常简单, 你只需要创建一个方法, 这个方法接收三个参数: `fastify` 实例、`options` 选项和 `done` 回调。<br>
