@@ -293,6 +293,22 @@ fastify.register(require('your-plugin'), parent => {
 ```
 在上面的例子中，`register` 方法的第二个参数的 `parent` 变量是注册了插件的**外部 fastify 实例**的一份拷贝。这就意味着我们可以获取到之前声明的插件所注入的变量了。
 
+<a name="error-handling"></a>
+#### ESM 的支持
+
+自 [Node.js `v13.3.0`](https://nodejs.org/api/esm.html) 开始， ESM 也被支持了！写插件时，你只需要将其作为 ESM 模块导出即可！
+
+```js
+// plugin.mjs
+async function plugin (fastify, opts) {
+  fastify.get('/', async (req, reply) => {
+    return { hello: 'world' }
+  })
+}
+
+export default plugin
+```
+
 <a name="handle-errors"></a>
 ## 错误处理
 你的插件也可能在启动的时候失败. 或许你预料到这个并且在这种情况下有特定的处理逻辑. 你该怎么实现呢?
