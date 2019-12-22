@@ -274,24 +274,134 @@ fastify.setSchemaCompiler(function (schema) {
 fastify.schemaCompiler = function (schema) { return ajv.compile(schema) })
 ```
 
-你可能还想使用其他的验证库，例如 `Joi`。这时，你只要参照下面的示例，便能轻松地使用它们来校验 url 参数、请求主体与查询字符串了！
+<a name="using-other-validation-libraries"></a>
+#### 使用其他验证工具
+
+通过 `schemaCompiler` 函数，你可以轻松地将 `ajv` 替换为几乎任意的 Javascript 验证工具 (如 [joi](https://github.com/hapijs/joi/)、[yup](https://github.com/jquense/yup/) 等)。
+
+然而，为了更好地与 Fastify 的 request/response 相适应，`schemaCompiler` 返回的函数应该返回一个包含以下属性的对象：
+
+* `error` 属性，其值为 `Error` 的实例，或描述校验错误的字符串，当验证失败时使用。
+* `value` 属性，其值为验证后的隐式转换过的数据，验证成功时使用。
+
+因此，下面的例子是等价的：
+The examples below are therefore equivalent:
 
 ```js
-const Joi = require('joi')
+const joi = require('joi')
 
+// 等同于前文 ajv 基本配置的 joi 的配置
+const joiOptions = {
+  abortEarly: false, // 返回所有错误 (译注：为 true 时出现首个错误后即返回)
+  convert: true, // 根据定义的 type 的值改变数据类型
+  allowUnknown : false, // 移除额外属性
+  noDefaults: false
+}
+
+const joiBodySchema = joi.object().keys({
+  age: joi.number().integer().required(),
+  sub: joi.object().keys({
+    name: joi.string().required()
+  }).required()
+})
+
+const joiSchemaCompiler = schema => data => {
+  // joi 的 `validate` 函数返回一个对象。当验证失败时，该对象具有 error 属性，并永远都有一个 value 属性，当验证成功后，会存有隐式转换后的值。
+  const { error, value } = joiSchema.validate(data, joiOptions)
+  if (error) {
+    return { error }
+  } else {
+    return { value }
+  }
+}
+// 更简洁的写法
+const joiSchemaCompiler = schema => data => joiSchema.validate(data, joiOptions)
 fastify.post('/the/url', {
   schema: {
-    body: Joi.object().keys({
-      hello: Joi.string().required()
-    }).required()
+    body: joiBodySchema
   },
-  schemaCompiler: schema => data => Joi.validate(data, schema)
+  schemaCompiler: joiSchemaCompiler
 }, handler)
 ```
 
-在上面的例子中，`schemaCompiler` 函数返回一个包含以下属性的对象：
-* `error`：一个 `Error` 实例，或一个描述验证错误信息的字符串
-* `value`：通过了验证的数据
+```js
+const yup = require('yup')
+
+// 等同于前文 ajv 基本配置的 yup 的配置
+const yupOptions = {
+  strict: false,
+  abortEarly: false, // 返回所有错误（译注：为 true 时出现首个错误后即返回）
+  stripUnknown: true, // 移除额外属性
+  recursive: true
+}
+
+const yupBodySchema = yup.object({
+  age: yup.number().integer().required(),
+  sub: yup.object().shape({
+    name: yup.string().required()
+  }).required()
+})
+
+const yupSchemaCompiler = schema => data => {
+  // 当设置 strict = false 时， yup 的 `validateSync` 函数在验证成功后会返回经过转换的值，而失败时则会抛错。
+  try {
+    const result = schema.validateSync(data, yupOptions)
+    return { value: result }
+  } catch (e) {
+    return { error: e }
+  }
+}
+
+fastify.post('/the/url', {
+  schema: {
+    body: yupBodySchema
+  },
+  schemaCompiler: yupSchemaCompiler
+}, handler)
+```
+
+##### 其他验证工具与验证信息
+Fastify 的错误验证与其默认的验证引擎 `ajv` 紧密结合，错误最终会经由 `schemaErrorsText` 函数转化为便于阅读的信息。然而，也正是由于 `schemaErrorsText` 与 `ajv` 的强关联性，当你使用其他校验工具时，可能会出现奇怪或不完整的错误信息。
+
+要规避以上问题，主要有两个途径：
+
+1. 确保自定义的 `schemaCompiler` 返回的错误结构与 `ajv` 的一致 (当然，由于各引擎的差异，这是件困难的活儿)。
+2. 使用自定义的 `errorHandler` 拦截并格式化验证错误。
+
+Fastify 给所有的验证错误添加了两个属性，来帮助你自定义 `errorHandler`：
+
+* validation：来自 `schemaCompiler` 函数的验证函数所返回的对象上的 `error` 属性的内容。
+* validationContext：验证错误的上下文 (body、params、query、headers)。
+
+以下是一个自定义 `errorHandler` 来处理验证错误的例子：
+
+```js
+const errorHandler = (error, request, reply) => {
+
+  const statusCode = error.statusCode
+  let response
+
+  const { validation, validationContext } = error
+
+  // 检验是否发生了验证错误
+  if (validation) {
+    response = {
+      message: `A validation error occured when validating the ${validationContext}...`, // validationContext 的值可能是 'body'、'params'、'headers' 或 'query'
+      errors: validation // 验证工具返回的结果
+    }
+  } else {
+    response = {
+      message: 'An error occurred...'
+    }
+  }
+
+  // 其余代码。例如，记录错误日志。
+  // ...
+
+  reply.status(statusCode).send(response)
+
+}
+```
 
 <a name="schema-resolver"></a>
 #### Schema 解析器
