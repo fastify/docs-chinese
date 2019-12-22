@@ -383,8 +383,10 @@ const joiSchemaCompiler = schema => data => {
     return { value }
   }
 }
+
 // 更简洁的写法
 const joiSchemaCompiler = schema => data => joiSchema.validate(data, joiOptions)
+
 fastify.post('/the/url', {
   schema: {
     body: joiBodySchema
