@@ -521,7 +521,7 @@ const schema = {
 ```
 当校验失败时，路由会立即返回一个包含以下内容的响应：
  ```js
-{ 
+{
   "statusCode": 400,
   "error": "Bad Request",
   "message": "body should have required property 'name'"
@@ -543,7 +543,8 @@ const fastify = Fastify()
  ```js
 fastify.setErrorHandler(function (error, request, reply) {
   if (error.validation) {
-     reply.status(422).send(new Error('validation failed'))
+     // error.validationContext 是 [body, params, querystring, headers] 之中的值
+     reply.status(422).send(new Error(`validation failed of the ${error.validationContext}`))
   }
 })
 ```
