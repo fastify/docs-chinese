@@ -284,8 +284,7 @@ fastify.schemaCompiler = function (schema) { return ajv.compile(schema) })
 * `error` 属性，其值为 `Error` 的实例，或描述校验错误的字符串，当验证失败时使用。
 * `value` 属性，其值为验证后的隐式转换过的数据，验证成功时使用。
 
-因此，下面的例子是等价的：
-The examples below are therefore equivalent:
+因此，下面的例子和使用 ajv 是一致的：
 
 ```js
 const joi = require('joi')
