@@ -52,9 +52,9 @@ fastify.addHook('onRequest', async (request, reply) => {
 })
 ```
 
-**注意**：在 `onRequest` 钩子中，`request.body` 的值总是 `null`，这是因为 body 的解析发生在 `preHandler` 钩子之前。
+**注意**：在 [onRequest](#onRequest) 钩子中，`request.body` 的值总是 `null`，这是因为 body 的解析发生在 [preValidation](#preValidation) 钩子之前。
 
-## preParsing
+### preParsing
 ```js
 fastify.addHook('preParsing', (request, reply, done) => {
   // 其他代码
@@ -73,6 +73,9 @@ fastify.addHook('preParsing', async (request, reply) => {
   return
 })
 ```
+
+**注意**：在 [preParsing](#preParsing) 钩子中，`request.body` 的值总是 `null`，这是因为 body 的解析发生在 [preValidation](#preValidation) 钩子之前。
+
 ### preValidation
 ```js
 fastify.addHook('preValidation', (request, reply, done) => {
@@ -92,7 +95,6 @@ fastify.addHook('preValidation', async (request, reply) => {
   return
 })
 ```
-**注意**：在 `preValidation` 钩子中，`request.body` 的值总是 `null`，这是因为 body 的解析发生在 `preHandler` 钩子之前。
 
 ### preHandler
 ```js
