@@ -12,6 +12,7 @@ Fastify 从一开始就搭建成非常模块化的系统. 我们搭建了非常�
 - [中间件](#middlewares)
 - [如何处理封装与分发](#distribution)
 - [错误处理](#handle-errors)
+- [ESM 的支持](#esm-support)
 - [开始!](#start)
 
 <a name="register"></a>
@@ -293,8 +294,8 @@ fastify.register(require('your-plugin'), parent => {
 ```
 在上面的例子中，`register` 方法的第二个参数的 `parent` 变量是注册了插件的**外部 fastify 实例**的一份拷贝。这就意味着我们可以获取到之前声明的插件所注入的变量了。
 
-<a name="error-handling"></a>
-#### ESM 的支持
+<a name="esm-support"></a>
+## ESM 的支持
 
 自 [Node.js `v13.3.0`](https://nodejs.org/api/esm.html) 开始， ESM 也被支持了！写插件时，你只需要将其作为 ESM 模块导出即可！
 
