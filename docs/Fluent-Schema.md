@@ -4,7 +4,7 @@
 
 在[验证和序列化](https://github.com/fastify/docs-chinese/blob/master/docs/Validation-and-Serialization.md)一文中，我们列明了使用 JSON schema 验证输入、优化输出时所有可用的参数。
 
-现在，你可以使用 [`fluent-schema`][fluent-schema-repo] 来更简单地设置 JSON schema，并且复用常量。
+现在，你可以使用 [`fluent-schema`](https://github.com/fastify/fluent-schema) 来更简单地设置 JSON schema，并且复用常量。
 
 ### 基本设置
 
@@ -113,5 +113,3 @@ fastify.post('/the/url', { schema }, handler)
 ```
 
 特别注意：你可以在 `fastify.addSchema` 方法里混用 `$ref` 和 `替换方式`。
-
-[fluent-schema-repo]: https://github.com/fastify/fluent-schema
