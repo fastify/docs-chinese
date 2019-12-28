@@ -44,10 +44,6 @@ fastify.addHook('onRequest', (request, reply, done) => {
 fastify.addHook('onRequest', async (request, reply) => {
   // 其他代码
   await asyncMethod()
-  // 发生错误
-  if (err) {
-    throw new Error('Some errors occurred.')
-  }
   return
 })
 ```
@@ -66,10 +62,6 @@ fastify.addHook('preParsing', (request, reply, done) => {
 fastify.addHook('preParsing', async (request, reply) => {
   // 其他代码
   await asyncMethod()
-  // 发生错误
-  if (err) {
-    throw new Error('Some errors occurred.')
-  }
   return
 })
 ```
@@ -88,10 +80,6 @@ fastify.addHook('preValidation', (request, reply, done) => {
 fastify.addHook('preValidation', async (request, reply) => {
   // 其他代码
   await asyncMethod()
-  // 发生错误
-  if (err) {
-    throw new Error('Some errors occurred.')
-  }
   return
 })
 ```
@@ -108,10 +96,6 @@ fastify.addHook('preHandler', (request, reply, done) => {
 fastify.addHook('preHandler', async (request, reply) => {
   // 其他代码
   await asyncMethod()
-  // 发生错误
-  if (err) {
-    throw new Error('Some errors occurred.')
-  }
   return
 })
 ```
@@ -200,10 +184,6 @@ fastify.addHook('onResponse', (request, reply, done) => {
 fastify.addHook('onResponse', async (request, reply) => {
   // 其他代码
   await asyncMethod()
-  // 发生错误
-  if (err) {
-    throw new Error('Some errors occurred.')
-  }
   return
 })
 ```
