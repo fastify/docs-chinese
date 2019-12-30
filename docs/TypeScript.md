@@ -188,8 +188,8 @@ server.get('/ping', (request, reply) => {
 ## 贡献
 和 TypeScript 相关的改动可以被归入下列类别：
 
-* Core - Fastify 的 typings 文件
-* Plugins - Fastify 插件
+* [`Core`](#core-types) - Fastify 的 typings 文件
+* [`Plugins`](#plugin-types) - Fastify 插件
 
 记得要先阅读 `CONTRIBUTING.md` 文件，确保行事顺利！
 
@@ -214,7 +214,7 @@ server.get('/ping', (request, reply) => {
 ### 编写插件类型
 扩展了 `FastifyRequest`、`FastifyReply` 或 `FastifyInstance` 对象的许多插件，可以通过如下方式获取。
 
-以下代码展示了 `fastify-static` 插件的 typings。
+以下代码展示了 [`fastify-static`](https://github.com/fastify/fastify-static) 插件的 typings。
 
 ```ts
 /// <reference types="node" />
