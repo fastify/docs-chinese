@@ -357,7 +357,8 @@ fastify.register(context1, {
 })
 async function context1 (fastify, opts) {
   fastify.get('/', (req, reply) => {
-    req.log.info({ user: 'call father serializer', key: 'another key' }) // 打印结果： { user: 'My serializer father - call father  serializer', key: 'another key' }
+    req.log.info({ user: 'call father serializer', key: 'another key' })
+    // 打印结果： { user: 'My serializer father - call father  serializer', key: 'another key' }
     reply.send({})
   })
 }
