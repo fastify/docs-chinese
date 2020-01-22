@@ -20,6 +20,19 @@ fastify.inject({
 })
 ```
 
+忽略回调函数，可以链式调用 `.inject` 提供的方法：
+
+```js
+fastify
+  .inject()
+  .get('/')
+  .headers({ foo: 'bar' })
+  .query({ foo: 'bar' })
+  .end((err, res) => { //  调用 .end 触发请求
+    console.log(res.payload)
+  })
+```
+
 或是用 promise 的版本
 
 ```js
