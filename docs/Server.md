@@ -376,7 +376,7 @@ const fastify = require('fastify')({
 
 为每个 http2 会话设置默认[超时时间](https://nodejs.org/api/http2.html#http2_http2session_settimeout_msecs_callback)。超时后，会话将关闭。默认值：`5000` 毫秒。
 
-要注意的是，使用 http2 时需要提供一个优雅的“close”体验。Node 的默认值为 `0`，既无超时。
+要注意的是，使用 http2 时需要提供一个优雅的“close”体验。Node 的默认值为 `0`，即无超时。
 
 ## 实例
 
