@@ -93,7 +93,7 @@ exports.handler = proxy;
 
 *参照以下步骤部署 Google Cloud Run。如果你对 gcloud 还不熟悉，请看其[入门文档](https://cloud.google.com/run/docs/quickstarts/build-and-deploy)*。
 
-### 调整 Fastfiy 服务器
+### 调整 Fastify 服务器
 
 为了让 Fastify 能正确地在容器里监听请求，请确保设置了正确的端口与地址：
 
