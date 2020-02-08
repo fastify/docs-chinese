@@ -211,7 +211,12 @@ fastify.addHook('preHandler', (request, reply, done) => {
 
 
 ### 在钩子中响应请求
-需要的话，你可以在路由控制器执行前响应一个请求，例如进行身份验证。如果你在 `onRequest` 或 `preHandler` 中发出响应，请使用 `reply.send`。如果是在中间件中，使用 `res.end`。
+
+需要的话，你可以在路由函数执行前响应一个请求，例如进行身份验证。在钩子中响应暗示着钩子的调用链被 __终止__，剩余的钩子将不会执行。假如钩子使用回调的方式，意即不是 `async` 函数，也没有返回 `Promise`，那么只需要调用 `reply.send()`，并且避免触发回调便可。假如钩子是 `async` 函数，那么 `reply.send()` __必须__ 发生在函数返回或 promise resolve 之前，否则请求将会继续下去。当 `reply.send()` 在 promise 调用链之外被调用时，需要  `return reply`，不然请求将被执行两次。
+
+__不应当混用回调与 `async`/`Promise`__，否则钩子的调用链会被执行两次。
+
+如果你在 `onRequest` 或 `preHandler` 中发出响应，请使用 `reply.send`。如果是在中间件中，使用 `res.end`。
 
 ```js
 fastify.addHook('onRequest', (request, reply, done) => {
@@ -220,7 +225,9 @@ fastify.addHook('onRequest', (request, reply, done) => {
 
 // 也可使用 async 函数
 fastify.addHook('preHandler', async (request, reply) => {
+  await something()
   reply.send({ hello: 'world' })
+  return reply // 在这里是可选的，但这是好的实践
 })
 ```
 
@@ -230,6 +237,21 @@ fastify.addHook('preHandler', async (request, reply) => {
 fastify.addHook('onRequest', (request, reply, done) => {
   const stream = fs.createReadStream('some-file', 'utf8')
   reply.send(stream)
+})
+```
+
+如果发出响应但没有 `await` 关键字，请确保总是 `return reply`：
+
+```js
+fastify.addHook('preHandler', async (request, reply) => {
+  setImmediate(() => { reply.send('hello') })
+  // 让处理函数等待 promise 链之外发出的响应
+  return reply
+})
+fastify.addHook('preHandler', async (request, reply) => {
+  // fastify-static 插件异步地发送文件，因此需要 return reply
+  reply.sendFile('myfile')
+  return reply
 })
 ```
 
