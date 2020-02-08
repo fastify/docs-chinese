@@ -49,9 +49,23 @@ const bodyJsonSchema = {
 }
 
 const queryStringJsonSchema = {
+  type: 'object',
+  required: ['name']
+  properties: {
+    name: { type: 'string' },
+    excitement: { type: 'integer' }
+  }
+}
+
+/* 如果不需指明必填字段，
+ * 也可使用简化的语法：
+
+const queryStringJsonSchema = {
   name: { type: 'string' },
   excitement: { type: 'integer' }
 }
+
+*/
 
 const paramsJsonSchema = {
   type: 'object',
