@@ -203,7 +203,7 @@ fastify.get('/user/:username', (request, reply) => {
 ### `genReqId`
 用于生成请求 id 的函数。参数为来访的请求对象。
 
-+ 默认值：`'request-id' 的值 (当存在该 header 时) 或单调递增的整数`
++ 默认值：`'request-id' header 的值 (当存在时) 或单调递增的整数`
 在分布式系统中，你可能会特别想覆盖如下默认的 id 生成行为。要生成 `UUID`，请看[hyperid](https://github.com/mcollina/hyperid)。
  ```js
 let i = 0
@@ -212,7 +212,7 @@ const fastify = require('fastify')({
 })
 ```
 
-**注意：当设置了 'request-id' header时，genReqId _不会_ 被调用。**
+**注意：当设置了 <code>[requestIdHeader](#requestidheader)</code> 中定义的 header (默认为 'request-id') 时，genReqId _不会_ 被调用。**
 
 <a name="factory-trust-proxy"></a>
 ### `trustProxy`
