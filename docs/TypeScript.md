@@ -110,8 +110,8 @@ const opts: fastify.RouteShorthandOptions = {
 server.get<Query, Params, Headers, Body>('/ping/:bar', opts, (request, reply) => {
   console.log(request.query) // 这是 Query 类型
   console.log(request.params) // 这是 Params 类型
-  console.log(request.body) // 这是 Body 类型
   console.log(request.headers) // 这是 Headers 类型
+  console.log(request.body) // 这是 Body 类型
   reply.code(200).send({ pong: 'it worked!' })
 })
 ```
@@ -143,8 +143,8 @@ const opts: fastify.RouteShorthandOptions = {
 server.get<fastify.DefaultQuery, Params, unknown>('/ping/:bar', opts, (request, reply) => {
   console.log(request.query) // 这是 fastify.DefaultQuery 类型
   console.log(request.params) // 这是 Params 类型
-  console.log(request.body) // 这是未知的类型
-  console.log(request.headers) // 这是 fastify.DefaultHeader 类型，因为 typescript 会使用默认类型
+  console.log(request.headers) // 这是未知的类型
+  console.log(request.body) // 这是 fastify.DefaultBody 类型，因为 typescript 会使用默认类型
   reply.code(200).send({ pong: 'it worked!' })
 })
 
@@ -155,8 +155,8 @@ server.get<fastify.DefaultQuery, Params, unknown>('/ping/:bar', opts, (request, 
 server.get<unknown, Params, unknown, unknown>('/ping/:bar', opts, (request, reply) => {
   console.log(request.query) // 这是未知的类型
   console.log(request.params) // 这是 Params 类型
-  console.log(request.body) // 这是未知的类型
   console.log(request.headers) // 这是未知的类型
+  console.log(request.body) // 这是未知的类型
   reply.code(200).send({ pong: 'it worked!' })
 })
 ```
