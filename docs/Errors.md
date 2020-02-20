@@ -116,3 +116,8 @@ content type 不能是一个空字符串。
 #### FST_ERR_PROMISE_NOT_FULLFILLED
 
 状态码不为 204 时，Promise 的 payload 不能为 'undefined'。
+
+<a name="FST_ERR_SEND_UNDEFINED_ERR"></a>
+#### FST_ERR_SEND_UNDEFINED_ERR
+
+发生了未定义的错误。
