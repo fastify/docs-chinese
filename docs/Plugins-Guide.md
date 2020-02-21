@@ -181,7 +181,7 @@ fastify.get('/happiness', (request, reply) => {
 ## 钩子方法
 你刚刚构建了工具方法, 现在你需要在每个请求的时候都执行这个方法, 你大概会这样做:
 ```js
-fastify.decorate('util', (request, key, value) => { request.key = value })
+fastify.decorate('util', (request, key, value) => { request[key] = value })
 
 fastify.get('/plugin1', (request, reply) => {
   fastify.util(request, 'timestamp', new Date())
@@ -197,7 +197,7 @@ fastify.get('/plugin2', (request, reply) => {
 
 那么你该怎么消除这个问题呢? 是的, 使用[钩子方法](https://github.com/fastify/docs-chinese/blob/master/docs/Hooks.md)!<br>
 ```js
-fastify.decorate('util', (request, key, value) => { request.key = value })
+fastify.decorate('util', (request, key, value) => { request[key] = value })
 
 fastify.addHook('preHandler', (request, reply, done) => {
   fastify.util(request, 'timestamp', new Date())
@@ -217,7 +217,7 @@ fastify.get('/plugin2', (request, reply) => {
 
 ```js
 fastify.register((instance, opts, done) => {
-  instance.decorate('util', (request, key, value) => { request.key = value })
+  instance.decorate('util', (request, key, value) => { request[key] = value })
 
   instance.addHook('preHandler', (request, reply, done) => {
     instance.util(request, 'timestamp', new Date())
