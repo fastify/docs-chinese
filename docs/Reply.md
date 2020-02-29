@@ -108,10 +108,27 @@ reply.getHeader('x-foo') // undefined
 返回一个 boolean，用于检查是否设置了某个 header。
 
 <a name="redirect"></a>
-### .redirect(dest)
+### .redirect([code ,] dest)
 重定向请求至指定的 url，状态码可选，当未通过 `code` 方法设置时，默认为 `302`。
+
+示例 (不调用 `reply.code()`)：状态码 `302`，重定向至 `/home`
 ```js
 reply.redirect('/home')
+```
+
+示例 (不调用 `reply.code()`)：状态码 `303`，重定向至 `/home`
+```js
+reply.redirect(303, '/home')
+```
+
+示例 (调用 `reply.code()`)：状态码 `303`，重定向至 `/home`
+```js
+reply.code(303).redirect('/home')
+```
+
+示例 (调用 `reply.code()`)：状态码 `302`，重定向至 `/home`
+```js
+reply.code(303).redirect(302, '/home')
 ```
 
 <a name="call-not-found"></a>
