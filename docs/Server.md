@@ -378,6 +378,28 @@ const fastify = require('fastify')({
 
 要注意的是，使用 http2 时需要提供一个优雅的“close”体验。Node 的默认值为 `0`，即无超时。
 
+<a name="framework-errors"></a>
+### `frameworkErrors`
+
++ 默认值：`null`
+
+对于最常见的场景，Fastify 已经提供了默认的错误处理方法。这个选项允许你重写这些处理方法。
+
+*注：目前只实现了 `FST_ERR_BAD_URL` 这个错误。*
+
+```js
+const fastify = require('fastify')({
+  frameworkErrors: function (error, req, res) {
+    if (error instanceof FST_ERR_BAD_URL) {
+      res.code(400)
+      return res.send("Provided url is not valid")
+    } else {
+      res.send(err)
+    }
+  }
+})
+```
+
 ## 实例
 
 ### 服务器方法
