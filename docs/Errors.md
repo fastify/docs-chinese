@@ -12,6 +12,11 @@ Fastify 遵循不全则无的原则，旨在精而优。因此，确保正确处
 <a name="fastify-error-codes"></a>
 ### Fastify 错误代码
 
+<a name="FST_ERR_BAD_URL"></a>
+#### FST_ERR_BAD_URL
+
+无效的 url。
+
 <a name="FST_ERR_CTP_ALREADY_PRESENT"></a>
 #### FST_ERR_CTP_ALREADY_PRESENT
 
