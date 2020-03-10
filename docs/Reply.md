@@ -318,7 +318,7 @@ fastify.get('/async-await', options, async function (request, reply) {
 })
 ```
 
-被 reject 的 promise 默认发送 `500` 状态码。要修改回复，可以 reject 一个 promise，或在 `async 函数` 中进行 `throw` 操作，同时附带上一个有 `statusCode` (或 `status`) 与 `message` 属性的对象。
+被 reject 的 promise 默认发送 `500` 状态码。要修改回复，可以 reject 一个 promise，或在 `async 函数` 中进行 `throw` 操作，同时附带上一个有 `statusCode` (或 `status`) 与 `message` 属性的 _Error_ 对象。不支持抛出普通的对象，必须是 _Error_ 的实例：
 
 ```js
 fastify.get('/teapot', async function (request, reply) => {
