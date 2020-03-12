@@ -4,7 +4,7 @@
 
 装饰器 API 允许你自定义服务器实例或请求周期中的请求/回复等对象。任意类型的属性都能通过装饰器添加到这些对象上，包括函数、普通对象 (plain object) 以及原生类型。
 
-装饰器 API 是 *同步* 的。如果异步地添加装饰器，可能会导致在装饰完成初始化之前， Fastify 实例便已经引导完毕。因此，必须将 `register` 方法与 `fastify-plugin` 结合使用。详见 [Plugins](Plugins.md)。
+装饰器 API 是 *同步* 的。如果异步地添加装饰器，可能会导致在装饰器完成初始化之前， Fastify 实例就已经引导完毕了。因此，必须将 `register` 方法与 `fastify-plugin` 结合使用。详见 [Plugins](Plugins.md)。
 
 通过装饰器 API 来自定义对象，底层的 Javascript 引擎便能对其进行优化。这是因为引擎能在所有的对象实例被初始化与使用前，定义好它们的形状 (shape)。下文的例子则是不推荐的做法，因为它在对象的生命周期中修改了它们的形状：
 
@@ -24,9 +24,9 @@ fastify.get('/', function (req, reply) {
 })
 ```
 
-由于上述例子在请求对象初始化完成后，还改动了它的形状，因此 JavaScript 引擎必须对该对象去优化。然而，装饰器 API 避开了去优化问题：
+由于上述例子在请求对象初始化完成后，还改动了它的形状，因此 JavaScript 引擎必须对该对象去优化。使用装饰器 API 能避开去优化问题：
 
-``js
+```js
 // 使用装饰器为请求对象添加 'user' 属性。
 fastify.decorateRequest('user', '')
 
@@ -41,7 +41,7 @@ fastify.get('/', (req, reply) => {
 })
 ```
 
-更多此话题的信息，请见 [JavaScript engine fundamentals: Shapes and Inline Caches](https://web.archive.org/web/20200201163000/https://mathiasbynens.be/notes/shapes-ics)。
+更多此话题的内容，请见 [JavaScript engine fundamentals: Shapes and Inline Caches](https://web.archive.org/web/20200201163000/https://mathiasbynens.be/notes/shapes-ics)。
 
 ### 使用方法
 <a name="usage"></a>
@@ -74,13 +74,13 @@ fastify.utility()
 console.log(fastify.conf.db)
 ```
 
-可选的 `dependencies` 参数用于指定当前装饰器所依赖的其他装饰器列表。这个列表仅仅包含了其他装饰器的名称字符串。在下面的例子里，装饰器 "utility" 依赖于 "greet" 和 "log"：
+可选的 `dependencies` 参数用于指定当前装饰器所依赖的其他装饰器列表。这个列表包含了其他装饰器的名称字符串。在下面的例子里，装饰器 "utility" 依赖于 "greet" 和 "log"：
 
 ```js
 fastify.decorate('utility', fn, ['greet', 'log'])
 ```
 
-假设某个依赖项不满足，`decorate` 方法会抛出异常。依赖项检查是在服务器实例启动前进行的，因此，在运行时不会发生异常。
+一旦有依赖项不满足，`decorate` 方法便会抛出异常。依赖项检查是在服务器实例启动前进行的，因此，在运行时不会发生异常。
 
 #### `decorateReply(name, value, [dependencies])`
 <a name="decorate-reply"></a>
