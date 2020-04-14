@@ -32,7 +32,7 @@ fastify.register(helmet)
 
 请记住，中间件能被封装。这就意味着你可以通过使用 `register` 来决定中间件该在何处运行，正如[插件指南](https://github.com/fastify/docs-chinese/blob/master/docs/Plugins-Guide.md)一文所述。
 
-Fastify 中间件不会暴露 `send` 等 Fastify 的 [Reply]('./Reply.md' "Reply") 实例上专属的方法。这是因为，虽然 Fastify 使用 [Request](./Request.md "Request") 和 [Reply](./Reply.md "Reply") 对象包裹了 Node 原生的 `req` 和 `res` 实例，但是它们的处理要在中间件阶段之后。因此，在一个中间件里，你必须使用 Node 原生的 `req` 和 `res` 对象。要使用 Fastify 的 [Request](./Request.md "Request") 与 [Reply](./Reply.md "Reply") 实例，你可以通过 `preHandler` 钩子。更多信息，请看[钩子](./Hooks.md "Hooks")。
+Fastify 中间件不会暴露 `send` 等 Fastify 的 [Reply](./Reply.md#reply) 实例上专属的方法。这是因为，虽然 Fastify 使用 [Request](./Request.md#request) 和 [Reply](./Reply.md#reply) 对象包裹了 Node 原生的 `req` 和 `res` 实例，但是它们的处理要在中间件阶段之后。因此，在一个中间件里，你必须使用 Node 原生的 `req` 和 `res` 对象。要使用 Fastify 的 [Request](./Request.md#request) 与 [Reply](./Reply.md#reply) 实例，你可以通过 `preHandler` 钩子。更多信息，请看[钩子](./Hooks.md#hooks)。
 
 <a name="restrict-usage"></a>
 #### 将中间件限定在特定的路径执行
