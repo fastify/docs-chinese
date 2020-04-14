@@ -148,28 +148,28 @@ Fastify 同时支持静态与动态的 url。<br>
 
 ```js
 // 参数路由
-fastify.get('/example/:userId', (request, reply) => {}))
-fastify.get('/example/:userId/:secretToken', (request, reply) => {}))
+fastify.get('/example/:userId', (request, reply) => {})
+fastify.get('/example/:userId/:secretToken', (request, reply) => {})
 
 // 通配符
-fastify.get('/example/*', (request, reply) => {}))
+fastify.get('/example/*', (request, reply) => {})
 ```
 
 正则表达式路由亦被支持。但要注意，正则表达式会严重拖累性能！
 ```js
 // 正则表达的参数路由
-fastify.get('/example/:file(^\\d+).png', (request, reply) => {}))
+fastify.get('/example/:file(^\\d+).png', (request, reply) => {})
 ```
 
 你还可以在同一组斜杠 ("/") 里定义多个参数。就像这样：
 ```js
-fastify.get('/example/near/:lat-:lng/radius/:r', (request, reply) => {}))
+fastify.get('/example/near/:lat-:lng/radius/:r', (request, reply) => {})
 ```
 *使用短横线 ("-") 来分隔参数。*
 
 最后，同时使用多参数和正则表达式也是允许的。
 ```js
-fastify.get('/example/at/:hour(^\\d{2})h:minute(^\\d{2})m', (request, reply) => {}))
+fastify.get('/example/at/:hour(^\\d{2})h:minute(^\\d{2})m', (request, reply) => {})
 ```
 在这个例子里，任何未被正则匹配的符号均可作为参数的分隔符。
 
