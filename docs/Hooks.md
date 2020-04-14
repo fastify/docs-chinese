@@ -15,6 +15,8 @@
   - [onError](#onerror)
   - [onSend](#onsend)
   - [onResponse](#onresponse)
+  - [在钩子中管理错误](#manage-errors-from-a-hook)
+  - [在钩子中响应请求](#respond-to-a-request-from-a-hook)
 - [应用钩子](#application-hooks)
   - [onClose](#onclose)
   - [onRoute](#onroute)
@@ -206,9 +208,14 @@ fastify.addHook('preHandler', (request, reply, done) => {
   done(new Error('Some error'))
 })
 ```
-
 *错误最终会在 [`Reply`](https://github.com/fastify/docs-chinese/blob/master/docs/Reply.md#errors) 中得到处理。*
 
+或者在 `async/await` 函数中抛出错误：
+```js
+fastify.addHook('onResponse', async (request, reply) => {
+  throw new Error('Some error')
+})
+```
 
 ### 在钩子中响应请求
 
