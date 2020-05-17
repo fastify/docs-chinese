@@ -133,7 +133,8 @@ reply.code(303).redirect(302, '/home')
 
 <a name="call-not-found"></a>
 ### .callNotFound()
-调用自定义的 not found 处理函数。
+调用自定义的 not found 处理函数。 要注意的是，只有 [setNotFoundHandler](https://github.com/fastify/fastify/blob/master/docs/Server.md#set-not-found-handler) 中指明的 `preHandler` 钩子函数会被调用。
+
 ```js
 reply.callNotFound()
 ```

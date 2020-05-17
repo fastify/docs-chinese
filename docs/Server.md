@@ -638,6 +638,8 @@ fastify.setReplySerializer(function (payload, statusCode){
 
 你也可以为 404 处理函数注册一个 [preValidation](https://www.fastify.io/docs/latest/Hooks/#route-hooks) 或 [preHandler](https://www.fastify.io/docs/latest/Hooks/#route-hooks) 钩子。
 
+_注意：通过该方法注册的 `preValidation` 钩子将在 Fastify 检测不到的路由中运行，即便你在路由函数中调用 [`reply.callNotFound`](https://github.com/fastify/fastify/blob/master/docs/Reply.md#call-not-found) **也是如此**_。在这种情况下，只有 preHandler 会运行。
+
 ```js
 fastify.setNotFoundHandler({
   preValidation: (req, reply, done) => {
