@@ -25,6 +25,10 @@
 * [Serverless](https://github.com/fastify/docs-chinese/blob/master/docs/Serverless.md)
 * [推荐方案](https://github.com/fastify/docs-chinese/blob/master/docs/Recommendations.md)
 
+### 其他版本
+
+* [v2.x](https://github.com/fastify/docs-chinese/tree/2.x)
+
 ### 翻译指南
 
 想要参与到项目当中？欢迎！
