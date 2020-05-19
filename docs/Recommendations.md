@@ -52,6 +52,10 @@ defaults
   option        dontlognull
   retries       3
   option redispatch
+  # 下一行的选项使 haproxy 关闭与后端服务的连接，
+  # 而不是保持它。这么做能减缓 Node 进程中预期外
+  # 的连接重置错误。
+  option http-server-close
   maxconn       2000
   timeout connect 5000
   timeout client 50000
