@@ -2,7 +2,7 @@
 
 ## TypeScript
 
-Fastify 是用普通的 JavaScript 编写的，因此，类型定义的维护并不容易。可喜的是，自版本 2 以来，维护者和贡献者们已经投入了巨大的努力在类型的维护上。
+Fastify 是用普通的 JavaScript 编写的，因此，类型定义的维护并不容易。可喜的是，自版本 2 以来，维护者和贡献者们已经在类型维护上投入了巨大的努力。
 
 版本 3 的类型系统发生了改变。新的系统带来了泛型约束 (generic constraining) 与默认值，以及定义请求 body，querystring 等 schema 的新方式！在团队改善框架和类型定义的协作中，难免有所纰漏。我们鼓励你**参与贡献**。请记得在开始前阅读 [`CONTRIBUTING.md`](https://github.com/fastify/fastify/blob/master/CONTRIBUTING.md) 一文，
 
@@ -61,7 +61,7 @@ Fastify 是用普通的 JavaScript 编写的，因此，类型定义的维护并
 8. 你将看到控制台输出： `Server listening at http://127.0.0.1:8080`。
 9. 通过 `curl localhost:8080/ping` 访问服务，你将收到 `pong`。
 
-🎉 现在，你有了一个能用的 TypeScript 写的 Fastify 服务器！这个例子演示了在 3.x 版本中，类型系统有多么简单。默认情况下，类型系统会假定你使用的是 `http` 服务器。后续的例子将为你展现更多内容：例如，创建较为复杂的服务器，如 `https` 与 `http2`，以及指定路由的 schema！
+🎉 现在，你有了一个能用的 TypeScript 写的 Fastify 服务器！这个例子演示了在 3.x 版本中，类型系统有多么简单。默认情况下，类型系统会假定你使用的是 `http` 服务器。后续的例子将为你展现更多内容，例如，创建较为复杂的服务器 (`https` 与 `http2`)，以及指定路由的 schema！
 
 > 更多使用 TypeScript 初始化 Fastify 的示例 (如启用 HTTP2)，请在[这里][Fastify]查阅详细的 API。
 
@@ -225,7 +225,7 @@ Fastify 是用普通的 JavaScript 编写的，因此，类型定义的维护并
     ```
     要特别关注文件顶部的导入。虽然看上去有些多余，但你必须同时导入 schema 与生成的接口。
 
-真棒！现在你就能同时运用 JSON Schema 与 TypeScript 的定义了。给 Fastify 路由定义 schema 还能增加吞吐量！更多信息请见[验证和序列化](./Validation-and-Serialization.md)。
+真棒！现在你就能同时运用 JSON Schema 与 TypeScript 的定义了。给 Fastify 路由定义 schema 还能提高吞吐量！更多信息请见[验证和序列化](./Validation-and-Serialization.md)。
 
 一些其他说明：
   - `json-schema-to-typescript` 有一个 [pull request](https://github.com/bcherny/json-schema-to-typescript/pull/238)，添加了在第 4 步提到的文件夹支持。当该 PR 合并后，我们将会更新本文档，删去 `compile-schemas-to-typescript` 的部分。
@@ -233,7 +233,7 @@ Fastify 是用普通的 JavaScript 编写的，因此，类型定义的维护并
 
 ### 插件
 
-拓展性强的插件生态系统是 Fastify 最突出的特性之一。插件完全支持类型系统，并利用了[声明合并]() (declaration merging) 模式的优势。下面的例子将分为三块：用 TypeScript 编写 Fastify 插件，为插件编写类型定义，以及在 TypeScript 项目中使用插件。
+拓展性强的插件生态系统是 Fastify 最突出的特性之一。插件完全支持类型系统，并利用了[声明合并]() (declaration merging) 模式的优势。下面的例子将分为三个部分：用 TypeScript 编写 Fastify 插件，为插件编写类型定义，以及在 TypeScript 项目中使用插件。
 
 #### 用 TypeScript 编写 Fastify 插件
 
@@ -297,7 +297,7 @@ Fastify 是用普通的 JavaScript 编写的，因此，类型定义的维护并
 
 #### 为插件编写类型定义
 
-以下例子是为 JavaScript 编写的 Fastify 插件所作，列明了如何在插件中加入 TypeScript 支持，以便用户使用。
+以下例子是为 JavaScript 编写的 Fastify 插件所作，展示了如何在插件中加入 TypeScript 支持，以方便用户使用。
 
 1. 初始化新的 npm 项目，并安装必需的依赖。
   ```bash
@@ -354,7 +354,7 @@ Fastify 的插件系统允许开发者装饰 Fastify 以及 request/reply 的实
 
 在 TypeScript 中使用插件和在 JavaScript 中使用一样简单，只需要用到 `import/from` 而已，除了一个特殊情况。
 
-Fastify 插件使用声明合并来修改已有的 Fastify 类型接口 (详见上一个例子)。声明合并没有那么_聪明_，只要插件的类型定义在 TypeScript 解释器的范围内，那么**不管**插件本身是否被使用，这些定义都会被包括。这是 TypeScript 的限制，目前无法规避。
+Fastify 插件使用声明合并来修改已有的 Fastify 类型接口 (详见上一个例子)。声明合并没有那么 _聪明_，只要插件的类型定义在 TypeScript 解释器的范围内，那么**不管**插件本身是否被使用，这些定义都会被包括。这是 TypeScript 的限制，目前无法规避。
 
 尽管如此，还是有一些建议能帮助改善这种状况：
 - 确保 [ESLint](https://eslint.org/docs/rules/no-unused-vars) 开启了 `no-unused-vars`，并且所有导入的插件都得到了加载。
