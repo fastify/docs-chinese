@@ -107,15 +107,15 @@ content type 不能是一个空字符串。
 
 同 `$id` 的 schema 已经存在。
 
-<a name="FST_ERR_SCH_NOT_PRESENT"></a>
-#### FST_ERR_SCH_NOT_PRESENT
+<a name="FST_ERR_SCH_VALIDATION_BUILD"></a>
+#### FST_ERR_SCH_VALIDATION_BUILD
 
-不存在 `$id` 为提供的值的 schema。
+用于校验路由的 JSON schema 不合法。
 
-<a name="FST_ERR_SCH_BUILD"></a>
-#### FST_ERR_SCH_BUILD
+<a name="FST_ERR_SCH_SERIALIZATION_BUILD"></a>
+#### FST_ERR_SCH_SERIALIZATION_BUILD
 
-某个路由的 JSON schema 不合法。
+用于序列化响应的 JSON schema 不合法。
 
 <a name="FST_ERR_PROMISE_NOT_FULLFILLED"></a>
 #### FST_ERR_PROMISE_NOT_FULLFILLED
