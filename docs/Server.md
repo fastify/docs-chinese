@@ -604,8 +604,16 @@ fastify.register(function (instance, opts, done) {
 
 <a name="add-schema"></a>
 #### addSchema
-`fastify.addSchema(schemaObj)`，向 Fastify 实例添加可共用的 schema，用于验证数据。你可以通过该 schema 的 id 在应用的任意位置使用它。<br/>
-请看[验证和序列化](https://github.com/fastify/docs-chinese/blob/master/docs/Validation-and-Serialization.md)一文中的[范例](https://github.com/fastify/docs-chinese/blob/master/docs/Validation-and-Serialization.md#shared-schema)。
+`fastify.addSchema(schemaObj)`，向 Fastify 实例添加 JSON schema。你可以通过 `$ref` 关键字在应用的任意位置使用它。<br/>
+更多内容，请看[验证和序列化](https://github.com/fastify/docs-chinese/blob/master/docs/Validation-and-Serialization.md)。
+
+<a name="get-schemas"></a>
+#### getSchemas
+`fastify.getSchemas()`，返回一个对象，包含所有通过 `addSchema` 添加的 schema，对象的键是 JSON schema 的 `$id`。
+
+<a name="get-schema"></a>
+#### getSchema
+`fastify.getSchema(id)`，返回通过 `addSchema` 添加的拥有匹配 `id` 的 schema，未找到则返回 `undefined`。
 
 <a name="set-reply-serializer"></a>
 #### setReplySerializer
@@ -619,24 +627,31 @@ fastify.setReplySerializer(function (payload, statusCode){
 })
 ```
 
-<a name="set-schema-compiler"></a>
-#### setSchemaCompiler
-为所有的路由设置 schema 编译器 (schema compiler)，请看[这里](https://github.com/fastify/docs-chinese/blob/master/docs/Validation-and-Serialization.md#schema-compiler)了解更多信息。
+<a name="set-validator-compiler"></a>
+#### setValidatorCompiler
+为所有的路由设置 schema 校验编译器 (validator compiler)。详见 [#schema-validator](https://github.com/fastify/docs-chinese/blob/master/docs/Validation-and-Serialization.md#schema-validator)。
 
-<a name="set-schema-resolver"></a>
-#### setSchemaResolver
-为所有的路由设置 schema `$ref` 解析器 (schema `$ref` resolver)，请看[这里](https://github.com/fastify/docs-chinese/blob/master/docs/Validation-and-Serialization.md#schema-resolver)了解更多信息。
+<a name="set-serializer-resolver"></a>
+#### setSerializerCompiler
+为所有的路由设置 schema 序列化编译器 (serializer compiler)。详见 [#schema-serializer](https://github.com/fastify/docs-chinese/blob/master/docs/Validation-and-Serialization.md#schema-serializer)。
+**注：** [`setReplySerializer`](#set-reply-serializer) 有更高的优先级！
 
-<a name="schema-compiler"></a>
-#### schemaCompiler
-`setSchemaCompiler` 方法的简写。用于设置 schema 编译器函数，也可用于返回全部路由的 schema 编译器。
+<a name="validator-compiler"></a>
+#### validatorCompiler
+该属性用于获取 schema 校验器。未设置校验器时，在服务器启动前，该值是 `null`，之后是一个签名为 `function (method, url, httpPart, schema)` 的函数。该函数将 `schema` 参数编译为一个校验数据的函数，并返回生成的函数。
+`schema` 参数能访问到所有通过 [`.addSchema`](#add-schema) 添加的共用 schema。
+
+<a name="serializer-compiler"></a>
+#### serializerCompiler
+该属性用于获取 schema 序列化器。未设置序列化器时，在服务器启动前，该值是 `null`，之后是一个签名为 `function (method, url, httpPart, schema)` 的函数。该函数将 `schema` 参数编译为一个校验数据的函数，并返回生成的函数。
+`schema` 参数能访问到所有通过 [`.addSchema`](#add-schema) 添加的共用 schema。
 
 <a name="set-not-found-handler"></a>
 #### setNotFoundHandler
 
 `fastify.setNotFoundHandler(handler(request, reply))`：为 404 状态 (not found) 设置处理函数 (handler)。向 `fastify.register()` 传递不同的 [`prefix` 选项](https://github.com/fastify/docs-chinese/blob/master/docs/Plugins.md#route-prefixing-option)，就可以为不同的插件设置不同的处理函数。这些处理函数被视为常规的路由处理函数，因此它们的请求会经历一个完整的 [Fastify 生命周期](https://github.com/fastify/docs-chinese/blob/master/docs/Lifecycle.md#lifecycle)。
 
-你也可以为 404 处理函数注册一个 [preValidation](https://www.fastify.io/docs/latest/Hooks/#route-hooks) 或 [preHandler](https://www.fastify.io/docs/latest/Hooks/#route-hooks) 钩子。
+你也可以为 404 处理函数注册 [`preValidation`](https://www.fastify.io/docs/latest/Hooks/#route-hooks) 或 [`preHandler`](https://www.fastify.io/docs/latest/Hooks/#route-hooks) 钩子。
 
 ```js
 fastify.setNotFoundHandler({
