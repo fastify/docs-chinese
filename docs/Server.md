@@ -651,7 +651,7 @@ fastify.setReplySerializer(function (payload, statusCode){
 
 `fastify.setNotFoundHandler(handler(request, reply))`：为 404 状态 (not found) 设置处理函数 (handler)。向 `fastify.register()` 传递不同的 [`prefix` 选项](https://github.com/fastify/docs-chinese/blob/master/docs/Plugins.md#route-prefixing-option)，就可以为不同的插件设置不同的处理函数。这些处理函数被视为常规的路由处理函数，因此它们的请求会经历一个完整的 [Fastify 生命周期](https://github.com/fastify/docs-chinese/blob/master/docs/Lifecycle.md#lifecycle)。
 
-你也可以为 404 处理函数注册 [`preValidation`](https://www.fastify.io/docs/latest/Hooks/#route-hooks) 或 [`preHandler`](https://www.fastify.io/docs/latest/Hooks/#route-hooks) 钩子。
+你也可以为 404 处理函数注册 [`preValidation`](https://github.com/fastify/docs-chinese/blob/master/docs/Hooks.md/#route-hooks) 或 [`preHandler`](https://github.com/fastify/docs-chinese/blob/master/docs/Hooks.md/#route-hooks) 钩子。
 
 ```js
 fastify.setNotFoundHandler({
