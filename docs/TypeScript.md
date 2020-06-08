@@ -280,10 +280,15 @@ Fastify 是用普通的 JavaScript 编写的，因此，类型定义的维护并
     }
   }
 
+  // 定义选项
+  export interface MyPluginOptions {
+    myPluginOption: string
+  }
+
   // 定义插件
-  const myPlugin: FastifyPlugin = (fastify, options, done) => {
+  const myPlugin: FastifyPlugin<MyPluginOptions> = (fastify, options, done) => {
     fastify.decorateRequest('myPluginProp', 'super_secret_value')
-    fastify.decorateReply('myPluginProp', 5000)
+    fastify.decorateReply('myPluginProp', options.myPluginOption)
 
     done()
   }
@@ -757,7 +762,7 @@ RawReplyDefaultExpression<http2.Http2Server> // -> http2.Http2ServerResponse
 
 通过插件，用户能拓展 Fastify 的功能。一个插件可以是一组路由，也可以是一个装饰器，或其它逻辑。要激活一个插件，需调用 [`fastify.register()`][FastifyRegister] 方法。
 
-##### fastify.FastifyPlugin<[Options][FastifyPluginOptions], [RawServer][RawServerGeneric], [RawRequest][RawRequestGeneric], [RequestGeneric][FastifyRequestGenericInterface]>
+##### fastify.FastifyPlugin<[Options][FastifyPluginOptions]>
 [源码](../types/plugin.d.ts#L10)
 
 [`fastify.register()`][FastifyRegister] 使用的接口方法定义。
@@ -773,7 +778,7 @@ RawReplyDefaultExpression<http2.Http2Server> // -> http2.Http2ServerResponse
 
 #### Register
 
-##### fastify.FastifyRegister<[RawServer][RawServerGeneric], [RawRequest][RawRequestGeneric], [RequestGeneric][FastifyRequestGenericInterface]>(plugin: [FastifyPlugin][FastifyPlugin], opts: [FastifyRegisterOptions][FastifyRegisterOptions])
+##### fastify.FastifyRegister(plugin: [FastifyPlugin][FastifyPlugin], opts: [FastifyRegisterOptions][FastifyRegisterOptions])
 [源码](../types/register.d.ts#L5)
 
 指定 [`fastify.register()`](./Server.md#register) 类型的类型接口，返回一个拥有默认值为 [FastifyPluginOptions][FastifyPluginOptions] 的 `Options` 泛型的函数签名。当调用此函数时，根据 FastifyPlugin 参数能推断出该泛型，因此不必特别指定。options 参数是插件选项以及 `prefix: string` 和 `logLevel` ([LogLevels][LogLevels]) 两个属性的交叉类型。
