@@ -664,13 +664,15 @@ fastify.register(function (instance, options, done) {
 <a name="set-error-handler"></a>
 #### setErrorHandler
 
-`fastify.setErrorHandler(handler(error, request, reply))`：设置任意时刻的错误处理函数。错误处理函数是完全封装 (fully encapsulated) 的，因此不同插件的处理函数可以不同。支持 *async-await* 语法。<br>
+`fastify.setErrorHandler(handler(error, request, reply))`：设置任意时刻的错误处理函数。错误处理函数绑定在 Fastify 实例上，并且是完全封装 (fully encapsulated) 的，因此不同插件的处理函数可以不同。支持 *async-await* 语法。<br>
 *注：假如错误的 `statusCode` 小于 400，在处理错误前 Fastify 将会自动将其设为 500。*
 
 ```js
 fastify.setErrorHandler(function (error, request, reply) {
   // 记录错误
+  this.log.error(error)
   // 发送错误响应
+  reply.status(409).send({ ok: false })
 })
 ```
 
