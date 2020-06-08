@@ -437,7 +437,7 @@ Fastify 的 API 都首先来自于 `fastify()` 方法。在 JavaScript 中，通
 
 约束值：`http.Server`、`https.Server`、`http2.Http2Server`、`http2.Http2SecureServer`
 
-强制执行泛型参数 (Enforces generic parameters)：[`RawRequest`][RawRequestGeneric]、[`RawReply`][RawReplyGeneric]
+必要的泛型参数 (Enforces generic parameters)：[`RawRequest`][RawRequestGeneric]、[`RawReply`][RawReplyGeneric]
 
 ##### RawRequest
 底层 Node.js request 的类型。
@@ -446,7 +446,7 @@ Fastify 的 API 都首先来自于 `fastify()` 方法。在 JavaScript 中，通
 
 约束值：`http.IncomingMessage`、`http2.Http2ServerRequest`
 
-被 [`RawServer`][RawServerGeneric] 强制执行
+被 [`RawServer`][RawServerGeneric] 约束。
 
 ##### RawReply
 底层 Node.js response 的类型。
@@ -455,14 +455,14 @@ Fastify 的 API 都首先来自于 `fastify()` 方法。在 JavaScript 中，通
 
 约束值：`http.ServerResponse`、`http2.Http2ServerResponse`
 
-被 [`RawServer`][RawServerGeneric] 强制执行
+被 [`RawServer`][RawServerGeneric]  约束。
 
 ##### Logger
 Fastify 日志工具。
 
 默认值：[`FastifyLoggerOptions`][FastifyLoggerOptions]
 
-被 [`RawServer`][RawServerGeneric] 强制执行
+被 [`RawServer`][RawServerGeneric]  约束。
 
 ##### RawBody
 为 content-type-parser 方法提供的泛型参数。
@@ -809,7 +809,7 @@ fastify().register(plugin, { option1: '', option2: true }) // OK - options 对�
 
 [源码](../types/logger.d.ts#L17)
 
-Fastify 内建日志工具的接口定义，基于 [Pino.js](http://getpino.io/#/)。当通过服务器选项启用日志时，参照[日志](./Logging.md)文档使用它。
+Fastify 内建日志工具的接口定义，模仿了 [Pino.js](http://getpino.io/#/) 的接口定义。当通过服务器选项启用日志时，参照[日志](./Logging.md)文档使用它。
 
 ##### fastify.FastifyLogFn
 
