@@ -250,9 +250,9 @@ fastify.post('/foo', {
 ```
 
 <a name="schema-validator"></a>
-#### Schema 验证器
+#### 验证生成器
 
-`schemaValidator` 返回一个用于验证 body、url、路由参数、header 以及 querystring 的函数。默认返回一个实现了 [ajv](https://ajv.js.org/) 验证接口的函数。Fastify 内在地使用该函数以加速验证。
+`validatorCompiler` 返回一个用于验证 body、url、路由参数、header 以及 querystring 的函数。默认返回一个实现了 [ajv](https://ajv.js.org/) 验证接口的函数。Fastify 内在地使用该函数以加速验证。
 
 Fastify 使用的 [ajv 基本配置](https://github.com/epoberezkin/ajv#options-to-modify-validated-data)如下：
 
@@ -289,6 +289,10 @@ fastify.setValidatorCompiler((method, url, httpPart, schema) => {
 ```
 
 也许你想使用其他验证工具，例如 `Joi`。下面的例子展示了如何通过 `Joi` 来验证 url、参数、body 与 querystring！
+<a name="using-other-validation-libraries"></a>
+##### 使用其他验证工具
+
+通过 `setValidatorCompiler` 函数，你可以轻松地将 `ajv` 替换为几乎任意的 Javascript 验证工具 (如 [joi](https://github.com/hapijs/joi/)、[yup](https://github.com/jquense/yup/) 等)，或自定义它们。	
 
 ```js
 const Joi = require('@hapi/joi')
@@ -305,9 +309,81 @@ fastify.post('/the/url', {
 }, handler)
 ```
 
-在这个例子里，`validatorCompiler` 返回的函数会返回一个包含下列属性的对象：
-* `error`：`Error` 的实例，或描述校验错误的字符串。
-* `value`：经过验证的隐式转换过的数据。
+```js
+const yup = require('yup')
+// 等同于前文 ajv 基本配置的 yup 的配置
+const yupOptions = {
+  strict: false,
+  abortEarly: false, // 返回所有错误（译注：为 true 时出现首个错误后即返回）
+  stripUnknown: true, // 移除额外属性
+  recursive: true
+}
+fastify.post('/the/url', {
+  schema: {
+    body: yup.object({
+      age: yup.number().integer().required(),
+      sub: yup.object().shape({
+        name: yup.string().required()
+      }).required()
+    })
+  },
+  validatorCompiler: (method, url, httpPart, schema) => {
+    return function (data) {
+      // 当设置 strict = false 时， yup 的 `validateSync` 函数在验证成功后会返回经过转换的值，而失败时则会抛错。
+      try {
+        const result = schema.validateSync(data, yupOptions)
+        return { value: result }
+      } catch (e) {
+        return { error: e }
+      }
+    }
+  }
+}, handler)
+```
+
+##### 其他验证工具的验证信息
+
+Fastify 的错误验证与其默认的验证引擎 `ajv` 紧密结合，错误最终会经由 `schemaErrorsText` 函数转化为便于阅读的信息。然而，也正是由于 `schemaErrorsText` 与 `ajv` 的强关联性，当你使用其他校验工具时，可能会出现奇怪或不完整的错误信息。
+
+要规避以上问题，主要有两个途径：
+
+1. 确保自定义的 `schemaCompiler` 返回的错误结构与 `ajv` 的一致 (当然，由于各引擎的差异，这是件困难的活儿)。	
+2. 使用自定义的 `errorHandler` 拦截并格式化验证错误。
+
+Fastify 给所有的验证错误添加了两个属性，来帮助你自定义 `errorHandler`：
+
+* validation：来自 `schemaCompiler` 函数的验证函数所返回的对象上的 `error` 属性的内容。	
+* validationContext：验证错误的上下文 (body、params、query、headers)。
+
+以下是一个自定义 `errorHandler` 来处理验证错误的例子：
+
+```js
+const errorHandler = (error, request, reply) => {
+  const statusCode = error.statusCode
+  let response
+
+  const { validation, validationContext } = error
+
+  // 检验是否发生了验证错误
+  if (validation) {
+    response = {
+      // validationContext 的值可能是 'body'、'params'、'headers' 或 'query'
+      message: `A validation error occured when validating the ${validationContext}...`,
+     // 验证工具返回的结果
+      errors: validation
+    }
+  } else {
+    response = {
+      message: 'An error occurred...'
+    }
+  }
+
+  // 其余代码。例如，记录错误日志。	
+  // ...
+
+  reply.status(statusCode).send(response)
+}
+```
 
 <a name="serialization"></a>
 ### 序列化
@@ -353,9 +429,9 @@ fastify.post('/the/url', { schema }, handler)
 ```
 
 <a name="schema-serializer"></a>
-#### Schema 序列化器
+#### 序列化函数生成器
 
-`schemaSerializer` 返回一个根据输入参数返回字符串的函数。你应该提供一个函数，用于序列化所有定义了 `response` JSON Schema 的路由。
+`serializerCompiler` 返回一个根据输入参数返回字符串的函数。你应该提供一个函数，用于序列化所有定义了 `response` JSON Schema 的路由。
 
 ```js
 fastify.setSerializerCompiler((method, url, httpPart, schema) => {
