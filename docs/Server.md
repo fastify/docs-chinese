@@ -638,12 +638,12 @@ fastify.setReplySerializer(function (payload, statusCode){
 
 <a name="validator-compiler"></a>
 #### validatorCompiler
-该属性用于获取 schema 校验器。未设置校验器时，在服务器启动前，该值是 `null`，之后是一个签名为 `function (method, url, httpPart, schema)` 的函数。该函数将 `schema` 参数编译为一个校验数据的函数，并返回生成的函数。
+该属性用于获取 schema 校验器。未设置校验器时，在服务器启动前，该值是 `null`，之后是一个签名为 `function ({ schema, method, url, httpPart })` 的函数。该函数将 `schema` 参数编译为一个校验数据的函数，并返回生成的函数。
 `schema` 参数能访问到所有通过 [`.addSchema`](#add-schema) 添加的共用 schema。
 
 <a name="serializer-compiler"></a>
 #### serializerCompiler
-该属性用于获取 schema 序列化器。未设置序列化器时，在服务器启动前，该值是 `null`，之后是一个签名为 `function (method, url, httpPart, schema)` 的函数。该函数将 `schema` 参数编译为一个校验数据的函数，并返回生成的函数。
+该属性用于获取 schema 序列化器。未设置序列化器时，在服务器启动前，该值是 `null`，之后是一个签名为 `function ({ schema, method, url, httpPart })` 的函数。该函数将 `schema` 参数编译为一个校验数据的函数，并返回生成的函数。
 `schema` 参数能访问到所有通过 [`.addSchema`](#add-schema) 添加的共用 schema。
 
 <a name="set-not-found-handler"></a>

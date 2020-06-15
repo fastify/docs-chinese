@@ -283,7 +283,7 @@ const ajv = new Ajv({
   // 任意其他参数
   // ...
 })
-fastify.setValidatorCompiler((method, url, httpPart, schema) => {
+fastify.setValidatorCompiler(({ schema, method, url, httpPart }) => {
   return ajv.compile(schema)
 })
 ```
@@ -303,7 +303,7 @@ fastify.post('/the/url', {
       hello: Joi.string().required()
     }).required()
   },
-  validatorCompiler: (method, url, httpPart, schema) => {
+  validatorCompiler: ({ schema, method, url, httpPart }) => {
     return (data) => Joi.validate(data, schema)
   }
 }, handler)
@@ -327,7 +327,7 @@ fastify.post('/the/url', {
       }).required()
     })
   },
-  validatorCompiler: (method, url, httpPart, schema) => {
+  validatorCompiler: ({ schema, method, url, httpPart }) => {
     return function (data) {
       // 当设置 strict = false 时， yup 的 `validateSync` 函数在验证成功后会返回经过转换的值，而失败时则会抛错。
       try {
@@ -434,7 +434,7 @@ fastify.post('/the/url', { schema }, handler)
 `serializerCompiler` 返回一个根据输入参数返回字符串的函数。你应该提供一个函数，用于序列化所有定义了 `response` JSON Schema 的路由。
 
 ```js
-fastify.setSerializerCompiler((method, url, httpPart, schema) => {
+fastify.setSerializerCompiler(({ schema, method, url, httpStatus }) => {
   return data => JSON.stringify(data)
 })
 

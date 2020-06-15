@@ -46,8 +46,8 @@ fastify.route(options)
 * `onSend(request, reply, payload, done)`：响应即将发送前调用的[函数](https://github.com/fastify/docs-chinese/blob/master/docs/Hooks.md#route-hooks)。可以是一个函数数组。
 * `onResponse(request, reply, done)`：当响应发送后调用的[函数](https://github.com/fastify/docs-chinese/blob/master/docs/Hooks.md#onresponse)。因此，在这个函数内部，不允许再向客户端发送数据。可以是一个函数数组。
 * `handler(request, reply)`：处理请求的函数。
-* `validatorCompiler(method, url, httpPart, schema)`：生成校验请求的 schema 的函数。详见[验证与序列化](https://github.com/fastify/docs-chinese/blob/master/docs/Validation-and-Serialization.md#schema-validator)。
-* `serializerCompiler(method, url, httpPart, schema)`：生成序列化响应的 schema 的函数。详见[验证与序列化](https://github.com/fastify/docs-chinese/blob/master/docs/Validation-and-Serialization.md#schema-serializer)。
+* `validatorCompiler({ schema, method, url, httpPart })`：生成校验请求的 schema 的函数。详见[验证与序列化](https://github.com/fastify/docs-chinese/blob/master/docs/Validation-and-Serialization.md#schema-validator)。
+* `serializerCompiler({ { schema, method, url, httpStatus } })`：生成序列化响应的 schema 的函数。详见[验证与序列化](https://github.com/fastify/docs-chinese/blob/master/docs/Validation-and-Serialization.md#schema-serializer)。
 * `bodyLimit`：一个以字节为单位的整形数，默认值为 `1048576` (1 MiB)，防止默认的 JSON 解析器解析超过此大小的请求主体。你也可以通过 `fastify(options)`，在首次创建 Fastify 实例时全局设置该值。
 * `logLevel`：设置日志级别。详见下文。
 * `logSerializers`：设置当前路由的日志序列化器。
