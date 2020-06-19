@@ -6,7 +6,7 @@
 
 - [AWS Lambda](#aws-lambda)
 - [Google Cloud Run](#google-cloud-run)
-- [Zeit Now](#zeit-now)
+- [Vercel](#vercel)
 
 ### 读者须知：
 > Fastify 并不是为无服务器环境准备的。
@@ -187,9 +187,9 @@ gcloud beta run deploy --image gcr.io/PROJECT-ID/APP-NAME --platform managed
 
 如此，便能从 Google 云平台提供的链接访问你的应用了。
 
-## Zeit Now
+## Vercel
 
-[now](https://zeit.co/home) 针对 Node.js 应用提供了零配置部署方案。要使用 now，只需要如下配置你的 `now.json` 文件：
+[Vercel](https://vercel.com) 针对 Node.js 应用提供了零配置部署方案。要使用 now，只需要如下配置你的 `now.json` 文件：
 
 ```json
 {
