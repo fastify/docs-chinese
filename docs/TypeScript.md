@@ -51,7 +51,7 @@ Fastify 是用普通的 JavaScript 编写的，因此，类型定义的维护并
   server.listen(8080, (err, address) => {
     if(err) {
       console.error(err)
-      process.exit(0)
+      process.exit(1)
     }
     console.log(`Server listening at ${address}`)
   })
