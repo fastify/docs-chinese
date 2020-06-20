@@ -400,6 +400,45 @@ const fastify = require('fastify')({
 })
 ```
 
+<a name="client-error-handler"></a>
+### `clientErrorHandler`
+
+设置 [clientErrorHandler](https://nodejs.org/api/http.html#http_event_clienterror) 来监听客户端连接造成的 `error` 事件，并响应 `400` 状态码。
+
+设置了该选项，会覆盖默认的 `clientErrorHandler`。
+
++ 默认值：
+```js
+function defaultClientErrorHandler (err, socket) {
+  const body = JSON.stringify({
+    error: http.STATUS_CODES['400'],
+    message: 'Client Error',
+    statusCode: 400
+  })
+  this.log.trace({ err }, 'client error')
+  socket.end(`HTTP/1.1 400 Bad Request\r\nContent-Length: ${body.length}\r\nContent-Type: application/json\r\n\r\n${body}`)
+}
+```
+
+*注：`clientErrorHandler` 使用底层的 socket，故处理函数需要返回格式正确的 HTTP 响应信息，包括状态行、HTTP header 以及 body。*
+
+```js
+const fastify = require('fastify')({
+  clientErrorHandler: function (err, socket) {
+    const body = JSON.stringify({
+      error: {
+        message: 'Client error',
+        code: '400'
+      }
+    })
+    // `this` 为 fastify 实例
+    this.log.trace({ err }, 'client error')
+    // 处理函数应当发送正确的 HTTP 响应信息。
+    socket.end(`HTTP/1.1 400 Bad Request\r\nContent-Length: ${body.length}\r\nContent-Type: application/json\r\n\r\n${body}`)
+  }
+})
+```
+
 ## 实例
 
 ### 服务器方法
