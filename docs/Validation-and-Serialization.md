@@ -498,7 +498,92 @@ fastify.setErrorHandler(function (error, request, reply) {
 })
 ```
 
-假如你想轻松愉快地自定义错误响应，可以看[这里](https://github.com/epoberezkin/ajv-errors)。
+假如你想轻松愉快地自定义错误响应，请查看 [`ajv-errors`](https://github.com/epoberezkin/ajv-errors)。具体的例子可以移步[这里](https://github.com/fastify/example/blob/master/validation-messages/custom-errors-messages.js)。
+
+
+下面的例子展示了如何通过自定义 AJV，为 schema 的**每个属性添加自定义错误信息**。
+其中的注释描述了在不同场景下设置不同信息的方法。
+
+```js
+const fastify = Fastify({
+  ajv: {
+    customOptions: { allErrors: true, jsonPointers: true },
+    plugins: [
+      require('ajv-errors')
+    ]
+  }
+})
+
+const schema = {
+  body: {
+    type: 'object',
+    properties: {
+      name: {
+        type: 'string',
+        errorMessage: {
+          type: 'Bad name'
+        }
+      },
+      age: {
+        type: 'number',
+        errorMessage: {
+          type: 'Bad age', // 为除了必填外的所有限制
+          min: 'Too young' // 自定义错误信息
+        }
+      }
+    },
+    required: ['name', 'age'],
+    errorMessage: {
+      required: {
+        name: 'Why no name!', // 为必填设置
+        age: 'Why no age!' // 错误信息
+      }
+    }
+  }
+}
+
+fastify.post('/', { schema, }, (request, reply) => {
+  reply.send({
+    hello: 'world'
+  })
+})
+```
+
+想要本地化错误信息，请看 [ajv-i18n](https://github.com/epoberezkin/ajv-i18n)
+
+```js
+const localize = require('ajv-i18n')
+
+const fastify = Fastify({
+  ajv: {
+    customOptions: { allErrors: true }
+  }
+})
+
+const schema = {
+  body: {
+    type: 'object',
+    properties: {
+      name: {
+        type: 'string',
+      },
+      age: {
+        type: 'number',
+      }
+    },
+    required: ['name', 'age'],
+  }
+}
+
+fastify.setErrorHandler(function (error, request, reply) {
+  if (error.validation) {
+    localize.ru(error.validation)
+    reply.status(400).send(error.validation)
+    return
+  }
+  reply.send(error)
+})
+```
 
 ### JSON Schema 支持
 
