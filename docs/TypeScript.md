@@ -125,7 +125,7 @@ Fastify 是用普通的 JavaScript 编写的，因此，类型定义的维护并
 在上一个例子里，我们使用接口定义了请求 querystring 和 header 的类型。许多用户使用 JSON Schema 来处理这些工作，幸运的是，有一套方法能将现有的 JSON Schema 转换为 TypeScript 接口！
 
 1. 完成 '起步' 中例子的 1-4 步。
-2. 安装 `compile-schemas-to-typesciprt` 模块：
+2. 安装 `compile-schemas-to-typescript` 模块：
     ```
     npm i -D compile-schemas-to-typescript
     ```
