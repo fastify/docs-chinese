@@ -18,6 +18,7 @@
   - [在钩子中管理错误](#manage-errors-from-a-hook)
   - [在钩子中响应请求](#respond-to-a-request-from-a-hook)
 - [应用钩子](#application-hooks)
+  - [onReady](#onready)
   - [onClose](#onclose)
   - [onRoute](#onroute)
   - [onRegister](#onregister)
@@ -107,7 +108,7 @@ fastify.addHook('preHandler', async (request, reply) => {
 
 ```js
 fastify.addHook('preSerialization', (request, reply, payload, done) => {
-  const err = null;
+  const err = null
   const newPayload = { wrapped: payload }
   done(err, newPayload)
 })
@@ -266,12 +267,30 @@ fastify.addHook('preHandler', async (request, reply) => {
 
 你也可以在应用的生命周期里使用钩子方法。要格外注意的是，这些钩子并未被完全封装。钩子中的 `this` 得到了封装，但处理函数可以响应封装界线外的事件。
 
+- [onReady](#onready)
 - [onClose](#onclose)
 - [onRoute](#onroute)
 - [onRegister](#onregister)
 
-<a name="on-close"></a>
+### onReady
+在服务器开始监听请求之前触发。在此你无法更改路由，或添加新的钩子。注册的 `onReady` 钩子函数串行执行，只有全部执行完毕时，服务器才会开始监听请求。钩子接受一个回调函数作为参数：`done`，在钩子函数完成后调用。钩子的 `this` 为 Fastify 实例。
 
+```js
+// 回调写法
+fastify.addHook('onReady', function (done) {
+  // 其他代码
+  const err = null;
+  done(err)
+})
+
+// 或 async/await
+fastify.addHook('onReady', async function () {
+  // 异步代码
+  await loadCacheFromDatabase()
+})
+```
+
+<a name="on-close"></a>
 ### onClose
 使用 `fastify.close()` 停止服务器时被触发。当[插件](https://github.com/fastify/docs-chinese/blob/master/docs/Plugins.md)需要一个 "shutdown" 事件时有用，例如关闭一个数据库连接。<br>
 该钩子的第一个参数是 Fastify 实例，第二个为 `done` 回调函数。
@@ -281,6 +300,7 @@ fastify.addHook('onClose', (instance, done) => {
   done()
 })
 ```
+
 <a name="on-route"></a>
 ### onRoute
 当注册一个新的路由时被触发。它的监听函数拥有一个唯一的参数：`routeOptions` 对象。该函数是同步的，其本身并不接受回调作为参数。
