@@ -3,7 +3,7 @@
 <a name="factory"></a>
 ## 工厂函数
 
-Fastify 模块导出了一个工厂函数，可以用于创建新的<a href="https://github.com/fastify/docs-chinese/blob/master/docs/Server.md"><code><b> Fastify server</b></code></a> 实例。这个工厂函数的参数是一个配置对象，用于自定义最终生成的实例。本文描述了这一对象中可用的属性。
+Fastify 模块导出了一个工厂函数，可以用于创建新的<a href="./Server.md"><code><b> Fastify server</b></code></a> 实例。这个工厂函数的参数是一个配置对象，用于自定义最终生成的实例。本文描述了这一对象中可用的属性。
 
 <a name="factory-http2"></a>
 ### `http2`
@@ -18,7 +18,7 @@ Fastify 模块导出了一个工厂函数，可以用于创建新的<a href="htt
 用于配置服务器的 TLS socket 的对象。其选项与 Node.js 原生的 [`createServer` 方法](https://nodejs.org/dist/latest-v8.x/docs/api/https.html#https_https_createserver_options_requestlistener)一致。
 当值为 `null` 时，socket 连接将不会配置 TLS。
 
-当 <a href="https://github.com/fastify/docs-chinese/blob/master/docs/Server.md#factory-http2">
+当 <a href="./Server.md#factory-http2">
 <code><b>http2</b></code>
 </a> 选项设置时，`https` 选项也会被应用。
 
@@ -158,7 +158,7 @@ const serverFactory = (handler, opts) => {
   return server
 }
 
-const fastify = Fastify({ serverFactory, modifyCoreObjects: false })
+const fastify = Fastify({ serverFactory })
 
 fastify.get('/', (req, reply) => {
   reply.send({ hello: 'world' })
@@ -167,7 +167,6 @@ fastify.get('/', (req, reply) => {
 fastify.listen(3000)
 ```
 Fastify 内在地使用 Node 原生 http server 的 API。因此，如果你使用一个自定义的 server，你必须保证暴露了相同的 API。不这么做的话，你可以在 `serverFactory` 函数内部 `return` 语句之前，向 server 实例添加新的属性。<br/>
-*要注意的是，我们也设置了 `modifyCoreObjects: false`。这是因为在诸如 Google Cloud Functions 等无服务器 (serverless) 环境下，一些 Node.js 核心的属性是不可写的。*
 
 <a name="factory-case-sensitive"></a>
 ### `caseSensitive`
@@ -188,7 +187,7 @@ fastify.get('/user/:username', (request, reply) => {
 <a name="factory-request-id-header"></a>
 ### `requestIdHeader`
 
-用来获知请求 id 的 header 名。请看[请求 id](https://github.com/fastify/docs-chinese/blob/master/docs/Logging.md#logging-request-id) 一节。
+用来获知请求 id 的 header 名。请看[请求 id](./Logging.md#logging-request-id) 一节。
 
 + 默认值：`'request-id'`
 
@@ -237,7 +236,7 @@ const fastify = Fastify({ trustProxy: true })
 
 更多示例详见 [proxy-addr](https://www.npmjs.com/package/proxy-addr)。
 
-你还可以通过 [`request`](https://github.com/fastify/docs-chinese/blob/master/docs/Request.md) 对象获取 `ip`、`ips` 与 `hostname` 的值。
+你还可以通过 [`request`](./Request.md) 对象获取 `ip`、`ips` 与 `hostname` 的值。
 
 ```js
 fastify.get('/', (request, reply) => {
@@ -250,7 +249,7 @@ fastify.get('/', (request, reply) => {
 <a name="plugin-timeout"></a>
 ### `pluginTimeout`
 
-单个插件允许加载的最长时间，以毫秒计。如果某个插件加载超时，则 [`ready`](https://github.com/fastify/docs-chinese/blob/master/docs/Server.md#ready) 会抛出一个含有 `'ERR_AVVIO_PLUGIN_TIMEOUT'` 代码的 `Error` 对象。
+单个插件允许加载的最长时间，以毫秒计。如果某个插件加载超时，则 [`ready`](./Server.md#ready) 会抛出一个含有 `'ERR_AVVIO_PLUGIN_TIMEOUT'` 代码的 `Error` 对象。
 
 + 默认值：`10000`
 
@@ -270,7 +269,7 @@ const fastify = require('fastify')({
 <a name="versioning"></a>
 ### `versioning`
 
-默认情况下，`find-my-way` 使用 [semver 版本号规范](https://github.com/fastify/docs-chinese/blob/master/docs/Routes.md#version)来为路由设置版本号。你也可以使用自定义的版本号策略。更多信息请看 [find-my-way](https://github.com/delvedor/find-my-way#versioned-routes) 的文档。
+默认情况下，`find-my-way` 使用 [semver 版本号规范](./Routes.md#version)来为路由设置版本号。你也可以使用自定义的版本号策略。更多信息请看 [find-my-way](https://github.com/delvedor/find-my-way#versioned-routes) 的文档。
 
 ```js
 const versioning = {
@@ -289,41 +288,6 @@ const versioning = {
 }
  const fastify = require('fastify')({
   versioning
-})
-```
-
-<a name="factory-modify-core-objects"></a>
-### `modifyCoreObjects`
-
-+ 默认值：`true`
-
-默认情况下，Fastify 会向 Node 原生的 request 对象添加 `ip`、`ips`、`hostname` 以及 `log` 属性 (参见 [`Request`](https://github.com/fastify/docs-chinese/blob/master/docs/Request.md))，向原生的 response 对象添加 `log` 属性。你可以将 `modifyCoreObjects` 设为 `false` 来避免上述行为。
-
-```js
-const fastify = Fastify({ modifyCoreObjects: true }) // 默认值
-
-fastify.get('/', (request, reply) => {
-  console.log(request.raw.ip)
-  console.log(request.raw.ips)
-  console.log(request.raw.hostname)
-  request.raw.log('Hello')
-  reply.res.log('World')
-})
-```
-
-在诸如 Google Cloud Functions 等无服务器 (serverless) 环境下，禁用该选项是有用的。因为在这些环境中，`ip` 及 `ips` 并不可写。
-
-**请注意，我们不建议使用这些属性。它们将会在 Fastify 的下个主要版本中，与该选项一起去除。**作为替代，我们推荐使用 Fastify 的 [`Request`](https://github.com/fastify/docs-chinese/blob/master/docs/Request.md) 与 [`Reply`](https://github.com/fastify/docs-chinese/blob/master/docs/Reply.md) 对象上相同的属性。
-
-```js
-const fastify = Fastify({ modifyCoreObjects: false })
-
-fastify.get('/', (request, reply) => {
-  console.log(request.ip)
-  console.log(request.ips)
-  console.log(request.hostname)
-  request.log('Hello')
-  reply.log('World')
 })
 ```
 
@@ -445,7 +409,7 @@ const fastify = require('fastify')({
 
 <a name="server"></a>
 #### 服务器
-`fastify.server`：由 [**`Fastify 的工厂函数`**](https://github.com/fastify/docs-chinese/blob/master/docs/Server.md) 生成的 Node 原生 [server](https://nodejs.org/api/http.html#http_class_http_server) 对象。
+`fastify.server`：由 [**`Fastify 的工厂函数`**](./Server.md) 生成的 Node 原生 [server](https://nodejs.org/api/http.html#http_class_http_server) 对象。
 
 <a name="after"></a>
 #### after
@@ -559,13 +523,13 @@ fastify.listen(3000, '0.0.0.0', (err, address) => {
 
 <a name="route"></a>
 #### route
-将路由添加到服务器的方法，支持简写。请看[这里](https://github.com/fastify/docs-chinese/blob/master/docs/Routes.md)。
+将路由添加到服务器的方法，支持简写。请看[这里](./Routes.md)。
 
 <a name="close"></a>
 #### close
-`fastify.close(callback)`：调用这个函数来关闭服务器实例，并触发 [`'onClose'`](https://github.com/fastify/docs-chinese/blob/master/docs/Hooks.md#on-close) 钩子。<br>
+`fastify.close(callback)`：调用这个函数来关闭服务器实例，并触发 [`'onClose'`](./Hooks.md#on-close) 钩子。<br>
 服务器会向所有新的请求发送 `503` 错误，并销毁它们。
-要改变这一行为，请见 [`return503OnClosing`](https://github.com/fastify/docs-chinese/blob/master/docs/Server.md#factory-return-503-on-closing)。
+要改变这一行为，请见 [`return503OnClosing`](./Server.md#factory-return-503-on-closing)。
 
 如果无参调用，它会返回一个 Promise：
 
@@ -579,11 +543,11 @@ fastify.close().then(() => {
 
 <a name="decorate"></a>
 #### decorate*
-向 Fastify 实例、响应或请求添加装饰器函数。参阅[这里](https://github.com/fastify/docs-chinese/blob/master/docs/Decorators.md)了解更多。
+向 Fastify 实例、响应或请求添加装饰器函数。参阅[这里](./Decorators.md)了解更多。
 
 <a name="register"></a>
 #### register
-Fastify 允许用户通过插件扩展功能。插件可以是一组路由、装饰器或其他。请看[这里](https://github.com/fastify/docs-chinese/blob/master/docs/Plugins.md)。
+Fastify 允许用户通过插件扩展功能。插件可以是一组路由、装饰器或其他。请看[这里](./Plugins.md)。
 
 <a name="use"></a>
 #### use
@@ -591,7 +555,7 @@ Fastify 允许用户通过插件扩展功能。插件可以是一组路由、装
 
 <a name="addHook"></a>
 #### addHook
-向 Fastify 添加特定的生命周期钩子函数，请看[这里](https://github.com/fastify/docs-chinese/blob/master/docs/Hooks.md)。
+向 Fastify 添加特定的生命周期钩子函数，请看[这里](./Hooks.md)。
 
 <a name="prefix"></a>
 #### prefix
@@ -635,16 +599,16 @@ fastify.register(function (instance, opts, done) {
 
 <a name="log"></a>
 #### log
-日志的实例，详见[这里](https://github.com/fastify/docs-chinese/blob/master/docs/Logging.md)。
+日志的实例，详见[这里](./Logging.md)。
 
 <a name="inject"></a>
 #### inject
-伪造 http 注入 (作为测试之用) 。请看[更多内容](https://github.com/fastify/docs-chinese/blob/master/docs/Testing.md#inject)。
+伪造 http 注入 (作为测试之用) 。请看[更多内容](./Testing.md#inject)。
 
 <a name="add-schema"></a>
 #### addSchema
 `fastify.addSchema(schemaObj)`，向 Fastify 实例添加 JSON schema。你可以通过 `$ref` 关键字在应用的任意位置使用它。<br/>
-更多内容，请看[验证和序列化](https://github.com/fastify/docs-chinese/blob/master/docs/Validation-and-Serialization.md)。
+更多内容，请看[验证和序列化](./Validation-and-Serialization.md)。
 
 <a name="get-schemas"></a>
 #### getSchemas
@@ -656,8 +620,8 @@ fastify.register(function (instance, opts, done) {
 
 <a name="set-reply-serializer"></a>
 #### setReplySerializer
-作用于未设置 [Reply.serializer(func)](https://github.com/fastify/docs-chinese/blob/master/docs/Reply.md#serializerfunc) 的所有路由的默认序列化方法。这个处理函数是完全封装的，因此，不同的插件允许有不同的错误处理函数。
-注：仅当状态码为 `2xx` 时才被调用。关于错误处理，请看 [`setErrorHandler`](https://github.com/fastify/docs-chinese/blob/master/docs/Server.md#seterrorhandler)。
+作用于未设置 [Reply.serializer(func)](./Reply.md#serializerfunc) 的所有路由的默认序列化方法。这个处理函数是完全封装的，因此，不同的插件允许有不同的错误处理函数。
+注：仅当状态码为 `2xx` 时才被调用。关于错误处理，请看 [`setErrorHandler`](./Server.md#seterrorhandler)。
 
  ```js
 fastify.setReplySerializer(function (payload, statusCode){
@@ -668,11 +632,11 @@ fastify.setReplySerializer(function (payload, statusCode){
 
 <a name="set-validator-compiler"></a>
 #### setValidatorCompiler
-为所有的路由设置 schema 校验编译器 (validator compiler)。详见 [#schema-validator](https://github.com/fastify/docs-chinese/blob/master/docs/Validation-and-Serialization.md#schema-validator)。
+为所有的路由设置 schema 校验编译器 (validator compiler)。详见 [#schema-validator](./Validation-and-Serialization.md#schema-validator)。
 
 <a name="set-serializer-resolver"></a>
 #### setSerializerCompiler
-为所有的路由设置 schema 序列化编译器 (serializer compiler)。详见 [#schema-serializer](https://github.com/fastify/docs-chinese/blob/master/docs/Validation-and-Serialization.md#schema-serializer)。
+为所有的路由设置 schema 序列化编译器 (serializer compiler)。详见 [#schema-serializer](./Validation-and-Serialization.md#schema-serializer)。
 **注：** [`setReplySerializer`](#set-reply-serializer) 有更高的优先级！
 
 <a name="validator-compiler"></a>
@@ -688,11 +652,11 @@ fastify.setReplySerializer(function (payload, statusCode){
 <a name="set-not-found-handler"></a>
 #### setNotFoundHandler
 
-`fastify.setNotFoundHandler(handler(request, reply))`：为 404 状态 (not found) 设置处理函数 (handler)。向 `fastify.register()` 传递不同的 [`prefix` 选项](https://github.com/fastify/docs-chinese/blob/master/docs/Plugins.md#route-prefixing-option)，就可以为不同的插件设置不同的处理函数。这些处理函数被视为常规的路由处理函数，因此它们的请求会经历一个完整的 [Fastify 生命周期](https://github.com/fastify/docs-chinese/blob/master/docs/Lifecycle.md#lifecycle)。
+`fastify.setNotFoundHandler(handler(request, reply))`：为 404 状态 (not found) 设置处理函数 (handler)。向 `fastify.register()` 传递不同的 [`prefix` 选项](./Plugins.md#route-prefixing-option)，就可以为不同的插件设置不同的处理函数。这些处理函数被视为常规的路由处理函数，因此它们的请求会经历一个完整的 [Fastify 生命周期](./Lifecycle.md#lifecycle)。
 
-你也可以为 404 处理函数注册 [`preValidation`](https://github.com/fastify/docs-chinese/blob/master/docs/Hooks.md/#route-hooks) 或 [`preHandler`](https://github.com/fastify/docs-chinese/blob/master/docs/Hooks.md/#route-hooks) 钩子。
+你也可以为 404 处理函数注册 [`preValidation`](./Hooks.md/#route-hooks) 或 [`preHandler`](./Hooks.md/#route-hooks) 钩子。
 
-_注：通过此方法注册的 `preValidation` 钩子会在遇到未知路由时触发，但手动调用 [`reply.callNotFound`](https://github.com/fastify/docs-chinese/blob/master/docs/Reply.md#call-not-found) 方法时则**不会**_。此时只有 preHandler 会执行。
+_注：通过此方法注册的 `preValidation` 钩子会在遇到未知路由时触发，但手动调用 [`reply.callNotFound`](./Reply.md#call-not-found) 方法时则**不会**_。此时只有 preHandler 会执行。
 
 ```js
 fastify.setNotFoundHandler({
