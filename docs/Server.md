@@ -410,17 +410,24 @@ const fastify = require('fastify')({
 + 默认值：
 ```js
 function defaultClientErrorHandler (err, socket) {
+  if (err.code === 'ECONNRESET') {
+    return
+  }
+
   const body = JSON.stringify({
     error: http.STATUS_CODES['400'],
     message: 'Client Error',
     statusCode: 400
   })
   this.log.trace({ err }, 'client error')
-  socket.end(`HTTP/1.1 400 Bad Request\r\nContent-Length: ${body.length}\r\nContent-Type: application/json\r\n\r\n${body}`)
+
+  if (socket.writable) {
+    socket.end(`HTTP/1.1 400 Bad Request\r\nContent-Length: ${body.length}\r\nContent-Type: application/json\r\n\r\n${body}`)
+  }
 }
 ```
 
-*注：`clientErrorHandler` 使用底层的 socket，故处理函数需要返回格式正确的 HTTP 响应信息，包括状态行、HTTP header 以及 body。*
+*注：`clientErrorHandler` 使用底层的 socket，故处理函数需要返回格式正确的 HTTP 响应信息，包括状态行、HTTP header 以及 body。在写入之前，为了避免 socket 已被销毁，你还应该检查 socket 是否依然可写。*
 
 ```js
 const fastify = require('fastify')({
