@@ -560,7 +560,7 @@ server.get('/', async (request, reply) => {
 
 ###### 例子 5：指定日志类型
 
-Fastify 使用 [Pino](http://getpino.io/#/) 作为日志工具。尽管提供了必要的日志类型，你仍然可以通过 `@types/pino` 获取 Pino 特定的类型，并将 `pino.Logger` 作为第四个泛型参数使用。自定义日志的功能，例如创建自定义的序列化工具也是支持的。详见[日志]()的文档。
+Fastify 使用 [Pino](http://getpino.io/#/) 作为日志工具。尽管提供了必要的日志类型，你仍然可以通过 `@types/pino` 获取 Pino 特定的类型，并将 `pino.Logger` 作为第四个泛型参数使用。自定义日志的功能，例如创建自定义的序列化工具也是支持的。详见[日志](./Logging.md)的文档。
 
 ```typescript
 import fastify from 'fastify'
@@ -568,7 +568,9 @@ import http from 'http'
 import pino from 'pino'
 
 const server = fastify<http.Server, http.IncomingMessage, http.ServerResponse, pino.Logger>({
-  logger: true
+  logger: {
+    messageKey: 'message'
+  }
 })
 
 server.get('/', async (request, reply) => {
