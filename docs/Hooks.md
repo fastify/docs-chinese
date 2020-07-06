@@ -224,7 +224,7 @@ fastify.addHook('onResponse', async (request, reply) => {
 
 __不应当混用回调与 `async`/`Promise`__，否则钩子的调用链会被执行两次。
 
-如果你在 `onRequest` 或 `preHandler` 中发出响应，请使用 `reply.send`。如果是在中间件中，使用 `res.end`。
+如果你在 `onRequest` 或 `preHandler` 中发出响应，请使用 `reply.send`。
 
 ```js
 fastify.addHook('onRequest', (request, reply, done) => {
