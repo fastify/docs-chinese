@@ -155,7 +155,7 @@ async function dbConnector (fastify, options) {
   const db = await MongoClient.connect(url, options)
   fastify.decorate('mongo', db)
 }
-// 用 fastify-plugin 包装插件，以使插件中声明的装饰器、钩子函数及中间件暴露在根作用域里。
+// 用 fastify-plugin 包装插件，以使插件中声明的装饰器、钩子函数暴露在根作用域里。
 module.exports = fastifyPlugin(dbConnector)
 ```
 
@@ -200,7 +200,7 @@ module.exports = routes
 └── 来自 Fastify 生态的插件
 └── 你自己的插件
 └── 装饰器
-└── 钩子函数和中间件
+└── 钩子函数
 └── 你的服务应用
 ```
 这确保了你总能访问当前作用域下声明的所有属性。<br/>
@@ -209,21 +209,21 @@ module.exports = routes
 └── 来自 Fastify 生态的插件
 └── 你自己的插件
 └── 装饰器
-└── 钩子函数和中间件
+└── 钩子函数
 └── 你的服务应用
     │
     └──  服务 A
     │     └── 来自 Fastify 生态的插件
     │     └── 你自己的插件
     │     └── 装饰器
-    │     └── 钩子函数和中间件
+    │     └── 钩子函数
     │     └── 你的服务应用
     │
     └──  服务 B
     │     └── 来自 Fastify 生态的插件
     │     └── 你自己的插件
     │     └── 装饰器
-    │     └── 钩子函数和中间件
+    │     └── 钩子函数
     │     └── 你的服务应用
 ```
 

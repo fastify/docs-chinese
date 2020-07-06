@@ -585,10 +585,6 @@ fastify.close().then(() => {
 #### register
 Fastify 允许用户通过插件扩展功能。插件可以是一组路由、装饰器或其他。请看[这里](https://github.com/fastify/docs-chinese/blob/master/docs/Plugins.md)。
 
-<a name="use"></a>
-#### use
-向 Fastify 添加中间件，请看[这里](https://github.com/fastify/docs-chinese/blob/master/docs/Middleware.md)。
-
 <a name="addHook"></a>
 #### addHook
 向 Fastify 添加特定的生命周期钩子函数，请看[这里](https://github.com/fastify/docs-chinese/blob/master/docs/Hooks.md)。

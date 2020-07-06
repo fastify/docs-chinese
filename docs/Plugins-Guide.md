@@ -9,7 +9,6 @@ Fastify 从一开始就搭建成非常模块化的系统. 我们搭建了非常�
 - [注册器](#register)
 - [装饰器](#decorators)
 - [钩子方法](#hooks)
-- [中间件](#middlewares)
 - [如何处理封装与分发](#distribution)
 - [错误处理](#handle-errors)
 - [ESM 的支持](#esm-support)
@@ -238,16 +237,6 @@ fastify.get('/plugin2', (request, reply) => {
 现在你的钩子方法只会在第一个路由中运行!
 
 你可能已经注意到, `request` and `reply` 不是标准的 Nodejs *request* 和 *response* 对象, 而是 Fastify 对象.<br>
-
-<a name="middleware"></a>
-## 中间件
-Fastify [支持](https://github.com/fastify/docs-chinese/blob/master/docs/Middleware.md) 开箱即用的 Express/Restify/Connect 中间件, 这意味着你可以直接插入你原来的代码而不会有任何问题! *(当然, 更快)*<br>
-假设你是从 Express 或者 Restify 这类框架过来的, 并且你已经知道哪些中间件是你需要的, 你也不想重写这块工作, Fastify 正好可以帮助你实现目标.
-我们是怎么做到的? 请查看我们的中间件引擎, [middie](https://github.com/fastify/middie).
-```js
-const yourMiddleware = require('your-middleware')
-fastify.use(yourMiddleware)
-```
 
 <a name="distribution"></a>
 ## 如何处理封装与分发
