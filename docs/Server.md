@@ -134,12 +134,12 @@ const fastify = require('fastify')({logger: customLogger});
 ```js
 // 例子：通过钩子再造被禁用的请求日志功能。
 fastify.addHook('onRequest', (req, reply, done) => {
-  req.log.info({ url: req.req.url, id: req.id }, 'received request')
+  req.log.info({ url: req.raw.url, id: req.id }, 'received request')
   done()
 })
 
 fastify.addHook('onResponse', (req, reply, done) => {
-  req.log.info({ url: req.req.originalUrl, statusCode: reply.res.statusCode }, 'request completed')
+  req.log.info({ url: req.raw.originalUrl, statusCode: res.raw.statusCode }, 'request completed')
   done()
 })
 ```

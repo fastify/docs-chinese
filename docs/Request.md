@@ -7,7 +7,8 @@ Request 是 Fastify 的核心对象，包含了一下的字段:
 - `body` - 消息主体
 - `params` - URL 参数
 - `headers` - headers
-- `raw` - Node 原生的 HTTP 请求 *(可以用别名 `req`)*
+- `raw` - Node 原生的 HTTP 请求
+- `req` *(不推荐，请使用 `.raw`)* - Node 原生的 HTTP 请求
 - `id` - 请求 id
 - `log` - 请求的日志实例
 - `ip` - 请求方的 ip 地址
