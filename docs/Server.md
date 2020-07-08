@@ -440,6 +440,25 @@ fastify
   })
 ```
 
+当 `after()` 没有回调参数时，它返回一个 `Promise`：
+
+```js
+fastify.register(async (instance, opts) => {
+  console.log('Current plugin')
+})
+
+await fastify.after()
+console.log('After current plugin')
+
+fastify.register(async (instance, opts) => {
+  console.log('Next plugin')
+})
+
+await fastify.ready()
+
+console.log('Everything has been loaded')
+```
+
 <a name="ready"></a>
 #### ready
 当所有插件的加载都完成时调用。如有错误发生，它会传递一个 `error` 参数。

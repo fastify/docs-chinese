@@ -88,9 +88,15 @@ fastify.listen(3000, (err, address) => {
 })
 ```
 
-*async-await* 只被 `ready` 与 `listen` 支持。
+<a name="async-await"></a>
+### async/await
+
+`after`、`ready` 与 `listen` 支持 *async/await*，同时 `fastify` 也是一个 [Thenable](https://promisesaplus.com/) 对象。
+
 ```js
-fastify.register(require('my-plugin'))
+await fastify.register(require('my-plugin'))
+
+await fastify.after()
 
 await fastify.ready()
 
