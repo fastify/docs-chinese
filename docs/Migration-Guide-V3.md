@@ -1,0 +1,217 @@
+# 迁移到 V3
+
+本文帮助你从 Fastify v2 迁移到 v3。
+
+开始之前，请确保所有 v2 中不推荐用法的警示都已修复，因为这些特性在新版都已被移除，升级后你将不能使用它们。([#1750](https://github.com/fastify/fastify/pull/1750))
+
+## 重大改动
+
+### 中间件支持 ([#2014](https://github.com/fastify/fastify/pull/2014))
+
+从 Fastify v3 开始，框架本身便不再支持中间件功能了。
+
+要使用 Express 的中间件的话，请安装 [`fastify-express`](https://github.com/fastify/fastify-express) 或 [`middie`](https://github.com/fastify/middie)。
+
+**v2:**
+
+```js
+fastify.use(require('cors')());
+```
+
+**v3:**
+
+```js
+await fastify.register(require('fastify-express'));
+fastify.use(require('cors')());
+```
+
+### 日志序列化 ([#2017](https://github.com/fastify/fastify/pull/2017))
+
+我们升级了日志的[序列化器](https://github.com/fastify/docs-chinese/blob/master/docs/Logging.md)，现在它接受 Fastify 的 [`Request`](https://github.com/fastify/docs-chinese/blob/master/docs/Request.md) 和 [`Reply`](https://github.com/fastify/docs-chinese/blob/master/docs/Reply.md) 对象，而非原生的对象。
+
+如果你创建了自定义的序列化器，且使用了 Fastify 的对象中未暴露的属性，你需要升级它们。
+
+**v2:**
+
+```js
+const fastify = require('fastify')({
+  logger: {
+    serializers: {
+      res(res) {
+        return {
+          statusCode: res.statusCode,
+          customProp: res.customProp
+        };
+      }
+    }
+  }
+});
+```
+
+**v3:**
+
+```js
+const fastify = require('fastify')({
+  logger: {
+    serializers: {
+      res(reply) {
+        return {
+          statusCode: reply.statusCode, // 无需更改
+          customProp: reply.raw.customProp // 从 res 对象 (译注：即 Node.js 原生的响应对象，此处为 raw) 中记录属性
+        };
+      }
+    }
+  }
+});
+```
+
+### schema 代入 (schema substitution) ([#2023](https://github.com/fastify/fastify/pull/2023))
+
+我们放弃了通过非标准的`替换方式`支持共用 schema 的代入，转而使用符合 JSON Schema 标准的 `$ref` 方案。要更好地理解这一改变，请阅读[《Fastify v3 的验证与序列化》](https://dev.to/eomm/validation-and-serialization-in-fastify-v3-2e8l)一文。
+
+**v2:**
+
+```js
+const schema = {
+  body: 'schemaId#'
+};
+fastify.route({ method, url, schema, handler });
+```
+
+**v3:**
+
+```js
+const schema = {
+  body: {
+    $ref: 'schemaId#'
+  }
+};
+fastify.route({ method, url, schema, handler });
+```
+
+### schema 验证选项 ([#2023](https://github.com/fastify/fastify/pull/2023))
+
+为了未来工具的改善，我们使用 `setValidatorCompiler` 替换了 `setSchemaCompiler` 和 `setSchemaResolver`。要深入地了解这一改变，[请阅读此文](https://dev.to/eomm/validation-and-serialization-in-fastify-v3-2e8l)。
+
+**v2:**
+
+```js
+const fastify = Fastify();
+const ajv = new AJV();
+ajv.addSchema(schemaA);
+ajv.addSchema(schemaB);
+
+fastify.setSchemaCompiler(schema => ajv.compile(schema));
+fastify.setSchemaResolver(ref => ajv.getSchema(ref).schema);
+```
+
+**v3:**
+
+```js
+const fastify = Fastify();
+const ajv = new AJV();
+ajv.addSchema(schemaA);
+ajv.addSchema(schemaB);
+
+fastify.setValidatorCompiler(({ schema, method, url, httpPart }) => 
+  ajv.compile(schema)
+);
+```
+
+### 钩子的行为 ([#2004](https://github.com/fastify/fastify/pull/2004))
+
+为了支持钩子的封装，从 Fastify v3 开始，`onRoute` 与 `onRegister` 钩子的行为发生了微小的变化。
+
+- `onRoute` - 现在改为了异步调用。而在 v1/v2 中，该钩子会在注册一个路由后立马调用。因此，现在你得尽早在代码中注册它。
+- `onRegister` - 和 onRoute 一样。唯一区别在于现在第一次的调用者不是框架本身了，而是首个注册的插件。
+
+### TypeScript 支持
+
+版本 3 的类型系统发生了改变。新的系统带来了泛型约束 (generic constraining) 与默认值，以及定义请求 body，querystring 等 schema 的新方式！
+
+**v2:**
+
+```ts
+interface PingQuerystring {
+  foo?: number;
+}
+
+interface PingParams {
+  bar?: string;
+}
+
+interface PingHeaders {
+  a?: string;
+}
+
+interface PingBody {
+  baz?: string;
+}
+
+server.get<PingQuerystring, PingParams, PingHeaders, PingBody>(
+  '/ping/:bar',
+  opts,
+  (request, reply) => {
+    console.log(request.query); // 类型为 `PingQuerystring`
+    console.log(request.params); // 类型为 `PingParams`
+    console.log(request.headers); // 类型为 `PingHeaders`
+    console.log(request.body); // 类型为 `PingBody`
+  }
+);
+```
+
+**v3:**
+
+```ts
+server.get<{
+  Querystring: PingQuerystring;
+  Params: PingParams;
+  Headers: PingHeaders;
+  Body: PingBody;
+}>('/ping/:bar', opts, async (request, reply) => {
+  console.log(request.query); // 类型为 `PingQuerystring`
+  console.log(request.params); // 类型为 `PingParams`
+  console.log(request.headers); // 类型为 `PingHeaders`
+  console.log(request.body); // 类型为 `PingBody`
+});
+```
+
+### 管理未捕获异常 ([#2073](https://github.com/fastify/fastify/pull/2073))
+
+在同步的路由方法里，一旦一个错误被抛出，服务器将会如设定的那样崩溃，且不调用 `.setErrorHandler()` 方法。现在这一行为发生了改变，所有在同步或异步的路由中未捕获的异常，都将得到控制。
+
+**v2:**
+
+```js
+fastify.setErrorHandler((error, request, reply) => {
+  // 不会调用
+  reply.send(error)
+})
+fastify.get('/', (request, reply) => {
+  const maybeAnArray = request.body.something ? [] : 'I am a string'
+  maybeAnArray.substr() // 抛错：[].substr is not a function，同时服务器崩溃
+})
+```
+
+**v3:**
+
+```js
+fastify.setErrorHandler((error, request, reply) => {
+  // 会调用
+  reply.send(error)
+})
+fastify.get('/', (request, reply) => {
+  const maybeAnArray = request.body.something ? [] : 'I am a string'
+  maybeAnArray.substr() // 抛错：[].substr is not a function，但错误得到控制
+})
+```
+
+## 更多特性与改善
+
+- 不管如何注册钩子，它们总拥有一致的上下文 ([#2005](https://github.com/fastify/fastify/pull/2005))
+- 推荐使用 [`request.raw`](https://github.com/fastify/docs-chinese/blob/master/docs/Request.md) 及 [`reply.raw`](https://github.com/fastify/docs-chinese/blob/master/docs/Reply.md)，而非 `request.req` 和 `reply.res` ([#2008](https://github.com/fastify/fastify/pull/2008))
+- 移除 `modifyCoreObjects` 选项 ([#2015](https://github.com/fastify/fastify/pull/2015))
+- 添加 [`connectionTimeout`](https://github.com/fastify/docs-chinese/blob/master/docs/Server.md#factory-connection-timeout) 选项 ([#2086](https://github.com/fastify/fastify/pull/2086))
+- 添加 [`keepAliveTimeout`](https://github.com/fastify/docs-chinese/blob/master/docs/Server.md#factory-keep-alive-timeout) 选项 ([#2086](https://github.com/fastify/fastify/pull/2086))
+- [插件](https://github.com/fastify/docs-chinese/blob/master/docs/Plugins.md#async-await)支持 async-await ([#2093](https://github.com/fastify/fastify/pull/2093))
+- 支持将对象作为错误抛出 ([#2134](https://github.com/fastify/fastify/pull/2134))
