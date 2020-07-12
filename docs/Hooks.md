@@ -366,7 +366,7 @@ fastify.addHook('onRegister', (instance, opts) => {
 ```
 
 <a name="scope"></a>
-### 作用域
+## 作用域
 除了[应用钩子](#application-hooks)，所有的钩子都是封装好的。这意味着你可以通过 `register` 来决定在何处运行它们，正如[插件指南](https://github.com/fastify/docs-chinese/blob/master/docs/Plugins-Guide.md)所述。如果你传递一个函数，那么该函数会获得 Fastify 的上下文，如此你便能使用 Fastify 的 API 了。
 
 ```js
@@ -375,7 +375,34 @@ fastify.addHook('onRequest', function (request, reply, done) {
   done()
 })
 ```
-注：使用箭头函数会破坏 Fastify 实例对 this 的绑定。
+
+要注意的是，每个钩子内的 Fastify 上下文都和注册路由时的插件一样，举例如下：
+
+```js
+fastify.addHook('onRequest', async function (req, reply) {
+  if (req.raw.url === '/nested') {
+    assert.strictEqual(this.foo, 'bar')
+  } else {
+    assert.strictEqual(this.foo, undefined)
+  }
+})
+
+fastify.get('/', async function (req, reply) {
+  assert.strictEqual(this.foo, undefined)
+  return { hello: 'world' }
+})
+
+fastify.register(async function plugin (fastify, opts) {
+  fastify.decorate('foo', 'bar')
+
+  fastify.get('/nested', async function (req, reply) {
+    assert.strictEqual(this.foo, 'bar')
+    return { hello: 'world' }
+  })
+})
+```
+
+提醒：使用[箭头函数](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/Arrow_functions)的话，`this` 将不会是 Fastify，而是当前的作用域。
 
 <a name="route-hooks"></a>
 
