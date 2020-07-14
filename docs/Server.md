@@ -24,6 +24,20 @@ Fastify 模块导出了一个工厂函数，可以用于创建新的<a href="./S
 
 + 默认值：`null`
 
+<a name="factory-connection-timeout"></a>
+### `connectionTimeout`
+
+定义服务器超时，单位为毫秒。作用请见 [`server.timeout` 属性](https://nodejs.org/api/http.html#http_server_timeout)的文档。当指定了 `serverFactory` 时，该选项被忽略。
+
++ 默认值：`0` (无超时)
+
+<a name="factory-keep-alive-timeout"></a>
+### `keepAliveTimeout`
+
+定义服务器 keep-alive 超时，单位为毫秒。作用请见 [`server.keepAliveTimeout` 属性](https://nodejs.org/api/http.html#http_server_timeout)的文档。仅当使用 HTTP/1 时有效。当指定了 `serverFactory` 时，该选项被忽略。
+
++ 默认值：`5000` (5 秒)
+
 <a name="factory-ignore-slash"></a>
 ### `ignoreTrailingSlash`
 
