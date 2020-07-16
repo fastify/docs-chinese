@@ -953,7 +953,9 @@ FastifyError 是自定义的错误对象，包括了状态码及校验结果。
 
 `preParsing` 是第二个钩子，前一个为 `onRequest`，下一个为 `preValidation`。
 
-注意：在 `preParsing` 钩子中，request.body 永远为 null，因为此时 body 尚未解析 (解析发生在 `preHandler` 钩子之前)。 
+注意：在 `preParsing` 钩子中，request.body 永远为 null，因为此时 body 尚未解析 (解析发生在 `preValidation` 钩子之前)。
+
+注意：你应当给返回的 stream 添加 `receivedEncodedLength` 属性。这是为了通过比对请求头的 `Content-Length`，来精确匹配请求的 payload。理想情况下，每收到一块数据都应该更新该属性。
 
 ##### fastify.preValidationHookhandler<[RawServer][RawServerGeneric], [RawRequest][RawRequestGeneric], [RawReply][RawReplyGeneric], [RequestGeneric][FastifyRequestGenericInterface], [ContextConfig][ContextConfigGeneric]>(request: [FastifyRequest][FastifyRequest], reply: [FastifyReply][FastifyReply], done: (err?: [FastifyError][FastifyError]) => void): Promise\<unknown\> | void
 

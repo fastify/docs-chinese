@@ -54,22 +54,33 @@ fastify.addHook('onRequest', async (request, reply) => {
 **注意**：在 [onRequest](#onRequest) 钩子中，`request.body` 的值总是 `null`，这是因为 body 的解析发生在 [preValidation](#preValidation) 钩子之前。
 
 ### preParsing
+
+`preParsing` 钩子让你能在解析请求之前转换它们。它的参数除了和其他钩子一样的请求与响应对象外，还多了一个当前请求 payload 的 stream。
+
+需要通过 `return` 或回调函数返回值的话，必须返回一个 stream。
+
+例如，你可以解压请求的 body：
+
 ```js
-fastify.addHook('preParsing', (request, reply, done) => {
+fastify.addHook('preParsing', (request, reply, payload, done) => {
   // 其他代码
-  done()
+  done(null, newPayload)
 })
 ```
 或使用 `async/await`：
 ```js
-fastify.addHook('preParsing', async (request, reply) => {
+fastify.addHook('preParsing', async (request, reply, payload) => {
   // 其他代码
   await asyncMethod()
-  return
+  return newPayload
 })
 ```
 
 **注意**：在 [preParsing](#preParsing) 钩子中，`request.body` 的值总是 `null`，这是因为 body 的解析发生在 [preValidation](#preValidation) 钩子之前。
+
+**注意**：你应当给返回的 stream 添加 `receivedEncodedLength` 属性。这是为了通过比对请求头的 `Content-Length`，来精确匹配请求的 payload。理想情况下，每收到一块数据都应该更新该属性。
+
+**注意**：早先的写法 `function(request, reply, done)` 与 `function(request, reply)` 仍被支持，但不推荐使用。
 
 ### preValidation
 ```js
@@ -113,7 +124,7 @@ fastify.addHook('preSerialization', (request, reply, payload, done) => {
   done(err, newPayload)
 })
 ```
-或使用 `async/await`
+或使用 `async/await`：
 ```js
 fastify.addHook('preSerialization', async (request, reply, payload) => {
   return { wrapped: payload }

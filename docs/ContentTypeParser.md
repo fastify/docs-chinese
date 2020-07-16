@@ -9,22 +9,23 @@ Fastify 自动将解析好的 payload 添加到 [Fastify request](https://github
 
 ### 用法
 ```js
-fastify.addContentTypeParser('application/jsoff', function (req, done) {
-  jsoffParser(req, function (err, body) {
+fastify.addContentTypeParser('application/jsoff', function (request, payload, done) {
+  jsoffParser(payload, function (err, body) {
     done(err, body)
   })
 })
 
 // 以相同方式处理多种 content type
-fastify.addContentTypeParser(['text/xml', 'application/xml'], function (req, done) {
-  xmlParser(req, function (err, body) {
+fastify.addContentTypeParser(['text/xml', 'application/xml'], function (request, payload, done) {
+  xmlParser(payload, function (err, body) {
     done(err, body)
   })
 })
 
 // Node 版本 >= 8.0.0 时也支持 async
-fastify.addContentTypeParser('application/jsoff', async function (req) {
-  var res = await new Promise((resolve, reject) => resolve(req))
+fastify.addContentTypeParser('application/jsoff', async function (request, payload) {
+  var res = await jsoffParserAsync(payload)
+
   return res
 })
 ```
@@ -33,11 +34,15 @@ fastify.addContentTypeParser('application/jsoff', async function (req) {
 
 ```js
 if (!fastify.hasContentTypeParser('application/jsoff')){
-  fastify.addContentTypeParser('application/jsoff', function (req, done) {
-    // 将请求的主体/payload 解析为特定类型的代码
-  })application/jsoff
+  fastify.addContentTypeParser('application/jsoff', function (request, payload, done) {
+    jsoffParser(payload, function (err, body) {
+      done(err, body)
+    })
+  })
 }
 ```
+
+**注意**：早先的写法 `function(req, done)` 与 `async function(req)` 仍被支持，但不推荐使用。
 
 #### Body Parser
 
@@ -54,7 +59,6 @@ fastify.addContentTypeParser('application/json', { parseAs: 'string' }, function
   }
 })
 ```
-你可以看到，新的方法参数变成了 `(req, body, done)` 而不是 `(req, done)`。
 
 查看例子 [`example/parser.js`](https://github.com/fastify/fastify/blob/master/examples/parser.js)。
 
@@ -65,10 +69,10 @@ fastify.addContentTypeParser('application/json', { parseAs: 'string' }, function
 #### 捕获所有
 有些情况下你需要捕获所有的 content type。通过 Fastify，你只需添加`'*'` content type。
 ```js
-fastify.addContentTypeParser('*', function (req, done) {
+fastify.addContentTypeParser('*', function (request, payload, done) {
   var data = ''
-  req.on('data', chunk => { data += chunk })
-  req.on('end', () => {
+  payload.on('data', chunk => { data += chunk })
+  payload.on('end', () => {
     done(null, data)
   })
 })
@@ -77,22 +81,22 @@ fastify.addContentTypeParser('*', function (req, done) {
 
 对请求流 (stream) 执行管道输送 (pipe) 操作也是有用的。你可以如下定义一个 content 解析器：
 ```js
-fastify.addContentTypeParser('*', function (req, done) {
+fastify.addContentTypeParser('*', function (request, payload, done) {
   done()
 })
 ```
 之后通过核心 HTTP request 对象将请求流直接输送到任意位置：
 ```js
 app.post('/hello', (request, reply) => {
-  reply.send(request.req)
+  reply.send(request.raw)
 })
 ```
 这里有一个将来访的 [json line](http://jsonlines.org/) 对象完整输出到日志的例子：
 ```js
 const split2 = require('split2')
 const pump = require('pump')
- fastify.addContentTypeParser('*', (req, done) => {
-  done(null, pump(req, split2(JSON.parse)))
+ fastify.addContentTypeParser('*', (request, payload, done) => {
+  done(null, pump(payload, split2(JSON.parse)))
 })
 fastify.route({
   method: 'POST',
