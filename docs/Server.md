@@ -424,6 +424,21 @@ const fastify = require('fastify')({
 })
 ```
 
+<a name="rewrite-url"></a>
+### `rewriteUrl`
+
+设置一个异步函数，返回一个字符串，用于重写 url。
+
+> 重写 url 会修改 `req` 对象的 `url` 属性
+
+```js
+function rewriteUrl (req) { // req 是 Node.js 的 HTTP 请求对象
+  return req.url === '/hi' ? '/hello' : req.url;
+}
+```
+
+要注意的是，`rewriteUrl` 在处理路由 _前_ 被调用，它不是封装的，而是整个应用级别的。
+
 ## 实例
 
 ### 服务器方法
