@@ -125,9 +125,9 @@ Fastify 是用普通的 JavaScript 编写的，因此，类型定义的维护并
 在上一个例子里，我们使用接口定义了请求 querystring 和 header 的类型。许多用户使用 JSON Schema 来处理这些工作，幸运的是，有一套方法能将现有的 JSON Schema 转换为 TypeScript 接口！
 
 1. 完成 '起步' 中例子的 1-4 步。
-2. 安装 `compile-schemas-to-typescript` 模块：
+2. 安装 `json-schema-to-typescript` 模块：
     ```
-    npm i -D compile-schemas-to-typescript
+    npm i -D json-schema-to-typescript
     ```
 3. 新建一个名为 `schemas` 的文件夹。在其中添加 `headers.json` 与 `querystring.json` 两个文件，将下面的 schema 定义粘贴到对应文件中。
     ```json
@@ -157,11 +157,11 @@ Fastify 是用普通的 JavaScript 编写的，因此，类型定义的维护并
     ```json
     {
       "scripts": {
-        "compile-schemas": "compile-schemas-to-typescript schemas types"
+        "compile-schemas": "json2ts -i schemas -o types"
       }
     }
     ```
-    `compile-schemas-to-typescript` 是封装了 `json-schema-to-typescript` 的命令行工具，支持为一个目录下的 schema 生成类型。两个参数依次为输入目录与输出目录。
+    `json2ts` 是囊括在 `json-schema-to-typescript` 中的命令行工具。`schemas` 是输入路径，`types` 则是输出路径。
 5. 执行 `npm run compile-schemas`，在 `types` 文件夹下生成两个新文件。
 6. 更新 `index.ts`：
     ```typescript
@@ -228,7 +228,6 @@ Fastify 是用普通的 JavaScript 编写的，因此，类型定义的维护并
 真棒！现在你就能同时运用 JSON Schema 与 TypeScript 的定义了。给 Fastify 路由定义 schema 还能提高吞吐量！更多信息请见[验证和序列化](./Validation-and-Serialization.md)。
 
 一些其他说明：
-  - `json-schema-to-typescript` 有一个 [pull request](https://github.com/bcherny/json-schema-to-typescript/pull/238)，添加了在第 4 步提到的文件夹支持。当该 PR 合并后，我们将会更新本文档，删去 `compile-schemas-to-typescript` 的部分。
   - 行内 JSON schema 目前还未支持类型定义。假如你有好的想法，欢迎 PR！
 
 ### 插件
