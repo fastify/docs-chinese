@@ -118,12 +118,34 @@ fastify.setValidatorCompiler(({ schema, method, url, httpPart }) =>
 );
 ```
 
+### preParsing 钩子的行为 ([#2286](https://github.com/fastify/fastify/pull/2286))
+
+为了支持针对请求 payload 的操作，从 Fastify v3 开始，`preParsing` 钩子的行为发生了微小的变化。
+
+该钩子现在有一个额外的参数，`payload`，因此，新的函数签名是 `fn(request, reply, payload, done)` 或 `async fn(request, reply, payload)`。
+
+钩子可以通过 `done(null, stream)` 回调，或 async 函数返回一个 stream。
+
+如果返回了新的 stream，那么在之后的钩子里，这个新的 stream 将代替原有的 stream。这种做法的一个用途是处理经过压缩的请求。
+
+新的 stream 还应当添加 `receivedEncodedLength` 属性，来反映客户端数据的真实大小。举例而言，假如请求被压缩了，那么该属性便是压缩后的 payload 的大小。该属性可以 (且应当) 在 `data` 事件中动态更新。
+
+原先 Fastify v2 的语法仍然受支持，但不推荐使用。
+
 ### 钩子的行为 ([#2004](https://github.com/fastify/fastify/pull/2004))
 
 为了支持钩子的封装，从 Fastify v3 开始，`onRoute` 与 `onRegister` 钩子的行为发生了微小的变化。
 
 - `onRoute` - 现在改为了异步调用。而在 v1/v2 中，该钩子会在注册一个路由后立马调用。因此，现在你得尽早在代码中注册它。
 - `onRegister` - 和 onRoute 一样。唯一区别在于现在第一次的调用者不是框架本身了，而是首个注册的插件。
+
+### Content Type 解析器的语法 ([#2286](https://github.com/fastify/fastify/pull/2286))
+
+在 Fastify v3 中，Content Type 解析器现在有了单一函数签名。
+
+新的签名是 `fn(request, payload, done)` 或 `async fn(request, payload)`。注意现在 `request` 是 fastify 的请求对象，而不是 `IncomingMessage` 了。默认情况下，payload 是一个 stream。如果在 `addContentTypeParser` 中使用了 `parseAs` 选项，那么 `payload` 会被当做该选项的值来对待 (string 或 buffer)。
+
+原先的函数签名 `fn(req, [done])` 或 `fn(req, payload, [done])` (这里 `req` 是 `IncomingMessage`) 仍然受支持，但不推荐使用。
 
 ### TypeScript 支持
 
