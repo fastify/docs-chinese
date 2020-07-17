@@ -331,7 +331,7 @@ fastify.get('/teapot', async function (request, reply) => {
 })
 
 fastify.get('/botnet', async function (request, reply) => {
-  throw { appCode: 418, message: 'short and stout' }
+  throw { statusCode: 418, message: 'short and stout' }
   // 这一 json 对象将被发送给客户端
 })
 ```
