@@ -158,6 +158,8 @@ fastify.addHook('onResponse', (req, reply, done) => {
 })
 ```
 
+请注意，该选项同时也会禁止默认的 `onResponse` 钩子在响应的回调函数出错时记录错误日志。
+
 <a name="custom-http-server"></a>
 ### `serverFactory`
 通过 `serverFactory` 选项，你可以向 Fastify 传递一个自定义的 http server。<br/>
