@@ -560,17 +560,20 @@ server.get('/', async (request, reply) => {
 
 ###### 例子 5：指定日志类型
 
-Fastify 使用 [Pino](http://getpino.io/#/) 作为日志工具。尽管提供了必要的日志类型，你仍然可以通过 `@types/pino` 获取 Pino 特定的类型，并将 `pino.Logger` 作为第四个泛型参数使用。自定义日志的功能，例如创建自定义的序列化工具也是支持的。详见[日志](./Logging.md)的文档。
+Fastify 使用 [Pino](http://getpino.io/#/) 作为日志工具。其中一些属性可以在构建 Fastify 实例时，在 `logger` 字段中配置。如果需要的属性未被暴露出来，你也能通过将一个外部配置好的 Pino 实例 (或其他兼容的日志工具) 传给这个字段，来配置这些属性。这么做也允许你自定义序列化工具，详见[日志](./Logging.md)的文档。
+
+要使用 Pino 的外部实例，请将 `@types/pino` 添加到 devDependencies 中，并把实例传给 `logger` 字段：
 
 ```typescript
 import fastify from 'fastify'
-import http from 'http'
 import pino from 'pino'
 
-const server = fastify<http.Server, http.IncomingMessage, http.ServerResponse, pino.Logger>({
-  logger: {
+const server = fastify({
+  logger: pino({
+    level: 'info',
+    redact: ['x-userinfo'],
     messageKey: 'message'
-  }
+  })
 })
 
 server.get('/', async (request, reply) => {
@@ -584,14 +587,14 @@ server.get('/', async (request, reply) => {
 ##### fastify.HTTPMethods 
 [源码](./../types/utils.d.ts#L8)
 
-`'DELETE' | 'GET' | 'HEAD' | 'PATCH' | 'POST' | 'PUT' | 'OPTIONS'` 的交叉类型 (Intersection type)
+`'DELETE' | 'GET' | 'HEAD' | 'PATCH' | 'POST' | 'PUT' | 'OPTIONS'` 的联合类型 (Union type)
 
 ##### fastify.RawServerBase 
 [源码](./../types/utils.d.ts#L13)
 
 依赖于 `@types/node` 的模块 `http`、`https`、`http2`
 
-`http.Server | https.Server | http2.Http2Server | http2.Http2SecureServer` 的交叉类型
+`http.Server | https.Server | http2.Http2Server | http2.Http2SecureServer` 的联合类型
 
 ##### fastify.RawServerDefault 
 [源码](./../types/utils.d.ts#L18)
@@ -783,7 +786,7 @@ RawReplyDefaultExpression<http2.Http2Server> // -> http2.Http2ServerResponse
 ##### fastify.FastifyRegister(plugin: [FastifyPlugin][FastifyPlugin], opts: [FastifyRegisterOptions][FastifyRegisterOptions])
 [源码](../types/register.d.ts#L5)
 
-指定 [`fastify.register()`](./Server.md#register) 类型的类型接口，返回一个拥有默认值为 [FastifyPluginOptions][FastifyPluginOptions] 的 `Options` 泛型的函数签名。当调用此函数时，根据 FastifyPlugin 参数能推断出该泛型，因此不必特别指定。options 参数是插件选项以及 `prefix: string` 和 `logLevel` ([LogLevels][LogLevels]) 两个属性的交叉类型。
+指定 [`fastify.register()`](./Server.md#register) 类型的类型接口，返回一个拥有默认值为 [FastifyPluginOptions][FastifyPluginOptions] 的 `Options` 泛型的函数签名。当调用此函数时，根据 FastifyPlugin 参数能推断出该泛型，因此不必特别指定。options 参数是插件选项以及 `prefix: string` 和 `logLevel` ([LogLevel][LogLevel]) 两个属性的交叉类型。
 
 以下例子展示了 options 的推断：
 
@@ -804,7 +807,7 @@ fastify().register(plugin, { option1: '', option2: true }) // OK - options 对�
 ##### fastify.FastifytRegisterOptions<Options>
 [源码](../types/register.d.ts#L16)
 
-该类型是 `Options` 泛型以及包括 `prefix: string` 和 `logLevel` ([LogLevels][LogLevels]) 两个可选属性的未导出接口 `RegisterOptions` 的交叉类型。也可以被指定为返回前述交叉类型的函数。
+该类型是 `Options` 泛型以及包括 `prefix: string` 和 `logLevel` ([LogLevel][LogLevel]) 两个可选属性的未导出接口 `RegisterOptions` 的交叉类型。也可以被指定为返回前述交叉类型的函数。
 
 ---
 
@@ -824,11 +827,11 @@ Fastify 内建日志工具的接口定义，模仿了 [Pino.js](http://getpino.i
 
 一个重载函数接口，实现 Fastify 调用日志的方法，会传递到所有 FastifyLoggerOptions 中启用的日志级别属性。
 
-##### fastify.LogLevels
+##### fastify.LogLevel
 
 [源码](../types/logger.d.ts#L12)
 
-`'info' | 'error' | 'debug' | 'fatal' | 'warn' | 'trace'` 的交叉类型
+`'info' | 'error' | 'debug' | 'fatal' | 'warn' | 'trace'` 的联合类型
 
 ---
 
@@ -1053,6 +1056,6 @@ FastifyError 是自定义的错误对象，包括了状态码及校验结果。
 [FastifyPluginOptions]: #fastifyfastifypluginoptions
 [FastifyRegister]: #fastifyfastifyregisterrawserver-rawrequest-requestgenericplugin-fastifyplugin-opts-fastifyregisteroptions
 [FastifyRegisterOptions]: #fastifyfastifytregisteroptions
-[LogLevels]: #fastifyloglevels
+[LogLevel]: #fastifyloglevel
 [FastifyError]: #fastifyfastifyerror
 [RouteOptions]: #fastifyrouteoptionsrawserver-rawrequest-rawreply-requestgeneric-contextconfig
