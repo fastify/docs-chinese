@@ -272,10 +272,10 @@ Fastify 是用普通的 JavaScript 编写的，因此，类型定义的维护并
 
   // 利用声明合并，将插件的属性加入合适的 fastify 接口。
   declare module 'fastify' {
-    interface FastifyRequestInterface {
+    interface FastifyRequest {
       myPluginProp: string
     }
-    interface FastifyReplyInterface {
+    interface FastifyReply {
       myPluginProp: number
     }
   }
@@ -345,7 +345,7 @@ Fastify 是用普通的 JavaScript 编写的，因此，类型定义的维护并
 
   // 利用声明合并将自定义属性加入 Fastify 的类型系统
   declare module 'fastify' {
-    interface FastifyIntstance {
+    interface FastifyInstance {
       myPluginFunc: myPluginFunc
     }
   }
@@ -353,7 +353,7 @@ Fastify 是用普通的 JavaScript 编写的，因此，类型定义的维护并
 
 这样一来，该插件便能被任意 TypeScript 项目使用了！
 
-Fastify 的插件系统允许开发者装饰 Fastify 以及 request/reply 的实例。鉴于 Fastify 类型系统的复杂性，假如你要合并 `FastifyRequest` 或 `FastifyReply`，你应该转而合并 `FastifyRequestInterface` 或 `FastifyReplyInterface`。更多信息请见[声明合并与泛型继承](https://dev.to/ethanarrowood/is-declaration-merging-and-generic-inheritance-at-the-same-time-impossible-53cp)一文。
+Fastify 的插件系统允许开发者装饰 Fastify 以及 request/reply 的实例。更多信息请见[声明合并与泛型继承](https://dev.to/ethanarrowood/is-declaration-merging-and-generic-inheritance-at-the-same-time-impossible-53cp)一文。
 
 #### 使用插件
 
@@ -553,7 +553,7 @@ interface customRequest extends http.IncomingMessage {
 const server = fastify<http.Server, customRequest>()
 
 server.get('/', async (request, reply) => {
-  const someValue = request.mySpecialProp // 由于 `customRequest` 接口的存在，TypeScript 能知道这是一个字符串
+  const someValue = request.raw.mySpecialProp // 由于 `customRequest` 接口的存在，TypeScript 能知道这是一个字符串
   return someValue.toUpperCase()
 })
 ```
@@ -627,16 +627,11 @@ Fastify 服务器实例化时，调用 [`fastify()`][Fastify] 方法使用到的
 ##### fastify.FastifyRequest<[RawServer][RawServerGeneric], [RawRequest][RawRequestGeneric], [RequestGeneric][FastifyRequestGenericInterface]> 
 [源码](./../types/request.d.ts#L29)
 
-`FastifyRequest` 是继承自 [`RawRequest`][RawRequestGeneric] 的类型，通过 [`FastifyRequestInterface`][FastifyRequestInterface] 的定义添加了额外的属性。假如你需要为 FastifyRequest 对象增加自定义属性 (例如使用 [`decorateRequest`][DecorateRequest] 方法)，你应该针对接口 ([`FastifyRequestInterface`][FastifyRequestInterface]) 应用声明合并，而不是针对该类型。
+该接口包含了 Fastify 请求对象的属性。这些属性无视请求类型 (http 或 http2)，也无关路由层级。因此在 GET 请求中访问 `request.body` 并不会抛错 (假如 GET 有 body 😉)。
 
-在 [`FastifyRequestInterface`][FastifyRequestInterface] 里有基本的范例。更详细的例子请见“从例子中学习”的[插件](#plugins)一节。
+假如你需要为 `FastifyRequest` 对象添加自定义属性 (例如使用 [`decorateRequest`][DecorateRequest] 方法时)，你应该针对该接口应用声明合并。
 
-##### fastify.FastifyRequestInterface<[RawServer][RawServerGeneric], [RawRequest][RawRequestGeneric], [RequestGeneric][FastifyRequestGenericInterface]>
-[源码](./../types/request.d.tsL#15)
-
-该接口包含了 Fastify 添加到 Node.js 标准的 request 对象上的属性。这些属性和 request 对象的类型 (http 或 http2) 或路由的层级无关，因此，在一个 GET 请求中调用 `request.body` 并不会报错 (但祈祷你能通过 GET 请求发送 body 吧 😉)。
-
-假如你需要为 FastifyRequest 对象增加自定义属性 (例如使用 [`decorateRequest`][DecorateRequest] 方法)，你应该针对该接口应用声明合并，而**不是**针对 [`FastifyRequest`][FastifyRequest]。
+在 [`FastifyRequest`][FastifyRequest] 里有基本的范例。更详细的例子请见“从例子中学习”的[插件](#plugins)一节。
 
 ###### 例子
 ```typescript
@@ -653,7 +648,7 @@ server.get('/', async (request, reply) => {
 
 // 以下声明必须在 typescript 解释器的作用域内
 declare module 'fastify' {
-  interface FastifyRequestInterface { // 引用的是接口而非类型
+  interface FastifyRequest { // 引用的是接口而非类型
     someProp: string
   }
 }
@@ -690,14 +685,14 @@ server.get<requestGeneric>('/', async (request, reply) => {
 
 泛型参数 `RawServer` 的默认值为 [`RawServerDefault`][RawServerDefault]
 
-如果 `RawServer` 的类型为 `http.Server` 或 `https.Server`，那么该表达式返回 `http.IncommingMessage`，否则返回 `http2.Http2ServerRequest`。
+如果 `RawServer` 的类型为 `http.Server` 或 `https.Server`，那么该表达式返回 `http.IncomingMessage`，否则返回 `http2.Http2ServerRequest`。
 
 ```typescript
 import http from 'http'
 import http2 from 'http2'
 import { RawRequestDefaultExpression } from 'fastify'
 
-RawRequestDefaultExpression<http.Server> // -> http.IncommingMessage
+RawRequestDefaultExpression<http.Server> // -> http.IncomingMessage
 RawRequestDefaultExpression<http2.Http2Server> // -> http2.Http2ServerRequest
 ```
 
@@ -705,19 +700,14 @@ RawRequestDefaultExpression<http2.Http2Server> // -> http2.Http2ServerRequest
 
 #### Reply
 
-##### fastify.FastifyReply<[RawServer][RawServerGeneric], [RawReply][RawReplyGeneric], [ContextConfig][ContextConfigGeneric]>
+##### fastify.FastifyReply<[RawServer][RawServerGeneric], [RawRequest][RawRequestGeneric], [RawReply][RawReplyGeneric], [RequestGeneric][FastifyRequestGenericInterface], [ContextConfig][ContextConfigGeneric]>
 [源码](./../types/reply.d.ts#L32)
-
-`FastifyReply` 是继承自 [`RawReply`][RawReplyGeneric] 的类型，通过 [`FastifyReplyInterface`][FastifyReplyInterface] 的定义添加了额外的属性。假如你需要为 FastifyRequest 对象增加自定义属性 (例如使用 `decorateReply` 方法)，你应该针对接口 ([`FastifyReplyInterface`][FastifyReplyInterface]) 应用声明合并，而不是针对该类型。
-
-在 [`FastifyReplyInterface`][FastifyReplyInterface] 里有基本的范例。更详细的例子请见“从例子中学习”的[插件](#plugins)一节。
-
-##### fastify.FastifyReplyInterface<[RawServer][RawServerGeneric], [RawReply][RawReplyGeneric], [ContextConfig][ContextConfigGeneric]>
-[源码](./../types/reply.d.ts#L8)
 
 该接口包含了 Fastify 添加到 Node.js 标准的 reply 对象上的属性。这些属性和 reply 对象的类型 (http 或 http2) 无关。
 
-假如你需要为 FastifyReply 对象增加自定义属性 (例如使用 `decorateReply` 方法)，你应该针对该接口应用声明合并，而**不是**针对 [`FastifyReply`][FastifyReply] 类型别名。
+假如你需要为 FastifyReply 对象添加自定义属性 (例如使用 `decorateReply` 方法时)，你应该针对该接口应用声明合并。
+
+在 [`FastifyReply`][FastifyReply] 里有基本的范例。更详细的例子请见“从例子中学习”的[插件](#plugins)一节。
 
 ###### 例子
 ```typescript
@@ -734,7 +724,7 @@ server.get('/', async (request, reply) => {
 
 // 以下声明必须在 typescript 解释器的作用域内
 declare module 'fastify' {
-  interface FastifyReplyInterface { // 引用的是接口而非类型
+  interface FastifyReply { // 引用的是接口而非类型
     someProp: string
   }
 }
@@ -955,7 +945,7 @@ FastifyError 是自定义的错误对象，包括了状态码及校验结果。
 
 注意：在 `preParsing` 钩子中，request.body 永远为 null，因为此时 body 尚未解析 (解析发生在 `preHandler` 钩子之前)。 
 
-##### fastify.preValidationHookhandler<[RawServer][RawServerGeneric], [RawRequest][RawRequestGeneric], [RawReply][RawReplyGeneric], [RequestGeneric][FastifyRequestGenericInterface], [ContextConfig][ContextConfigGeneric]>(request: [FastifyRequest][FastifyRequest], reply: [FastifyReply][FastifyReply], done: (err?: [FastifyError][FastifyError]) => void): Promise\<unknown\> | void
+##### fastify.preValidationHookHandler<[RawServer][RawServerGeneric], [RawRequest][RawRequestGeneric], [RawReply][RawReplyGeneric], [RequestGeneric][FastifyRequestGenericInterface], [ContextConfig][ContextConfigGeneric]>(request: [FastifyRequest][FastifyRequest], reply: [FastifyReply][FastifyReply], done: (err?: [FastifyError][FastifyError]) => void): Promise\<unknown\> | void
 
 [源码](../types/hooks.d.ts#L53)
 
@@ -963,13 +953,13 @@ FastifyError 是自定义的错误对象，包括了状态码及校验结果。
 
 注意：在 `preValidation` 钩子中，request.body 永远为 null，因为此时 body 尚未解析 (解析发生在 `preHandler` 钩子之前)。 
 
-##### fastify.preHandlerHookhandler<[RawServer][RawServerGeneric], [RawRequest][RawRequestGeneric], [RawReply][RawReplyGeneric], [RequestGeneric][FastifyRequestGenericInterface], [ContextConfig][ContextConfigGeneric]>(request: [FastifyRequest][FastifyRequest], reply: [FastifyReply][FastifyReply], done: (err?: [FastifyError][FastifyError]) => void): Promise\<unknown\> | void
+##### fastify.preHandlerHookHandler<[RawServer][RawServerGeneric], [RawRequest][RawRequestGeneric], [RawReply][RawReplyGeneric], [RequestGeneric][FastifyRequestGenericInterface], [ContextConfig][ContextConfigGeneric]>(request: [FastifyRequest][FastifyRequest], reply: [FastifyReply][FastifyReply], done: (err?: [FastifyError][FastifyError]) => void): Promise\<unknown\> | void
 
 [源码](../types/hooks.d.ts#L70)
 
 `preHandler` 是第四个钩子，前一个为 `preValidation`，下一个为 `preSerialization`。
 
-##### fastify.preSerializationHookhandler<PreSerializationPayload, [RawServer][RawServerGeneric], [RawRequest][RawRequestGeneric], [RawReply][RawReplyGeneric], [RequestGeneric][FastifyRequestGenericInterface], [ContextConfig][ContextConfigGeneric]>(request: [FastifyRequest][FastifyRequest], reply: [FastifyReply][FastifyReply], payload: PreSerializationPayload, done: (err: [FastifyError][FastifyError] | null, res?: unknown) => void): Promise\<unknown\> | void
+##### fastify.preSerializationHookHandler<PreSerializationPayload, [RawServer][RawServerGeneric], [RawRequest][RawRequestGeneric], [RawReply][RawReplyGeneric], [RequestGeneric][FastifyRequestGenericInterface], [ContextConfig][ContextConfigGeneric]>(request: [FastifyRequest][FastifyRequest], reply: [FastifyReply][FastifyReply], payload: PreSerializationPayload, done: (err: [FastifyError][FastifyError] | null, res?: unknown) => void): Promise\<unknown\> | void
 
 [源码](../types/hooks.d.ts#L94)
 
@@ -977,7 +967,7 @@ FastifyError 是自定义的错误对象，包括了状态码及校验结果。
 
 注：当 payload 为 string、Buffer、stream 或 null 时，该钩子不会执行。 
 
-##### fastify.onSendHookhandler<OnSendPayload, [RawServer][RawServerGeneric], [RawRequest][RawRequestGeneric], [RawReply][RawReplyGeneric], [RequestGeneric][FastifyRequestGenericInterface], [ContextConfig][ContextConfigGeneric]>(request: [FastifyRequest][FastifyRequest], reply: [FastifyReply][FastifyReply], payload: OnSendPayload, done: (err: [FastifyError][FastifyError] | null, res?: unknown) => void): Promise\<unknown\> | void
+##### fastify.onSendHookHandler<OnSendPayload, [RawServer][RawServerGeneric], [RawRequest][RawRequestGeneric], [RawReply][RawReplyGeneric], [RequestGeneric][FastifyRequestGenericInterface], [ContextConfig][ContextConfigGeneric]>(request: [FastifyRequest][FastifyRequest], reply: [FastifyReply][FastifyReply], payload: OnSendPayload, done: (err: [FastifyError][FastifyError] | null, res?: unknown) => void): Promise\<unknown\> | void
 
 [源码](../types/hooks.d.ts#L114)
 
@@ -985,7 +975,7 @@ FastifyError 是自定义的错误对象，包括了状态码及校验结果。
 
 注：你只能将 payload 改为 string、Buffer、stream 或 null。
 
-##### fastify.onResponseHookhandler<[RawServer][RawServerGeneric], [RawRequest][RawRequestGeneric], [RawReply][RawReplyGeneric], [RequestGeneric][FastifyRequestGenericInterface], [ContextConfig][ContextConfigGeneric]>(request: [FastifyRequest][FastifyRequest], reply: [FastifyReply][FastifyReply], done: (err?: [FastifyError][FastifyError]) => void): Promise\<unknown\> | void
+##### fastify.onResponseHookHandler<[RawServer][RawServerGeneric], [RawRequest][RawRequestGeneric], [RawReply][RawReplyGeneric], [RequestGeneric][FastifyRequestGenericInterface], [ContextConfig][ContextConfigGeneric]>(request: [FastifyRequest][FastifyRequest], reply: [FastifyReply][FastifyReply], done: (err?: [FastifyError][FastifyError]) => void): Promise\<unknown\> | void
 
 [源码](../types/hooks.d.ts#L134)
 
@@ -993,7 +983,7 @@ FastifyError 是自定义的错误对象，包括了状态码及校验结果。
 
 该钩子在响应发出后执行，因此无法再发送更多数据了。但是你可以在此向外部服务发送数据，执行收集数据之类的任务。
 
-##### fastify.onErrorHookhandler<[RawServer][RawServerGeneric], [RawRequest][RawRequestGeneric], [RawReply][RawReplyGeneric], [RequestGeneric][FastifyRequestGenericInterface], [ContextConfig][ContextConfigGeneric]>(request: [FastifyRequest][FastifyRequest], reply: [FastifyReply][FastifyReply], error: [FastifyError][FastifyError], done: () => void): Promise\<unknown\> | void
+##### fastify.onErrorHookHandler<[RawServer][RawServerGeneric], [RawRequest][RawRequestGeneric], [RawReply][RawReplyGeneric], [RequestGeneric][FastifyRequestGenericInterface], [ContextConfig][ContextConfigGeneric]>(request: [FastifyRequest][FastifyRequest], reply: [FastifyReply][FastifyReply], error: [FastifyError][FastifyError], done: () => void): Promise\<unknown\> | void
 
 [源码](../types/hooks.d.ts#L154)
 
@@ -1005,13 +995,13 @@ FastifyError 是自定义的错误对象，包括了状态码及校验结果。
 
 注意：与其他钩子不同，该钩子不支持向 done 函数传递错误。
 
-##### fastify.onRouteHookhandler<[RawServer][RawServerGeneric], [RawRequest][RawRequestGeneric], [RawReply][RawReplyGeneric], [RequestGeneric][FastifyRequestGenericInterface], [ContextConfig][ContextConfigGeneric]>(opts: [RouteOptions][RouteOptions] & { path: string; prefix: string }): Promise\<unknown\> | void
+##### fastify.onRouteHookHandler<[RawServer][RawServerGeneric], [RawRequest][RawRequestGeneric], [RawReply][RawReplyGeneric], [RequestGeneric][FastifyRequestGenericInterface], [ContextConfig][ContextConfigGeneric]>(opts: [RouteOptions][RouteOptions] & { path: string; prefix: string }): Promise\<unknown\> | void
 
 [源码](../types/hooks.d.ts#L174)
 
 当注册一个新的路由时被触发。它的监听函数拥有一个唯一的参数：routeOptions 对象。该接口是同步的，因此，监听函数不接受回调作为参数。
 
-##### fastify.onRegisterHookhandler<[RawServer][RawServerGeneric], [RawRequest][RawRequestGeneric], [RawReply][RawReplyGeneric], [Logger][LoggerGeneric]>(instance: [FastifyInstance][FastifyInstance], done: (err?: [FastifyError][FastifyError]) => void): Promise\<unknown\> | void
+##### fastify.onRegisterHookHandler<[RawServer][RawServerGeneric], [RawRequest][RawRequestGeneric], [RawReply][RawReplyGeneric], [Logger][LoggerGeneric]>(instance: [FastifyInstance][FastifyInstance], done: (err?: [FastifyError][FastifyError]) => void): Promise\<unknown\> | void
 
 [源码](../types/hooks.d.ts#L191)
 
@@ -1021,7 +1011,7 @@ FastifyError 是自定义的错误对象，包括了状态码及校验结果。
 
 注：被 fastify-plugin 所封装的插件不会触发该钩子。
 
-##### fastify.onCloseHookhandler<[RawServer][RawServerGeneric], [RawRequest][RawRequestGeneric], [RawReply][RawReplyGeneric], [Logger][LoggerGeneric]>(instance: [FastifyInstance][FastifyInstance], done: (err?: [FastifyError][FastifyError]) => void): Promise\<unknown\> | void
+##### fastify.onCloseHookHandler<[RawServer][RawServerGeneric], [RawRequest][RawRequestGeneric], [RawReply][RawReplyGeneric], [Logger][LoggerGeneric]>(instance: [FastifyInstance][FastifyInstance], done: (err?: [FastifyError][FastifyError]) => void): Promise\<unknown\> | void
 
 [源码](../types/hooks.d.ts#L206)
 
@@ -1039,11 +1029,9 @@ FastifyError 是自定义的错误对象，包括了状态码及校验结果。
 [RawServerBase]: #fastifyrawserverbase
 [RawServerDefault]: #fastifyrawserverdefault
 [FastifyRequest]: #fastifyfastifyrequestrawserver-rawrequest-requestgeneric
-[FastifyRequestInterface]: #fastifyfastifyrequestinterfacerawserver-rawrequest-requestgeneric
 [FastifyRequestGenericInterface]: #fastifyrequestgenericinterface
 [RawRequestDefaultExpression]: #fastifyrawrequestdefaultexpressionrawserver
 [FastifyReply]: #fastifyfastifyreplyrawserver-rawreply-contextconfig
-[FastifyReplyInterface]: #fastifyfastifyreplyinterfacerawserver-rawreply-contextconfig
 [RawReplyDefaultExpression]: #fastifyrawreplydefaultexpression
 [FastifyServerOptions]: #fastifyfastifyserveroptions-rawserver-logger
 [FastifyInstance]: #fastifyfastifyinstance
