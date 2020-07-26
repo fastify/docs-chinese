@@ -793,7 +793,7 @@ fastify().register(plugin, { option1: '', option2: true }) // OK - options 对�
 
 在“从例子中学习”的[插件](#plugins)一节中有使用 TypeScript 创建插件的详细示例。
 
-##### fastify.FastifytRegisterOptions<Options>
+##### fastify.FastifyRegisterOptions<Options>
 [源码](../types/register.d.ts#L16)
 
 该类型是 `Options` 泛型以及包括 `prefix: string` 和 `logLevel` ([LogLevel][LogLevel]) 两个可选属性的未导出接口 `RegisterOptions` 的交叉类型。也可以被指定为返回前述交叉类型的函数。
