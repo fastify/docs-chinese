@@ -2,7 +2,7 @@
 
 本文帮助你从 Fastify v2 迁移到 v3。
 
-开始之前，请确保所有 v2 中不推荐用法的警示都已修复，因为这些特性在新版都已被移除，升级后你将不能使用它们。([#1750](https://github.com/fastify/fastify/pull/1750))
+开始之前，请确保所有 v2 中不推荐用法的警示都已修复。v2 的这些特性在新版都已被移除，升级后你将不能使用它们。([#1750](https://github.com/fastify/fastify/pull/1750))
 
 ## 重大改动
 
@@ -15,21 +15,23 @@
 **v2:**
 
 ```js
+// 在 Fastify v2 中使用 Express 的 `cors` 中间件。
 fastify.use(require('cors')());
 ```
 
 **v3:**
 
 ```js
+// 在 Fastify v3 中使用 Express 的 `cors` 中间件。
 await fastify.register(require('fastify-express'));
 fastify.use(require('cors')());
 ```
 
 ### 日志序列化 ([#2017](https://github.com/fastify/fastify/pull/2017))
 
-我们升级了日志的[序列化器](https://github.com/fastify/docs-chinese/blob/master/docs/Logging.md)，现在它接受 Fastify 的 [`Request`](https://github.com/fastify/docs-chinese/blob/master/docs/Request.md) 和 [`Reply`](https://github.com/fastify/docs-chinese/blob/master/docs/Reply.md) 对象，而非原生的对象。
+日志的[序列化器](https://github.com/fastify/docs-chinese/blob/master/docs/Logging.md)得到了升级，现在它接受 Fastify 的 [`Request`](https://github.com/fastify/docs-chinese/blob/master/docs/Request.md) 和 [`Reply`](https://github.com/fastify/docs-chinese/blob/master/docs/Reply.md) 对象，而非原生的对象。
 
-如果你创建了自定义的序列化器，且使用了 Fastify 的对象中未暴露的属性，你需要升级它们。
+任何依赖于原生对象而非 Fastify 对象上的 `request` 或 `reply` 属性的自定义的序列化器，都应当升级。
 
 **v2:**
 
@@ -67,7 +69,7 @@ const fastify = require('fastify')({
 
 ### schema 代入 (schema substitution) ([#2023](https://github.com/fastify/fastify/pull/2023))
 
-我们放弃了通过非标准的`替换方式`支持共用 schema 的代入，转而使用符合 JSON Schema 标准的 `$ref` 方案。要更好地理解这一改变，请阅读[《Fastify v3 的验证与序列化》](https://dev.to/eomm/validation-and-serialization-in-fastify-v3-2e8l)一文。
+非标准`替换方式`的支持被移除了，取而代之的是符合 JSON Schema 标准的 `$ref` 方案。要更好地理解这一改变，请阅读[《Fastify v3 的验证与序列化》](https://dev.to/eomm/validation-and-serialization-in-fastify-v3-2e8l)一文。
 
 **v2:**
 
@@ -91,7 +93,7 @@ fastify.route({ method, url, schema, handler });
 
 ### schema 验证选项 ([#2023](https://github.com/fastify/fastify/pull/2023))
 
-为了未来工具的改善，我们使用 `setValidatorCompiler` 替换了 `setSchemaCompiler` 和 `setSchemaResolver`。要深入地了解这一改变，[请阅读此文](https://dev.to/eomm/validation-and-serialization-in-fastify-v3-2e8l)。
+为了未来工具的改善，`setSchemaCompiler` 和 `setSchemaResolver` 被替换成了 `setValidatorCompiler`。要更好地理解这一改变，请阅读[《Fastify v3 的验证与序列化》](https://dev.to/eomm/validation-and-serialization-in-fastify-v3-2e8l)一文。
 
 **v2:**
 
@@ -113,7 +115,7 @@ const ajv = new AJV();
 ajv.addSchema(schemaA);
 ajv.addSchema(schemaB);
 
-fastify.setValidatorCompiler(({ schema, method, url, httpPart }) => 
+fastify.setValidatorCompiler(({ schema, method, url, httpPart }) =>
   ajv.compile(schema)
 );
 ```
@@ -136,7 +138,7 @@ fastify.setValidatorCompiler(({ schema, method, url, httpPart }) =>
 
 为了支持钩子的封装，从 Fastify v3 开始，`onRoute` 与 `onRegister` 钩子的行为发生了微小的变化。
 
-- `onRoute` - 现在改为了异步调用。而在 v1/v2 中，该钩子会在注册一个路由后立马调用。因此，现在你得尽早在代码中注册它。
+- `onRoute` - 现在改为了异步调用，且在同一个封装的作用域内会继承。因此，你得在注册其他插件 _之前_ 注册该钩子。
 - `onRegister` - 和 onRoute 一样。唯一区别在于现在第一次的调用者不是框架本身了，而是首个注册的插件。
 
 ### Content Type 解析器的语法 ([#2286](https://github.com/fastify/fastify/pull/2286))
