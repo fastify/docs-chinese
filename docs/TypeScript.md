@@ -106,7 +106,7 @@ Fastify 是用普通的 JavaScript 编写的，因此，类型定义的维护并
       Querystring: IQuerystring,
       Headers: IHeaders
     }>('/auth', {
-      preValidation: (request, reply) => {
+      preValidation: (request, reply, done) => {
         const { username, password } = request.query
         done(username !== 'admin' ? new Error('Must be admin') : undefined) // 只允许 `admin` 访问
       }
