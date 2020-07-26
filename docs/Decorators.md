@@ -74,6 +74,16 @@ fastify.utility()
 console.log(fastify.conf.db)
 ```
 
+[路由](./Routes.md)函数的 `this` 指向 [Fastify server](./Server.md)：
+
+```js
+fastify.decorate('db', new DbConnection())
+
+fastify.get('/', async function (request, reply) {
+  reply({hello: await this.db.query('world')})
+})
+```
+
 可选的 `dependencies` 参数用于指定当前装饰器所依赖的其他装饰器列表。这个列表包含了其他装饰器的名称字符串。在下面的例子里，装饰器 "utility" 依赖于 "greet" 和 "log"：
 
 ```js
