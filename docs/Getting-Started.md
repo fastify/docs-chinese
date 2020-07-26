@@ -79,7 +79,7 @@ start()
 >
 > 类似地，`::1` 表示只允许本地的 IPv6 连接。而 `::` 表示允许所有 IPv6 地址的接入，当操作系统支持时，所有的 IPv4 地址也会被允许。
 >
-> 当使用 Docker 或其他容器部署时，这会是最简单的暴露应用的方式。
+> 当使用 Docker 或其他容器部署时，使用 `0.0.0.0` 或 `::` 会是最简单的暴露应用的方式。
 
 <a name="first-plugin"></a>
 ### 第一个插件
@@ -121,7 +121,12 @@ module.exports = routes
 Fastify 则不走寻常路，它从本质上用最轻松的方式解决这一问题！
 
 让我们重写上述示例，加入一个数据库连接。<br>
-*(在这里我们用简单的例子来说明，对于健壮的方案请考虑使用 [`fastify-mongo`](https://github.com/fastify/fastify-mongodb) 或 Fastify [生态](https://github.com/fastify/docs-chinese/blob/master/docs/Ecosystem.md)中的其他插件)*
+
+首先，安装 `fastify-plugin` 和 `fastify-mongodb`：
+
+```
+npm i --save fastify-plugin fastify-mongodb
+```
 
 **server.js**
 ```js
@@ -129,9 +134,7 @@ const fastify = require('fastify')({
   logger: true
 })
 
-fastify.register(require('./our-db-connector'), {
-  url: 'mongodb://localhost:27017/'
-})
+fastify.register(require('./our-db-connector'))
 fastify.register(require('./our-first-route'))
 
 fastify.listen(3000, function (err, address) {
@@ -141,40 +144,46 @@ fastify.listen(3000, function (err, address) {
   }
   fastify.log.info(`server listening on ${address}`)
 })
+
 ```
 
 **our-db-connector.js**
 ```js
 const fastifyPlugin = require('fastify-plugin')
-const MongoClient = require('mongodb').MongoClient
 
 async function dbConnector (fastify, options) {
-  const url = options.url
-  delete options.url
-
-  const db = await MongoClient.connect(url, options)
-  fastify.decorate('mongo', db)
+  fastify.register(require('fastify-mongodb'), {
+    url: 'mongodb://localhost:27017/test_database'
+  })
 }
 // 用 fastify-plugin 包装插件，以使插件中声明的装饰器、钩子函数暴露在根作用域里。
 module.exports = fastifyPlugin(dbConnector)
+
 ```
 
 **our-first-route.js**
 ```js
 async function routes (fastify, options) {
-  const database = fastify.mongo.db('db')
-  const collection = database.collection('test')
+  const collection = fastify.mongo.db.collection('test_collection')
 
   fastify.get('/', async (request, reply) => {
     return { hello: 'world' }
   })
 
-  fastify.get('/search/:id', async (request, reply) => {
-    const result = await collection.findOne({ id: request.params.id })
-    if (result.value === null) {
+  fastify.get('/animals', async (request, reply) => {
+    const result = await collection.find().toArray()
+    if (result.length === 0) {
+      throw new Error('No documents found')
+    }
+    return result
+  })
+
+  fastify.get('/animals/:animal', async (request, reply) => {
+    const result = await collection.findOne({ animal: request.params.animal })
+    if (result === null) {
       throw new Error('Invalid value')
     }
-    return result.value
+    return result
   })
 }
 
