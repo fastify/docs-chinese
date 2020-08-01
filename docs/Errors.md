@@ -83,7 +83,7 @@ content type 不能是一个空字符串。
 日志工具目标地址无效。仅接受 `'stream'` 或 `'file'` 作为目标地址。
 
 <a id="FST_ERR_REP_ALREADY_SENT"></a>
-### FST_ERR_REP_ALREADY_SENT
+#### FST_ERR_REP_ALREADY_SENT
 
 响应已发送。
 
