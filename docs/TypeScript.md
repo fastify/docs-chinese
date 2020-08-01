@@ -626,8 +626,8 @@ Fastify 服务器实例化时，调用 [`fastify()`][Fastify] 方法使用到的
 
 #### Request
 
-##### fastify.FastifyRequest<[RawServer][RawServerGeneric], [RawRequest][RawRequestGeneric], [RequestGeneric][FastifyRequestGenericInterface]> 
-[源码](./../types/request.d.ts#L29)
+##### fastify.FastifyRequest<[RequestGeneric][FastifyRequestGenericInterface], [RawServer][RawServerGeneric], [RawRequest][RawRequestGeneric]> 
+[源码](./../types/request.d.ts#L15)
 
 该接口包含了 Fastify 请求对象的属性。这些属性无视请求类型 (http 或 http2)，也无关路由层级。因此在 GET 请求中访问 `request.body` 并不会抛错 (假如 GET 有 body 😉)。
 
@@ -654,6 +654,15 @@ declare module 'fastify' {
     someProp: string
   }
 }
+
+// 你也可以如此定义 request 的类型
+type CustomRequest = FastifyRequest<{
+  Body: { test: boolean };
+}>
+
+server.get('/typedRequest', async (request: CustomRequest, reply: FastifyReply) => {
+  return request.body.test
+})
 ```
 
 ##### fastify.RequestGenericInterface
