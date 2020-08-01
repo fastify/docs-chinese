@@ -1,13 +1,124 @@
 <h1 align="center">Fastify</h1>
 
 ## 测试
+
 测试是开发应用最重要的一部分。Fastify 处理测试非常灵活并且它兼容绝大多数框架 (例如 [Tap](https://www.npmjs.com/package/tap)。下面的例子都会用这个演示)。
 
-<a name="inject"></a>
-### 带有 http 注入的测试
+让我们 `cd` 进入一个全新的 'testing-example' 文件夹，并在终端里输入 `npm init -y`。
+
+执行 `npm install fastify && npm install tap pino-pretty --save-dev`。
+
+### 关注点分离让测试变得轻松
+
+首先，我们将应用代码与服务器代码分离：
+
+**app.js**:
+
+```js
+'use strict'
+
+const fastify = require('fastify')
+
+function build(opts={}) {
+  const app = fastify(opts)
+  app.get('/', async function (request, reply) {
+    return { hello: 'world' }
+  })
+
+  return app
+}
+
+module.exports = build
+```
+
+**server.js**:
+
+```js
+'use strict'
+
+const server = require('./app')({
+  logger: {
+    level: 'info',
+    prettyPrint: true
+  }
+})
+
+server.listen(3000, (err, address) => {
+  if (err) {
+    console.log(err)
+    process.exit(1)
+  }
+})
+```
+
+### 使用 fastify.inject() 的好处
+
 感谢有 [`light-my-request`](https://github.com/fastify/light-my-request)，Fastify 自带了伪造的 http 注入。
 
-想要注入伪造的 http 请求，使用 `inject` 方法：
+在进行任何测试之前，我们通过 `.inject` 方法向路由发送假的请求：
+
+**app.test.js**:
+
+```js
+'use strict'
+
+const build = require('./app')
+
+const test = async () => {
+  const app = build()
+
+  const response = await app.inject({
+    method: 'GET',
+    url: '/'
+  })
+
+  console.log('status code: ', response.statusCode)
+  console.log('body: ', response.body)
+}
+test()
+```
+
+我们的代码运行在异步函数里，因此可以使用 async/await。
+
+`.inject` 确保了所有注册的插件都已引导完毕，可以开始测试应用了。之后请求方法将被传递到路由函数中去。使用 await 可以存储响应，且避免了回调函数。
+
+在终端执行 `node app.test.js` 来开始测试。
+
+```sh
+status code:  200
+body:  {"hello":"world"}
+```
+
+### http 注入测试
+
+现在我们能用真实的测试语句代替 `console.log` 了！
+
+在 `package.json` 里修改 "test" script 如下：
+
+`"test": "tap --reporter=list --watch"`
+
+**app.test.js**:
+
+```js
+'use strict'
+
+const { test } = require('tap')
+const build = require('./app')
+
+test('requests the "/" route', async t => {
+  const app = build()
+
+  const response = await app.inject({
+    method: 'GET',
+    url: '/'
+  })
+  t.strictEqual(response.statusCode, 200, 'returns a status code of 200')
+})
+```
+
+执行 `npm test`，查看结果！
+
+`inject` 方法能完成的不只有简单的 GET 请求：
 ```js
 fastify.inject({
   method: String,
@@ -64,7 +175,7 @@ try {
 }
 ```
 
-#### 举例:
+#### 另一个例子：
 
 **app.js**
 ```js
