@@ -51,7 +51,7 @@ fastify.addHook('onRequest', async (request, reply) => {
 })
 ```
 
-**注意**：在 [onRequest](#onRequest) 钩子中，`request.body` 的值总是 `null`，这是因为 body 的解析发生在 [preValidation](#preValidation) 钩子之前。
+**注意**：在 [onRequest](#onrequest) 钩子中，`request.body` 的值总是 `null`，这是因为 body 的解析发生在 [preValidation](#prevalidation) 钩子之前。
 
 ### preParsing
 
@@ -76,7 +76,7 @@ fastify.addHook('preParsing', async (request, reply, payload) => {
 })
 ```
 
-**注意**：在 [preParsing](#preParsing) 钩子中，`request.body` 的值总是 `null`，这是因为 body 的解析发生在 [preValidation](#preValidation) 钩子之前。
+**注意**：在 [preParsing](#preparsing) 钩子中，`request.body` 的值总是 `null`，这是因为 body 的解析发生在 [preValidation](#prevalidation) 钩子之前。
 
 **注意**：你应当给返回的 stream 添加 `receivedEncodedLength` 属性。这是为了通过比对请求头的 `Content-Length`，来精确匹配请求的 payload。理想情况下，每收到一块数据都应该更新该属性。
 
@@ -418,9 +418,9 @@ fastify.register(async function plugin (fastify, opts) {
 <a name="route-hooks"></a>
 
 ## 路由层钩子
-你可以为**单个**路由声明一个或多个自定义的 [onRequest](#onRequest)、[onReponse](#onResponse)、[preParsing](#preParsing)、[preValidation](#preValidation)、[preHandler](#preHandler) 与 [preSerialization](#preSerialization) 钩子。
+你可以为**单个**路由声明一个或多个自定义的 [onRequest](#onrequest)、[onReponse](#onresponse)、[preParsing](#preparsing)、[preValidation](#prevalidation)、[preHandler](#prehandler) 与 [preSerialization](#preserialization) 钩子。
 如果你这么做，这些钩子总是会作为同一类钩子中的最后一个被执行。<br/>
-当你需要进行认证时，这会很有用，而 [preParsing](#preParsing) 与 [preValidation](#preValidation) 钩子正是为此而生。
+当你需要进行认证时，这会很有用，而 [preParsing](#preparsing) 与 [preValidation](#prevalidation) 钩子正是为此而生。
 你也可以通过数组定义多个路由层钩子。
 
 ```js
