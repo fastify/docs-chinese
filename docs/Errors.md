@@ -1,13 +1,53 @@
 <h1 align="center">Fastify</h1>
 
-## 错误处理
+<a id="errors"></a>
+## 错误
 
-未捕获的错误容易引起内存泄漏、文件描述符泄漏等生产环境主要的问题。Node 的 [Domain 模块](https://nodejs.org/en/docs/guides/domain-postmortem/)被设计用来解决这一问题，然而效果不佳。事实上，以合理的方式来处理所有未捕获的错误是不可能的，目前，最好的方法就是[使程序崩溃](https://nodejs.org/api/process.html#process_warning_using_uncaughtexception_correctly)。当使用 promise 时，请注意[正确地](https://github.com/mcollina/make-promises-safe)[处理了](https://nodejs.org/dist/latest-v8.x/docs/api/deprecations.html#deprecations_dep0018_unhandled_promise_rejections)错误。
+<a name="error-handling"></a>
+### Node.js 错误处理
 
-Fastify 遵循不全则无的原则，旨在精而优。因此，确保正确处理错误成了开发者要考虑的问题。由于大部分的错误源于预期外的输入，我们建议为输入的数据指明 [JSON.schema 验证](https://github.com/fastify/docs-chinese/blob/master/docs/Validation-and-Serialization.md)。
+#### 未捕获的错误
+在 Node.js 里，未捕获的错误容易引起内存泄漏、文件描述符泄漏等生产环境主要的问题。[Domain 模块](https://nodejs.org/en/docs/guides/domain-postmortem/)被设计用来解决这一问题，然而效果不佳。
 
-要注意的是，在基于回调的路由中，Fastify 不会帮你捕获错误。因此，任何未捕获的错误都可能造成崩溃。
-但当路由被声明为 `async` 模式时，错误会被 promise 安全地捕获，并通过 Fastify 默认的错误处理器以一般的 `Internal Server Error` 响应发送给客户端。要自定义这一行为，请看 [setErrorHandler](https://github.com/fastify/docs-chinese/blob/master/docs/Server.md#seterrorhandler)。
+由于不可能合理地处理所有未捕获的错误，目前最好的处理方案就是[使程序崩溃](https://nodejs.org/api/process.html#process_warning_using_uncaughtexception_correctly)。
+
+#### 在 Promise 里捕获错误
+未处理的 promise rejection (即未被 `.catch()` 处理) 在 Node.js 中也可能引起内存或文件描述符泄漏。`unhandledRejection` 不被推荐，未处理的 rejection 也不会抛出，因此还是可能会泄露。你应当使用如 [`make-promises-safe`](https://github.com/mcollina/make-promises-safe) 的模块来确保未处理的 rejection _总能_ 被抛出。
+
+假如你使用 promise，你应当同时给它们加上 `.catch()`。
+
+### Fastify 的错误
+Fastify 遵循不全则无的原则，旨在精而优。因此，确保正确处理错误是开发者需要考虑的问题。
+
+#### 输入数据的错误
+由于大部分的错误源于预期外的输入，我们建议为输入的数据指明 [JSON.schema 验证](Validation-and-Serialization.md)。
+
+#### 在 Fastify 中捕捉未捕获的错误
+在不影响性能的前提下，Fastify 尽可能多地捕捉未捕获的错误。这些错误包括：
+
+1. 同步路由中的错误。如 `app.get('/', () => { throw new Error('kaboom') })`
+2. `async` 路由中的错误。如 `app.get('/', async () => { throw new Error('kaboom') })`
+
+上述错误都会被安全地捕捉，并移交给 Fastify 默认的错误处理函数，发送一个通用的 `500 Internal Server Error` 响应。
+
+要自定义该行为，请见 [`setErrorHandler`](Server.md#seterrorhandler)。
+
+### Fastify 生命周期钩子的错误，及自定义错误控制函数
+
+在[钩子](Hooks/#manage-errors-from-a-hook)的文档中提到：
+> 假如在钩子执行过程中发生错误，只需把它传递给 `done()`，Fastify 便会自动地关闭请求，并向用户发送合适的错误代码。
+
+如果通过 `setErrorHandler` 自定义了一个错误函数，那么错误会被引导到那里，否则被引导到 Fastify 默认的错误函数中去。
+
+自定义错误函数应该考虑以下几点：
+
+- 你可以调用 `reply.send(data)`，正如在[常规路由](Reply/#senddata)中那样
+  - object 会被序列化，并触发 `preSerialization` 钩子 (假如有定义的话)
+  - string、buffer 及 stream 会被直接发送至客户端 (不会序列化)，并附带上合适的 header。
+
+- 在错误函数里你可以抛出新的错误
+  - 错误 (新的错误，或被重新抛出的错误参数) 会触发 `onError` 钩子，并被发送给用户
+  - 在同一个钩子内，一个错误不会被触发两次。Fastify 会内在地监控错误的触发，以此避免在回复阶段无限循环地抛错 (在路由函数执行后)。
 
 <a name="fastify-error-codes"></a>
 ### Fastify 错误代码
