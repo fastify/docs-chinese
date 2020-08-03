@@ -261,7 +261,6 @@ Fastify 使用的 [ajv 基本配置](https://github.com/epoberezkin/ajv#options-
   removeAdditional: true, // 移除额外属性
   useDefaults: true, // 当属性或项目缺失时，使用 schema 中预先定义好的 default 的值代替
   coerceTypes: true, // 根据定义的 type 的值改变数据类型
-  allErrors: true,   // 检查出所有错误（译注：为 false 时出现首个错误后即返回）
   nullable: true     // 支持 OpenAPI Specification 3.0 版本的 "nullable" 关键字
 }
 ```
@@ -278,7 +277,6 @@ const ajv = new Ajv({
   removeAdditional: true,
   useDefaults: true,
   coerceTypes: true,
-  allErrors: true,
   nullable: true,
   // 任意其他参数
   // ...
@@ -507,7 +505,7 @@ fastify.setErrorHandler(function (error, request, reply) {
 ```js
 const fastify = Fastify({
   ajv: {
-    customOptions: { allErrors: true, jsonPointers: true },
+    customOptions: { jsonPointers: true },
     plugins: [
       require('ajv-errors')
     ]
@@ -554,11 +552,7 @@ fastify.post('/', { schema, }, (request, reply) => {
 ```js
 const localize = require('ajv-i18n')
 
-const fastify = Fastify({
-  ajv: {
-    customOptions: { allErrors: true }
-  }
-})
+const fastify = Fastify()
 
 const schema = {
   body: {

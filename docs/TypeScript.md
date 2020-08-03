@@ -106,7 +106,7 @@ Fastify 是用普通的 JavaScript 编写的，因此，类型定义的维护并
       Querystring: IQuerystring,
       Headers: IHeaders
     }>('/auth', {
-      preValidation: (request, reply) => {
+      preValidation: (request, reply, done) => {
         const { username, password } = request.query
         done(username !== 'admin' ? new Error('Must be admin') : undefined) // 只允许 `admin` 访问
       }
@@ -626,8 +626,8 @@ Fastify 服务器实例化时，调用 [`fastify()`][Fastify] 方法使用到的
 
 #### Request
 
-##### fastify.FastifyRequest<[RawServer][RawServerGeneric], [RawRequest][RawRequestGeneric], [RequestGeneric][FastifyRequestGenericInterface]> 
-[源码](./../types/request.d.ts#L29)
+##### fastify.FastifyRequest<[RequestGeneric][FastifyRequestGenericInterface], [RawServer][RawServerGeneric], [RawRequest][RawRequestGeneric]> 
+[源码](./../types/request.d.ts#L15)
 
 该接口包含了 Fastify 请求对象的属性。这些属性无视请求类型 (http 或 http2)，也无关路由层级。因此在 GET 请求中访问 `request.body` 并不会抛错 (假如 GET 有 body 😉)。
 
@@ -654,6 +654,15 @@ declare module 'fastify' {
     someProp: string
   }
 }
+
+// 你也可以如此定义 request 的类型
+type CustomRequest = FastifyRequest<{
+  Body: { test: boolean };
+}>
+
+server.get('/typedRequest', async (request: CustomRequest, reply: FastifyReply) => {
+  return request.body.test
+})
 ```
 
 ##### fastify.RequestGenericInterface
@@ -793,7 +802,7 @@ fastify().register(plugin, { option1: '', option2: true }) // OK - options 对�
 
 在“从例子中学习”的[插件](#plugins)一节中有使用 TypeScript 创建插件的详细示例。
 
-##### fastify.FastifytRegisterOptions<Options>
+##### fastify.FastifyRegisterOptions<Options>
 [源码](../types/register.d.ts#L16)
 
 该类型是 `Options` 泛型以及包括 `prefix: string` 和 `logLevel` ([LogLevel][LogLevel]) 两个可选属性的未导出接口 `RegisterOptions` 的交叉类型。也可以被指定为返回前述交叉类型的函数。

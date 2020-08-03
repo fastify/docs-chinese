@@ -6,6 +6,7 @@
 
 - [AWS Lambda](#aws-lambda)
 - [Google Cloud Run](#google-cloud-run)
+- [Netlify Lambda](#netlify-lambda)
 - [Vercel](#vercel)
 
 ### 读者须知：
@@ -186,6 +187,86 @@ gcloud beta run deploy --image gcr.io/PROJECT-ID/APP-NAME --platform managed
 ```
 
 如此，便能从 Google 云平台提供的链接访问你的应用了。
+
+## netlify-lambda
+
+首先，完成与 **AWS Lambda** 有关的准备工作。
+
+新建 `functions` 文件夹，在其中创建 `server.js` (应用的入口文件)。
+
+### functions/server.js
+
+```js
+export { handler } from '../lambda.js'; // 记得将路径修改为你的应用中对应的 `lambda.js` 的路径
+```
+
+### netlify.toml
+
+```toml
+[build]
+  # 构建站点时执行的命令
+  command = "npm run build:functions"
+  # 发布到 netlify CDN 的文件夹
+  # 同时也是应用的前端
+  # publish = "build"
+  # 构建好的 Lambda 函数的目录
+  functions = "functions-build" # 总是为构建后的 `functions` 文件夹名称加上 `-build` 后缀
+```
+
+### webpack.config.netlify.js
+
+**别忘记添加这个文件，否则会有不少问题**
+
+```js
+const nodeExternals = require('webpack-node-externals');
+const dotenv = require('dotenv-safe');
+const webpack = require('webpack');
+
+const env = process.env.NODE_ENV || 'production';
+const dev = env === 'development';
+
+if (dev) {
+  dotenv.config({ allowEmptyValues: true });
+}
+
+module.exports = {
+  mode: env,
+  devtool: dev ? 'eval-source-map' : 'none',
+  externals: [nodeExternals()],
+  devServer: {
+    proxy: {
+      '/.netlify': {
+        target: 'http://localhost:9000',
+        pathRewrite: { '^/.netlify/functions': '' }
+      }
+    }
+  },
+  module: {
+    rules: []
+  },
+  plugins: [
+    new webpack.DefinePlugin({
+      'process.env.APP_ROOT_PATH': JSON.stringify('/'),
+      'process.env.NETLIFY_ENV': true,
+      'process.env.CONTEXT': env
+    })
+  ]
+};
+```
+
+### Scripts
+
+在 `package.json` 的 *scripts* 里加上这一命令
+
+```json
+"scripts": {
+...
+"build:functions": "netlify-lambda build functions --config ./webpack.config.netlify.js"
+...
+}
+```
+
+这样就完成了。
 
 ## Vercel
 

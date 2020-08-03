@@ -12,6 +12,7 @@ Fastify 从一开始就搭建成非常模块化的系统. 我们搭建了非常�
 - [如何处理封装与分发](#distribution)
 - [错误处理](#handle-errors)
 - [ESM 的支持](#esm-support)
+- [自定义错误](#custom-errors)
 - [开始!](#start)
 
 <a name="register"></a>
@@ -317,6 +318,16 @@ fastify
   .after(err => {
     if (err) throw err
   })
+```
+
+<a name="custom-errors"></a>
+## 自定义错误
+假如你的插件需要暴露自定义的错误，[`fastify-error`](https://github.com/fastify/fastify-error) 能帮助你轻松地在代码或插件中生成一致的错误对象。
+
+```js
+const createError = require('fastify-error')
+const CustomError = createError('ERROR_CODE', 'message')
+console.log(new CustomError())
 ```
 
 <a name="start"></a>
