@@ -10,9 +10,10 @@ Fastify 从一开始就搭建成非常模块化的系统. 我们搭建了非常�
 - [装饰器](#decorators)
 - [钩子方法](#hooks)
 - [如何处理封装与分发](#distribution)
-- [错误处理](#handle-errors)
 - [ESM 的支持](#esm-support)
+- [错误处理](#handle-errors)
 - [自定义错误](#custom-errors)
+- [发布提醒](#emit-warnings)
 - [开始!](#start)
 
 <a name="register"></a>
@@ -328,6 +329,16 @@ fastify
 const createError = require('fastify-error')
 const CustomError = createError('ERROR_CODE', 'message')
 console.log(new CustomError())
+```
+
+<a name="emit-warnings"></a>
+## 发布提醒
+假如你要提示用户某个 API 不被推荐，或某个特殊场景需要注意，你可以使用 [`fastify-warning`](https://github.com/fastify/fastify-warning)。
+
+```js
+const warning = require('fastify-warning')()
+warning.create('FastifyDeprecation', 'FST_ERROR_CODE', 'message')
+warning.emit('FST_ERROR_CODE')
 ```
 
 <a name="start"></a>
