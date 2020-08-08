@@ -320,7 +320,9 @@ fastify.addHook('onRoute', (routeOptions) => {
   // 其他代码
   routeOptions.method
   routeOptions.schema
-  routeOptions.url
+  routeOptions.url // 路由的完整 URL，包括前缀
+  routeOptions.path // `url` 的别名 
+  routeOptions.routePath // 无前缀的 URL
   routeOptions.bodyLimit
   routeOptions.logLevel
   routeOptions.logSerializers
