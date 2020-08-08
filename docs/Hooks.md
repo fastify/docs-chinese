@@ -27,10 +27,10 @@
 
 ## 请求/响应钩子
 
-[Request](https://github.com/fastify/docs-chinese/blob/master/docs/Request.md) 与 [Reply](https://github.com/fastify/docs-chinese/blob/master/docs/Reply.md) 是 Fastify 核心的对象。<br/>
-`done` 是调用[生命周期](https://github.com/fastify/docs-chinese/blob/master/docs/Lifecycle.md)下一阶段的函数。
+[Request](Request.md) 与 [Reply](Reply.md) 是 Fastify 核心的对象。<br/>
+`done` 是调用[生命周期](Lifecycle.md)下一阶段的函数。
 
-[生命周期](https://github.com/fastify/docs-chinese/blob/master/docs/Lifecycle.md)一文清晰地展示了各个钩子执行的位置。<br>
+[生命周期](Lifecycle.md)一文清晰地展示了各个钩子执行的位置。<br>
 钩子可被封装，因此可以运用在特定的路由上。更多信息请看[作用域](#scope)一节。
 
 在请求/响应中，有八个可用的钩子 *(按执行顺序排序)*：
@@ -220,7 +220,7 @@ fastify.addHook('preHandler', (request, reply, done) => {
   done(new Error('Some error'))
 })
 ```
-*错误最终会在 [`Reply`](https://github.com/fastify/docs-chinese/blob/master/docs/Reply.md#errors) 中得到处理。*
+*错误最终会在 [`Reply`](Reply.md#errors) 中得到处理。*
 
 或者在 `async/await` 函数中抛出错误：
 ```js
@@ -303,7 +303,7 @@ fastify.addHook('onReady', async function () {
 
 <a name="on-close"></a>
 ### onClose
-使用 `fastify.close()` 停止服务器时被触发。当[插件](https://github.com/fastify/docs-chinese/blob/master/docs/Plugins.md)需要一个 "shutdown" 事件时有用，例如关闭一个数据库连接。<br>
+使用 `fastify.close()` 停止服务器时被触发。当[插件](Plugins.md)需要一个 "shutdown" 事件时有用，例如关闭一个数据库连接。<br>
 该钩子的第一个参数是 Fastify 实例，第二个为 `done` 回调函数。
 ```js
 fastify.addHook('onClose', (instance, done) => {
@@ -378,7 +378,7 @@ fastify.addHook('onRegister', (instance, opts) => {
 
 <a name="scope"></a>
 ## 作用域
-除了[应用钩子](#application-hooks)，所有的钩子都是封装好的。这意味着你可以通过 `register` 来决定在何处运行它们，正如[插件指南](https://github.com/fastify/docs-chinese/blob/master/docs/Plugins-Guide.md)所述。如果你传递一个函数，那么该函数会获得 Fastify 的上下文，如此你便能使用 Fastify 的 API 了。
+除了[应用钩子](#application-hooks)，所有的钩子都是封装好的。这意味着你可以通过 `register` 来决定在何处运行它们，正如[插件指南](Plugins-Guide.md)所述。如果你传递一个函数，那么该函数会获得 Fastify 的上下文，如此你便能使用 Fastify 的 API 了。
 
 ```js
 fastify.addHook('onRequest', function (request, reply, done) {

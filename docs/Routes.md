@@ -31,37 +31,37 @@ fastify.route(options)
 * `method`：支持的 HTTP 请求方法。目前支持 `'DELETE'`、`'GET'`、`'HEAD'`、`'PATCH'`、`'POST'`、`'PUT'` 以及 `'OPTIONS'`。它还可以是一个 HTTP 方法的数组。
 * `url`：路由匹配的 url 路径 (别名：`path`)。
 * `schema`：用于验证请求与回复的 schema 对象。
-必须符合 [JSON Schema](http://json-schema.org/) 格式。请看[这里](https://github.com/fastify/docs-chinese/blob/master/docs/Validation-and-Serialization.md)了解更多信息。
+必须符合 [JSON Schema](http://json-schema.org/) 格式。请看[这里](Validation-and-Serialization.md)了解更多信息。
 
   * `body`：当为 POST 或 PUT 方法时，校验请求主体。
   * `querystring` 或 `query`：校验 querystring。可以是一个完整的 JSON Schema 对象，它包括了值为 `object` 的 `type` 属性以及包含参数的 `properties` 对象，也可以仅仅是 `properties` 对象中的值 (见下文示例)。
   * `params`：校验 url 参数。
   * `response`：过滤并生成用于响应的 schema，能帮助提升 10-20% 的吞吐量。
 * `attachValidation`：当 schema 校验出错时，将一个 `validationError` 对象添加到请求中，否则错误将被发送给错误处理函数。
-* `onRequest(request, reply, done)`：每当接收到一个请求时触发的[函数](https://github.com/fastify/docs-chinese/blob/master/docs/Hooks.md#onrequest)。可以是一个函数数组。
-* `preParsing(request, reply, done)`：解析请求前调用的[函数](https://github.com/fastify/docs-chinese/blob/master/docs/Hooks.md#preparsing)。可以是一个函数数组。
-* `preValidation(request, reply, done)`：在共享的 `preValidation` 钩子之后执行的[函数](https://github.com/fastify/docs-chinese/blob/master/docs/Hooks.md#prevalidation)，在路由层进行认证等场景中会有用处。可以是一个函数数组。
-* `preHandler(request, reply, done)`：处理请求之前调用的[函数](https://github.com/fastify/docs-chinese/blob/master/docs/Hooks.md#prehandler)。可以是一个函数数组。
-* `preSerialization(request, reply, payload, done)`：序列化之前调用的[函数](https://github.com/fastify/docs-chinese/blob/master/docs/Hooks.md#preserialization)。可以是一个函数数组。
-* `onSend(request, reply, payload, done)`：响应即将发送前调用的[函数](https://github.com/fastify/docs-chinese/blob/master/docs/Hooks.md#route-hooks)。可以是一个函数数组。
-* `onResponse(request, reply, done)`：当响应发送后调用的[函数](https://github.com/fastify/docs-chinese/blob/master/docs/Hooks.md#onresponse)。因此，在这个函数内部，不允许再向客户端发送数据。可以是一个函数数组。
-* `handler(request, reply)`：处理请求的函数。函数被调用时，[Fastify server](./Server.md) 将会与 `this` 进行绑定。注意，使用箭头函数会破坏这一绑定。
-* `errorHandler(error, request, reply)`：在请求作用域内使用的自定义错误控制函数。覆盖默认的全局错误函数，以及由 [`setErrorHandler`](./Server.md#setErrorHandler) 设置的请求错误函数。
-* `validatorCompiler({ schema, method, url, httpPart })`：生成校验请求的 schema 的函数。详见[验证与序列化](https://github.com/fastify/docs-chinese/blob/master/docs/Validation-and-Serialization.md#schema-validator)。
-* `serializerCompiler({ { schema, method, url, httpStatus } })`：生成序列化响应的 schema 的函数。详见[验证与序列化](https://github.com/fastify/docs-chinese/blob/master/docs/Validation-and-Serialization.md#schema-serializer)。
+* `onRequest(request, reply, done)`：每当接收到一个请求时触发的[函数](Hooks.md#onrequest)。可以是一个函数数组。
+* `preParsing(request, reply, done)`：解析请求前调用的[函数](Hooks.md#preparsing)。可以是一个函数数组。
+* `preValidation(request, reply, done)`：在共享的 `preValidation` 钩子之后执行的[函数](Hooks.md#prevalidation)，在路由层进行认证等场景中会有用处。可以是一个函数数组。
+* `preHandler(request, reply, done)`：处理请求之前调用的[函数](Hooks.md#prehandler)。可以是一个函数数组。
+* `preSerialization(request, reply, payload, done)`：序列化之前调用的[函数](Hooks.md#preserialization)。可以是一个函数数组。
+* `onSend(request, reply, payload, done)`：响应即将发送前调用的[函数](Hooks.md#route-hooks)。可以是一个函数数组。
+* `onResponse(request, reply, done)`：当响应发送后调用的[函数](Hooks.md#onresponse)。因此，在这个函数内部，不允许再向客户端发送数据。可以是一个函数数组。
+* `handler(request, reply)`：处理请求的函数。函数被调用时，[Fastify server](Server.md) 将会与 `this` 进行绑定。注意，使用箭头函数会破坏这一绑定。
+* `errorHandler(error, request, reply)`：在请求作用域内使用的自定义错误控制函数。覆盖默认的全局错误函数，以及由 [`setErrorHandler`](Server.md#setErrorHandler) 设置的请求错误函数。
+* `validatorCompiler({ schema, method, url, httpPart })`：生成校验请求的 schema 的函数。详见[验证与序列化](Validation-and-Serialization.md#schema-validator)。
+* `serializerCompiler({ { schema, method, url, httpStatus } })`：生成序列化响应的 schema 的函数。详见[验证与序列化](Validation-and-Serialization.md#schema-serializer)。
 * `bodyLimit`：一个以字节为单位的整形数，默认值为 `1048576` (1 MiB)，防止默认的 JSON 解析器解析超过此大小的请求主体。你也可以通过 `fastify(options)`，在首次创建 Fastify 实例时全局设置该值。
 * `logLevel`：设置日志级别。详见下文。
 * `logSerializers`：设置当前路由的日志序列化器。
 * `config`：存放自定义配置的对象。
-* `version`：一个符合[语义化版本控制规范 (semver)](http://semver.org/) 的字符串。[示例](https://github.com/fastify/docs-chinese/blob/master/docs/Routes.md#version)。
+* `version`：一个符合[语义化版本控制规范 (semver)](http://semver.org/) 的字符串。[示例](Routes.md#version)。
 `prefixTrailingSlash`：一个字符串，决定如何处理带前缀的 `/` 路由。
   * `both` (默认值)：同时注册 `/prefix` 与 `/prefix/`。
   * `slash`：只会注册 `/prefix/`。
   * `no-slash`：只会注册 `/prefix`。
 
-  `request` 的相关内容请看[请求](https://github.com/fastify/docs-chinese/blob/master/docs/Request.md)一文。
+  `request` 的相关内容请看[请求](Request.md)一文。
 
-  `reply` 请看[回复](https://github.com/fastify/docs-chinese/blob/master/docs/Reply.md)一文。
+  `reply` 请看[回复](Reply.md)一文。
 
 示例：
 ```js
@@ -292,7 +292,7 @@ module.exports = function (fastify, opts, done) {
 在 Fastify 中为路由里设置不同的日志级别是十分容易的。<br/>
 你只需在插件或路由的选项里设置 `logLevel` 为相应的[值](https://github.com/pinojs/pino/blob/master/docs/API.md#discussion-3)即可。
 
-要注意的是，如果在插件层面上设置了 `logLevel`，那么 [`setNotFoundHandler`](https://github.com/fastify/docs-chinese/blob/master/docs/Server.md#setnotfoundhandler) 和 [`setErrorHandler`](https://github.com/fastify/docs-chinese/blob/master/docs/Server.md#seterrorhandler) 也会受到影响。
+要注意的是，如果在插件层面上设置了 `logLevel`，那么 [`setNotFoundHandler`](Server.md#setnotfoundhandler) 和 [`setErrorHandler`](Server.md#seterrorhandler) 也会受到影响。
 
 ```js
 // server.js
@@ -418,4 +418,4 @@ fastify.inject({
 假如请求未带有 `Accept-Version` header，那么将返回一个 404 错误。
 
 #### 自定义
-新建实例时，可以通过设置 [`versioning`](https://github.com/fastify/docs-chinese/blob/master/docs/Server.md#versioning) 来自定义版本号逻辑。
+新建实例时，可以通过设置 [`versioning`](Server.md#versioning) 来自定义版本号逻辑。

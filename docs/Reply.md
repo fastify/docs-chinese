@@ -134,7 +134,7 @@ reply.code(303).redirect(302, '/home')
 
 <a name="call-not-found"></a>
 ### .callNotFound()
-调用自定义的 not found 处理函数。注意，只有在 [`setNotFoundHandler`](https://github.com/fastify/docs-chinese/blob/master/docs/Server.md#set-not-found-handler) 中指明的 `preHandler` 钩子会被调用。
+调用自定义的 not found 处理函数。注意，只有在 [`setNotFoundHandler`](Server.md#set-not-found-handler) 中指明的 `preHandler` 钩子会被调用。
 
 ```js
 reply.callNotFound()
@@ -265,7 +265,7 @@ fastify.get('/', function (request, reply) {
 })
 ```
 
-如果你想完全自定义错误处理，请看 [`setErrorHandler`](https://github.com/fastify/docs-chinese/blob/master/docs/Server.md#seterrorhandler) API。<br>
+如果你想完全自定义错误处理，请看 [`setErrorHandler`](Server.md#seterrorhandler) API。<br>
 *注：当自定义错误处理时，你需要自行记录日志*
 
 API:
@@ -281,7 +281,7 @@ fastify.setErrorHandler(function (error, request, reply) {
 })
 ```
 
-路由生成的 not found 错误会使用 [`setNotFoundHandler`](https://github.com/fastify/docs-chinese/blob/master/docs/Server.md#setnotfoundhandler)。
+路由生成的 not found 错误会使用 [`setNotFoundHandler`](Server.md#setnotfoundhandler)。
 API：
 
 ```js
@@ -295,7 +295,7 @@ fastify.setNotFoundHandler(function (request, reply) {
 
 <a name="payload-type"></a>
 #### 最终 payload 的类型
-发送的 payload (序列化之后、经过任意的 [`onSend` 钩子](https://github.com/fastify/docs-chinese/blob/master/docs/Hooks.md#the-onsend-hook)) 必须为下列类型之一，否则将会抛出一个错误：
+发送的 payload (序列化之后、经过任意的 [`onSend` 钩子](Hooks.md#the-onsend-hook)) 必须为下列类型之一，否则将会抛出一个错误：
 
 - `string`
 - `Buffer`
@@ -336,7 +336,7 @@ fastify.get('/botnet', async function (request, reply) => {
 })
 ```
 
-想要了解更多？请看 [Routes#async-await](https://github.com/fastify/docs-chinese/blob/master/docs/Routes.md#async-await)。
+想要了解更多？请看 [Routes#async-await](Routes.md#async-await)。
 
 <a name="then"></a>
 ### .then(fullfilled, rejected)

@@ -5,7 +5,7 @@ Fastify 原生只支持 `'application/json'` 和 `'text/plain'` content types。
 
 和其他的 API 一样，`addContentTypeParser` 被封装在定义它的作用域中了。这就意味着如果你定义在了根作用域中，那么就是全局可用，如果你定义在一个插件中，那么它只能在那个作用域和子作用域中可用。
 
-Fastify 自动将解析好的 payload 添加到 [Fastify request](https://github.com/fastify/docs-chinese/blob/master/docs/Request.md) 对象，你能通过 `request.body` 访问。
+Fastify 自动将解析好的 payload 添加到 [Fastify request](Request.md) 对象，你能通过 `request.body` 访问。
 
 ### 用法
 ```js
@@ -46,7 +46,7 @@ if (!fastify.hasContentTypeParser('application/jsoff')){
 
 #### Body Parser
 
-你可以用两种方式解析消息主体。第一种方法在上面演示过了: 你可以添加定制的 content type 解析器来处理请求。第二种方法你可以在 `addContentTypeParser`  API 传递 `parseAs` 参数。它可以是 `'string'` 或者 `'buffer'`。如果你使用 `parseAs` 选项 Fastify 会处理 stream 并且进行一些检查，比如消息主体的 [最大尺寸](https://github.com/fastify/docs-chinese/blob/master/docs/Factory.md#factory-body-limit) 和消息主体的长度。如果达到了某些限制，自定义的解析器就不会被调用。
+你可以用两种方式解析消息主体。第一种方法在上面演示过了: 你可以添加定制的 content type 解析器来处理请求。第二种方法你可以在 `addContentTypeParser`  API 传递 `parseAs` 参数。它可以是 `'string'` 或者 `'buffer'`。如果你使用 `parseAs` 选项 Fastify 会处理 stream 并且进行一些检查，比如消息主体的 [最大尺寸](Factory.md#factory-body-limit) 和消息主体的长度。如果达到了某些限制，自定义的解析器就不会被调用。
 
 ```js
 fastify.addContentTypeParser('application/json', { parseAs: 'string' }, function (req, body, done) {
@@ -64,7 +64,7 @@ fastify.addContentTypeParser('application/json', { parseAs: 'string' }, function
 
 ##### 自定义解析器的选项
 + `parseAs` (string): `'string'` 或者 `'buffer'` 定义了如何收集进来的数据。默认是 `'buffer'`。
-+ `bodyLimit` (number): 自定义解析器能够接收的最大的数据长度，比特为单位。默认是全局的消息主体的长度限制[`Fastify 工厂方法`](https://github.com/fastify/docs-chinese/blob/master/docs/Factory.md#bodylimit)。
++ `bodyLimit` (number): 自定义解析器能够接收的最大的数据长度，比特为单位。默认是全局的消息主体的长度限制[`Fastify 工厂方法`](Factory.md#bodylimit)。
 
 #### 捕获所有
 有些情况下你需要捕获所有的 content type。通过 Fastify，你只需添加`'*'` content type。

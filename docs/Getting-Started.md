@@ -85,7 +85,7 @@ start()
 ### 第一个插件
 就如同在 JavaScript 中一切皆为对象，在 Fastify 中，一切都是插件 (plugin)。<br>
 在深入之前，先来看看插件系统是如何工作的吧！<br>
-让我们新建一个基本的服务器，但这回我们把路由 (route) 的声明从入口文件转移到一个外部文件。(参阅[路由声明](https://github.com/fastify/docs-chinese/blob/master/docs/Routes.md))。
+让我们新建一个基本的服务器，但这回我们把路由 (route) 的声明从入口文件转移到一个外部文件。(参阅[路由声明](Routes.md))。
 ```js
 const fastify = require('fastify')({
   logger: true
@@ -193,14 +193,14 @@ module.exports = routes
 哇，真是快啊！<br>
 介绍了一些新概念后，让我们回顾一下迄今为止都做了些什么吧。<br>
 如你所见，我们可以使用 `register` 来注册数据库连接器或者路由。
-这是 Fastify 最棒的特性之一了！它使得插件按声明的顺序来加载，唯有当前插件加载完毕后，才会加载下一个插件。如此，我们便可以在第一个插件中注册数据库连接器，并在第二个插件中使用它。*(参见 [这里](https://github.com/fastify/docs-chinese/blob/master/docs/Plugins.md#handle-the-scope) 了解如何处理插件的作用域)*。
+这是 Fastify 最棒的特性之一了！它使得插件按声明的顺序来加载，唯有当前插件加载完毕后，才会加载下一个插件。如此，我们便可以在第一个插件中注册数据库连接器，并在第二个插件中使用它。*(参见 [这里](Plugins.md#handle-the-scope) 了解如何处理插件的作用域)*。
 当调用函数 `fastify.listen()`、`fastify.inject()` 或 `fastify.ready()` 时，插件便开始加载了。
 
 我们还用到了 `decorate` API。现在来看看这一 API 是什么，以及它是如何运作的吧。
 考虑下需要在应用的不同部分使用相同的代码或库的场景。一种解决方案便是按需引入这些代码或库。哈，这固然可行，但却因为重复的代码和麻烦的重构让人苦恼。<br>
 为了解决上述问题，Fastify 提供了 `decorate` API。它允许你在 Fastify 的命名空间下添加自定义对象，如此一来，你就可以在所有地方直接使用这些对象了。
 
-更深入的内容，例如插件如何运作、如何新建，以及使用 Fastify 全部的 API 去处理复杂的异步引导的细节，请看[插件指南](https://github.com/fastify/docs-chinese/blob/master/docs/Plugins-Guide.md)。
+更深入的内容，例如插件如何运作、如何新建，以及使用 Fastify 全部的 API 去处理复杂的异步引导的细节，请看[插件指南](Plugins-Guide.md)。
 
 <a name="plugin-loading-order"></a>
 ### 插件加载顺序
@@ -259,7 +259,7 @@ fastify.post('/', opts, async (request, reply) => {
 })
 ```
 这个例子展示了如何向路由传递配置选项。选项中包含了一个名为 `schema` 的对象，它便是我们验证路由所用的模式 (schema)。借由 schema，我们可以验证 `body`、`querystring`、`params` 以及 `header`。<br>
-请参阅[验证与序列化](https://github.com/fastify/docs-chinese/blob/master/docs/Validation-and-Serialization.md)获取更多信息。
+请参阅[验证与序列化](Validation-and-Serialization.md)获取更多信息。
 
 <a name="serialize-data"></a>
 ### 序列化数据
@@ -284,17 +284,17 @@ fastify.get('/', opts, async (request, reply) => {
 })
 ```
 简单地指明 schema，序列化的过程就达到了原先 2-3 倍的速度。这么做同时也保护了潜在的敏感数据不被泄露，因为 Fastify 仅对 schema 里出现的数据进行序列化。
-请参阅 [验证与序列化](https://github.com/fastify/docs-chinese/blob/master/docs/Validation-and-Serialization.md)获取更多信息。
+请参阅 [验证与序列化](Validation-and-Serialization.md)获取更多信息。
 
 <a name="extend-server"></a>
 ### 扩展服务器
 Fastify 生来十分精简，也具有高可扩展性。我们相信，一个小巧的框架足以实现一个优秀的应用。<br>
-换句话说，Fastify 并非一个面面俱到的框架，它依赖于自己惊人的[生态系统](https://github.com/fastify/docs-chinese/blob/master/docs/Ecosystem.md)！
+换句话说，Fastify 并非一个面面俱到的框架，它依赖于自己惊人的[生态系统](https://github.com/fastify/fastify/blob/master/docs/Ecosystem.md)！
 
 <a name="test-server"></a>
 ### 测试服务器
 Fastify 并没有提供测试框架，但是我们推荐你在测试中使用 Fastify 的特性及结构。<br>
-更多内容请看[测试](https://github.com/fastify/docs-chinese/blob/master/docs/Testing.md)！
+更多内容请看[测试](Testing.md)！
 
 <a name="cli"></a>
 ### 从命令行启动服务器
