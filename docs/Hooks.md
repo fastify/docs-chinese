@@ -15,6 +15,7 @@
   - [onError](#onerror)
   - [onSend](#onsend)
   - [onResponse](#onresponse)
+  - [onTimeout](#ontimeout)
   - [在钩子中管理错误](#manage-errors-from-a-hook)
   - [在钩子中响应请求](#respond-to-a-request-from-a-hook)
 - [应用钩子](#application-hooks)
@@ -203,6 +204,24 @@ fastify.addHook('onResponse', async (request, reply) => {
 ```
 
 `onResponse` 钩子在响应发出后被执行，因此在该钩子中你无法再向客户端发送数据了。但是你可以在此向外部服务发送数据，比如收集数据。
+
+### onTimeout
+
+```js
+fastify.addHook('onTimeout', (request, reply, done) => {
+  // 其他代码
+  done()
+})
+```
+Or `async/await`:
+```js
+fastify.addHook('onTimeout', async (request, reply) => {
+  // 其他代码
+  await asyncMethod()
+  return
+})
+```
+`onTimeout` 用于监测请求超时，需要在 fastify 实例上设置 `connectionTimeout` 属性。当请求超时，socket 挂起 (hang up) 时，该钩子执行。因此，在这个钩子里不能再向客户端发送数据了。
 
 ### 在钩子中管理错误
 在钩子的执行过程中如果发生了错误，只需将错误传递给 `done()`，Fastify 就会自动关闭请求，并发送一个相应的错误码给用户。
