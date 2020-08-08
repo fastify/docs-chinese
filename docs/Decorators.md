@@ -74,7 +74,7 @@ fastify.utility()
 console.log(fastify.conf.db)
 ```
 
-[路由](./Routes.md)函数的 `this` 指向 [Fastify server](./Server.md)：
+[路由](Routes.md)函数的 `this` 指向 [Fastify server](Server.md)：
 
 ```js
 fastify.decorate('db', new DbConnection())

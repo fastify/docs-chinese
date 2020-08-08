@@ -29,7 +29,7 @@ fastify.use(require('cors')());
 
 ### 日志序列化 ([#2017](https://github.com/fastify/fastify/pull/2017))
 
-日志的[序列化器](https://github.com/fastify/docs-chinese/blob/master/docs/Logging.md)得到了升级，现在它接受 Fastify 的 [`Request`](https://github.com/fastify/docs-chinese/blob/master/docs/Request.md) 和 [`Reply`](https://github.com/fastify/docs-chinese/blob/master/docs/Reply.md) 对象，而非原生的对象。
+日志的[序列化器](Logging.md)得到了升级，现在它接受 Fastify 的 [`Request`](Request.md) 和 [`Reply`](Reply.md) 对象，而非原生的对象。
 
 任何依赖于原生对象而非 Fastify 对象上的 `request` 或 `reply` 属性的自定义的序列化器，都应当升级。
 
@@ -233,9 +233,9 @@ fastify.get('/', (request, reply) => {
 ## 更多特性与改善
 
 - 不管如何注册钩子，它们总拥有一致的上下文 ([#2005](https://github.com/fastify/fastify/pull/2005))
-- 推荐使用 [`request.raw`](https://github.com/fastify/docs-chinese/blob/master/docs/Request.md) 及 [`reply.raw`](https://github.com/fastify/docs-chinese/blob/master/docs/Reply.md)，而非 `request.req` 和 `reply.res` ([#2008](https://github.com/fastify/fastify/pull/2008))
+- 推荐使用 [`request.raw`](Request.md) 及 [`reply.raw`](Reply.md)，而非 `request.req` 和 `reply.res` ([#2008](https://github.com/fastify/fastify/pull/2008))
 - 移除 `modifyCoreObjects` 选项 ([#2015](https://github.com/fastify/fastify/pull/2015))
-- 添加 [`connectionTimeout`](https://github.com/fastify/docs-chinese/blob/master/docs/Server.md#factory-connection-timeout) 选项 ([#2086](https://github.com/fastify/fastify/pull/2086))
-- 添加 [`keepAliveTimeout`](https://github.com/fastify/docs-chinese/blob/master/docs/Server.md#factory-keep-alive-timeout) 选项 ([#2086](https://github.com/fastify/fastify/pull/2086))
-- [插件](https://github.com/fastify/docs-chinese/blob/master/docs/Plugins.md#async-await)支持 async-await ([#2093](https://github.com/fastify/fastify/pull/2093))
+- 添加 [`connectionTimeout`](Server.md#factory-connection-timeout) 选项 ([#2086](https://github.com/fastify/fastify/pull/2086))
+- 添加 [`keepAliveTimeout`](Server.md#factory-keep-alive-timeout) 选项 ([#2086](https://github.com/fastify/fastify/pull/2086))
+- [插件](Plugins.md#async-await)支持 async-await ([#2093](https://github.com/fastify/fastify/pull/2093))
 - 支持将对象作为错误抛出 ([#2134](https://github.com/fastify/fastify/pull/2134))

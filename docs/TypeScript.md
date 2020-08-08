@@ -225,7 +225,7 @@ Fastify 是用普通的 JavaScript 编写的，因此，类型定义的维护并
     ```
     要特别关注文件顶部的导入。虽然看上去有些多余，但你必须同时导入 schema 与生成的接口。
 
-真棒！现在你就能同时运用 JSON Schema 与 TypeScript 的定义了。给 Fastify 路由定义 schema 还能提高吞吐量！更多信息请见[验证和序列化](./Validation-and-Serialization.md)。
+真棒！现在你就能同时运用 JSON Schema 与 TypeScript 的定义了。给 Fastify 路由定义 schema 还能提高吞吐量！更多信息请见[验证和序列化](Validation-and-Serialization.md)。
 
 一些其他说明：
   - 行内 JSON schema 目前还未支持类型定义。假如你有好的想法，欢迎 PR！
@@ -478,7 +478,7 @@ Fastify 日志工具。
 #### Fastify
 
 ##### fastify<[RawServer][RawServerGeneric], [RawRequest][RawRequestGeneric], [RawReply][RawReplyGeneric], [Logger][LoggerGeneric]>(opts?: [FastifyServerOptions][FastifyServerOptions]): [FastifyInstance][FastifyInstance]
-[源码](./../fastify.d.ts#L19)
+[源码](https://github.com/fastify/fastify/blob/master/fastify.d.ts#L19)
 
 Fastify 首要的 API 方法。默认情况下创建一个 HTTP 服务器。通过可辨识联合 (discriminant unions) 及重载的方法 (overload methods)，类型系统能自动地根据传递给该方法的选项 (详见下文例子)，推断出服务器的类型 (http、https 或 http2)。同时，可拓展的泛型类型系统允许用户拓展底层的 Node.js Server、Request 和 Reply 对象。此外，自定义日志类型则可以运用 `Logger` 泛型。详见下文的例子和泛型分类说明。
 
@@ -536,7 +536,7 @@ const secureServer = fastify({
 })
 ```
 
-更多细节详见 Fastify 的 [HTTP2](./HTTP2.md) 文档。
+更多细节详见 Fastify 的 [HTTP2](HTTP2.md) 文档。
 
 ###### 例子 4：拓展 HTTP 服务器
 
@@ -559,7 +559,7 @@ server.get('/', async (request, reply) => {
 
 ###### 例子 5：指定日志类型
 
-Fastify 使用 [Pino](http://getpino.io/#/) 作为日志工具。其中一些属性可以在构建 Fastify 实例时，在 `logger` 字段中配置。如果需要的属性未被暴露出来，你也能通过将一个外部配置好的 Pino 实例 (或其他兼容的日志工具) 传给这个字段，来配置这些属性。这么做也允许你自定义序列化工具，详见[日志](./Logging.md)的文档。
+Fastify 使用 [Pino](http://getpino.io/#/) 作为日志工具。其中一些属性可以在构建 Fastify 实例时，在 `logger` 字段中配置。如果需要的属性未被暴露出来，你也能通过将一个外部配置好的 Pino 实例 (或其他兼容的日志工具) 传给这个字段，来配置这些属性。这么做也允许你自定义序列化工具，详见[日志](Logging.md)的文档。
 
 要使用 Pino 的外部实例，请将 `@types/pino` 添加到 devDependencies 中，并把实例传给 `logger` 字段：
 
@@ -584,19 +584,19 @@ server.get('/', async (request, reply) => {
 ---
 
 ##### fastify.HTTPMethods 
-[源码](./../types/utils.d.ts#L8)
+[源码](https://github.com/fastify/fastify/blob/master/types/utils.d.ts#L8)
 
 `'DELETE' | 'GET' | 'HEAD' | 'PATCH' | 'POST' | 'PUT' | 'OPTIONS'` 的联合类型 (Union type)
 
 ##### fastify.RawServerBase 
-[源码](./../types/utils.d.ts#L13)
+[源码](https://github.com/fastify/fastify/blob/master/types/utils.d.ts#L13)
 
 依赖于 `@types/node` 的模块 `http`、`https`、`http2`
 
 `http.Server | https.Server | http2.Http2Server | http2.Http2SecureServer` 的联合类型
 
 ##### fastify.RawServerDefault 
-[源码](./../types/utils.d.ts#L18)
+[源码](https://github.com/fastify/fastify/blob/master/types/utils.d.ts#L18)
 
 依赖于 `@types/node` 的模块 `http`
 
@@ -627,7 +627,7 @@ Fastify 服务器实例化时，调用 [`fastify()`][Fastify] 方法使用到的
 #### Request
 
 ##### fastify.FastifyRequest<[RequestGeneric][FastifyRequestGenericInterface], [RawServer][RawServerGeneric], [RawRequest][RawRequestGeneric]> 
-[源码](./../types/request.d.ts#L15)
+[源码](https://github.com/fastify/fastify/blob/master/types/request.d.ts#L15)
 
 该接口包含了 Fastify 请求对象的属性。这些属性无视请求类型 (http 或 http2)，也无关路由层级。因此在 GET 请求中访问 `request.body` 并不会抛错 (假如 GET 有 body 😉)。
 
@@ -666,7 +666,7 @@ server.get('/typedRequest', async (request: CustomRequest, reply: FastifyReply) 
 ```
 
 ##### fastify.RequestGenericInterface
-[源码](./../types/request.d.ts#L4)
+[源码](https://github.com/fastify/fastify/blob/master/types/request.d.ts#L4)
 
 Fastify 的请求对象有四个动态属性：`body`、`params`、`query` 以及 `headers`，它们对应的类型可以通过该接口设定。这是具名属性接口，允许开发者忽略他们不想指定的类型。所有忽略的属性默认为 `unknown`。四个属性名为：`Body`、`Querystring`、`Params` 和 `Headers`。
 
@@ -690,7 +690,7 @@ server.get<requestGeneric>('/', async (request, reply) => {
 在“从例子中学习”的 [JSON Schema](#jsonschema) 一节中，你能找到更具体的范例。
 
 ##### fastify.RawRequestDefaultExpression\<[RawServer][RawServerGeneric]\>
-[源码](./../types/utils.d.ts#L23)
+[源码](https://github.com/fastify/fastify/blob/master/types/utils.d.ts#L23)
 
 依赖于 `@types/node` 的模块 `http`、`https`、`http2`
 
@@ -712,7 +712,7 @@ RawRequestDefaultExpression<http2.Http2Server> // -> http2.Http2ServerRequest
 #### Reply
 
 ##### fastify.FastifyReply<[RawServer][RawServerGeneric], [RawRequest][RawRequestGeneric], [RawReply][RawReplyGeneric], [RequestGeneric][FastifyRequestGenericInterface], [ContextConfig][ContextConfigGeneric]>
-[源码](./../types/reply.d.ts#L32)
+[源码](https://github.com/fastify/fastify/blob/master/types/reply.d.ts#L32)
 
 该接口包含了 Fastify 添加到 Node.js 标准的 reply 对象上的属性。这些属性和 reply 对象的类型 (http 或 http2) 无关。
 
@@ -742,7 +742,7 @@ declare module 'fastify' {
 ```
 
 ##### fastify.RawReplyDefaultExpression<[RawServer][RawServerGeneric]> 
-[源码](./../types/utils.d.ts#L27)
+[源码](https://github.com/fastify/fastify/blob/master/types/utils.d.ts#L27)
 
 依赖于 `@types/node` 的模块 `http`、`https`、`http2`
 
@@ -784,7 +784,7 @@ RawReplyDefaultExpression<http2.Http2Server> // -> http2.Http2ServerResponse
 ##### fastify.FastifyRegister(plugin: [FastifyPlugin][FastifyPlugin], opts: [FastifyRegisterOptions][FastifyRegisterOptions])
 [源码](../types/register.d.ts#L5)
 
-指定 [`fastify.register()`](./Server.md#register) 类型的类型接口，返回一个拥有默认值为 [FastifyPluginOptions][FastifyPluginOptions] 的 `Options` 泛型的函数签名。当调用此函数时，根据 FastifyPlugin 参数能推断出该泛型，因此不必特别指定。options 参数是插件选项以及 `prefix: string` 和 `logLevel` ([LogLevel][LogLevel]) 两个属性的交叉类型。
+指定 [`fastify.register()`](Server.md#register) 类型的类型接口，返回一个拥有默认值为 [FastifyPluginOptions][FastifyPluginOptions] 的 `Options` 泛型的函数签名。当调用此函数时，根据 FastifyPlugin 参数能推断出该泛型，因此不必特别指定。options 参数是插件选项以及 `prefix: string` 和 `logLevel` ([LogLevel][LogLevel]) 两个属性的交叉类型。
 
 以下例子展示了 options 的推断：
 
@@ -817,7 +817,7 @@ fastify().register(plugin, { option1: '', option2: true }) // OK - options 对�
 
 [源码](../types/logger.d.ts#L17)
 
-Fastify 内建日志工具的接口定义，模仿了 [Pino.js](http://getpino.io/#/) 的接口定义。当通过服务器选项启用日志时，参照[日志](./Logging.md)文档使用它。
+Fastify 内建日志工具的接口定义，模仿了 [Pino.js](http://getpino.io/#/) 的接口定义。当通过服务器选项启用日志时，参照[日志](Logging.md)文档使用它。
 
 ##### fastify.FastifyLogFn
 

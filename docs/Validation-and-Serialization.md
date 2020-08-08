@@ -191,7 +191,7 @@ fastify.post('/the/url', { schema }, handler)
 
 你可以提供一组用于 Ajv 的插件：
 
-> 插件格式参见 [`ajv 选项`](https://github.com/fastify/docs-chinese/blob/master/docs/Server.md#factory-ajv)
+> 插件格式参见 [`ajv 选项`](Server.md#factory-ajv)
 
 ```js
 const fastify = require('fastify')({
@@ -265,7 +265,7 @@ Fastify 使用的 [ajv 基本配置](https://github.com/epoberezkin/ajv#options-
 }
 ```
 
-上述配置可通过 [`ajv.customOptions`](https://github.com/fastify/docs-chinese/blob/master/docs/Server.md#factory-ajv) 修改。
+上述配置可通过 [`ajv.customOptions`](Server.md#factory-ajv) 修改。
 
 假如你想改变或增加额外的选项，你需要创建一个自定义的实例，并覆盖已存在的实例：
 
@@ -451,7 +451,7 @@ fastify.get('/user', {
 })
 ```
 
-*假如你需要在特定位置使用自定义的序列化工具，你可以使用 [`reply.serializer(...)`](https://github.com/fastify/docs-chinese/blob/master/docs/Reply.md#serializerfunc)。*
+*假如你需要在特定位置使用自定义的序列化工具，你可以使用 [`reply.serializer(...)`](Reply.md#serializerfunc)。*
 
 ### 错误控制
 当某个请求 schema 校验失败时，Fastify 会自动返回一个包含校验结果的 400 响应。举例来说，假如你的路由有一个如下的 schema：

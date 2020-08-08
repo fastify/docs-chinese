@@ -19,7 +19,7 @@ Fastify 从一开始就搭建成非常模块化的系统. 我们搭建了非常�
 <a name="register"></a>
 ## 注册器
 就像在 JavaScript 万物都是对象, 在 Fastify 万物都是插件.<br>
-你的路由, 你的工具方法等等都是插件. 无论添加什么功能的插件, 你都可以使用 Fastify 优秀又独一无二的 API: [`register`](https://github.com/fastify/docs-chinese/blob/master/docs/Plugins.md).
+你的路由, 你的工具方法等等都是插件. 无论添加什么功能的插件, 你都可以使用 Fastify 优秀又独一无二的 API: [`register`](Plugins.md).
 ```js
 fastify.register(
   require('./my-plugin'),
@@ -71,7 +71,7 @@ console.log(util('that is ', 'awesome'))
 现在你需要在所有需要这个方法的文件中引入它. (别忘了你可能在测试中也需要它).
 
 Fastify 提供了一个更优雅的方法, *装饰器*.
-创建一个装饰器非常简单, 只要使用 [`decorate`](https://github.com/fastify/docs-chinese/blob/master/docs/Decorators.md) API:
+创建一个装饰器非常简单, 只要使用 [`decorate`](Decorators.md) API:
 ```js
 fastify.decorate('util', (a, b) => a + b)
 ```
@@ -176,7 +176,7 @@ fastify.get('/happiness', (request, reply) => {
 })
 ```
 
-我们见识了如何扩展服务器的功能并且如何处理封装系统, 但是假如你需要加一个方法, 每次在服务器 "[emits](https://github.com/fastify/docs-chinese/blob/master/docs/Lifecycle.md)" 事件的时候执行这个方法, 该怎么做?
+我们见识了如何扩展服务器的功能并且如何处理封装系统, 但是假如你需要加一个方法, 每次在服务器 "[emits](Lifecycle.md)" 事件的时候执行这个方法, 该怎么做?
 
 <a name="hooks"></a>
 ## 钩子方法
@@ -196,7 +196,7 @@ fastify.get('/plugin2', (request, reply) => {
 ```
 我想大家都同意这个代码是很糟的. 代码重复, 可读性差并且不能扩展.
 
-那么你该怎么消除这个问题呢? 是的, 使用[钩子方法](https://github.com/fastify/docs-chinese/blob/master/docs/Hooks.md)!<br>
+那么你该怎么消除这个问题呢? 是的, 使用[钩子方法](Hooks.md)!<br>
 ```js
 fastify.decorate('util', (request, key, value) => { request[key] = value })
 
@@ -263,7 +263,7 @@ module.exports = fp(dbPlugin)
 ```
 你还可以告诉 `fastify-plugin` 去检查安装的 Fastify 版本, 万一你需要特定的 API.
 
-正如前面所述，Fastify 在 `.listen()`、`.inject()` 以及 `.ready()` 被调用，也即插件被声明 __之后__ 才开始加载插件。这么一来，即使插件通过 [`decorate`](https://github.com/fastify/docs-chinese/blob/master/docs/Decorators.md) 向外部的 fastify 实例注入了变量，在调用 `.listen()`、`.inject()` 和 `.ready()` 之前，这些变量是获取不到的。
+正如前面所述，Fastify 在 `.listen()`、`.inject()` 以及 `.ready()` 被调用，也即插件被声明 __之后__ 才开始加载插件。这么一来，即使插件通过 [`decorate`](Decorators.md) 向外部的 fastify 实例注入了变量，在调用 `.listen()`、`.inject()` 和 `.ready()` 之前，这些变量是获取不到的。
 
 当你需要在 `register` 方法的 `options` 参数里使用另一个插件注入的变量时，你可以向 `options` 传递一个函数参数，而不是对象：
 ```js

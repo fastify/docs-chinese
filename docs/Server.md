@@ -203,7 +203,7 @@ fastify.get('/user/:username', (request, reply) => {
 <a name="factory-request-id-header"></a>
 ### `requestIdHeader`
 
-用来获知请求 id 的 header 名。请看[请求 id](./Logging.md#logging-request-id) 一节。
+用来获知请求 id 的 header 名。请看[请求 id](Logging.md#logging-request-id) 一节。
 
 + 默认值：`'request-id'`
 
@@ -252,7 +252,7 @@ const fastify = Fastify({ trustProxy: true })
 
 更多示例详见 [proxy-addr](https://www.npmjs.com/package/proxy-addr)。
 
-你还可以通过 [`request`](./Request.md) 对象获取 `ip`、`ips` 与 `hostname` 的值。
+你还可以通过 [`request`](Request.md) 对象获取 `ip`、`ips` 与 `hostname` 的值。
 
 ```js
 fastify.get('/', (request, reply) => {
@@ -265,7 +265,7 @@ fastify.get('/', (request, reply) => {
 <a name="plugin-timeout"></a>
 ### `pluginTimeout`
 
-单个插件允许加载的最长时间，以毫秒计。如果某个插件加载超时，则 [`ready`](./Server.md#ready) 会抛出一个含有 `'ERR_AVVIO_PLUGIN_TIMEOUT'` 代码的 `Error` 对象。
+单个插件允许加载的最长时间，以毫秒计。如果某个插件加载超时，则 [`ready`](Server.md#ready) 会抛出一个含有 `'ERR_AVVIO_PLUGIN_TIMEOUT'` 代码的 `Error` 对象。
 
 + 默认值：`10000`
 
@@ -285,7 +285,7 @@ const fastify = require('fastify')({
 <a name="versioning"></a>
 ### `versioning`
 
-默认情况下，`find-my-way` 使用 [semver 版本号规范](./Routes.md#version)来为路由设置版本号。你也可以使用自定义的版本号策略。更多信息请看 [find-my-way](https://github.com/delvedor/find-my-way#versioned-routes) 的文档。
+默认情况下，`find-my-way` 使用 [semver 版本号规范](Routes.md#version)来为路由设置版本号。你也可以使用自定义的版本号策略。更多信息请看 [find-my-way](https://github.com/delvedor/find-my-way#versioned-routes) 的文档。
 
 ```js
 const versioning = {
@@ -447,7 +447,7 @@ function rewriteUrl (req) { // req 是 Node.js 的 HTTP 请求对象
 
 <a name="server"></a>
 #### 服务器
-`fastify.server`：由 [**`Fastify 的工厂函数`**](./Server.md) 生成的 Node 原生 [server](https://nodejs.org/api/http.html#http_class_http_server) 对象。
+`fastify.server`：由 [**`Fastify 的工厂函数`**](Server.md) 生成的 Node 原生 [server](https://nodejs.org/api/http.html#http_class_http_server) 对象。
 
 <a name="after"></a>
 #### after
@@ -580,13 +580,13 @@ fastify.listen(3000, '0.0.0.0', (err, address) => {
 
 <a name="route"></a>
 #### route
-将路由添加到服务器的方法，支持简写。请看[这里](./Routes.md)。
+将路由添加到服务器的方法，支持简写。请看[这里](Routes.md)。
 
 <a name="close"></a>
 #### close
-`fastify.close(callback)`：调用这个函数来关闭服务器实例，并触发 [`'onClose'`](./Hooks.md#on-close) 钩子。<br>
+`fastify.close(callback)`：调用这个函数来关闭服务器实例，并触发 [`'onClose'`](Hooks.md#on-close) 钩子。<br>
 服务器会向所有新的请求发送 `503` 错误，并销毁它们。
-要改变这一行为，请见 [`return503OnClosing`](./Server.md#factory-return-503-on-closing)。
+要改变这一行为，请见 [`return503OnClosing`](Server.md#factory-return-503-on-closing)。
 
 如果无参调用，它会返回一个 Promise：
 
@@ -600,15 +600,15 @@ fastify.close().then(() => {
 
 <a name="decorate"></a>
 #### decorate*
-向 Fastify 实例、响应或请求添加装饰器函数。参阅[这里](./Decorators.md)了解更多。
+向 Fastify 实例、响应或请求添加装饰器函数。参阅[这里](Decorators.md)了解更多。
 
 <a name="register"></a>
 #### register
-Fastify 允许用户通过插件扩展功能。插件可以是一组路由、装饰器或其他。请看[这里](./Plugins.md)。
+Fastify 允许用户通过插件扩展功能。插件可以是一组路由、装饰器或其他。请看[这里](Plugins.md)。
 
 <a name="addHook"></a>
 #### addHook
-向 Fastify 添加特定的生命周期钩子函数，请看[这里](./Hooks.md)。
+向 Fastify 添加特定的生命周期钩子函数，请看[这里](Hooks.md)。
 
 <a name="prefix"></a>
 #### prefix
@@ -652,16 +652,16 @@ fastify.register(function (instance, opts, done) {
 
 <a name="log"></a>
 #### log
-日志的实例，详见[这里](./Logging.md)。
+日志的实例，详见[这里](Logging.md)。
 
 <a name="inject"></a>
 #### inject
-伪造 http 注入 (作为测试之用) 。请看[更多内容](./Testing.md#inject)。
+伪造 http 注入 (作为测试之用) 。请看[更多内容](Testing.md#inject)。
 
 <a name="add-schema"></a>
 #### addSchema
 `fastify.addSchema(schemaObj)`，向 Fastify 实例添加 JSON schema。你可以通过 `$ref` 关键字在应用的任意位置使用它。<br/>
-更多内容，请看[验证和序列化](./Validation-and-Serialization.md)。
+更多内容，请看[验证和序列化](Validation-and-Serialization.md)。
 
 <a name="get-schemas"></a>
 #### getSchemas
@@ -673,8 +673,8 @@ fastify.register(function (instance, opts, done) {
 
 <a name="set-reply-serializer"></a>
 #### setReplySerializer
-作用于未设置 [Reply.serializer(func)](./Reply.md#serializerfunc) 的所有路由的默认序列化方法。这个处理函数是完全封装的，因此，不同的插件允许有不同的错误处理函数。
-注：仅当状态码为 `2xx` 时才被调用。关于错误处理，请看 [`setErrorHandler`](./Server.md#seterrorhandler)。
+作用于未设置 [Reply.serializer(func)](Reply.md#serializerfunc) 的所有路由的默认序列化方法。这个处理函数是完全封装的，因此，不同的插件允许有不同的错误处理函数。
+注：仅当状态码为 `2xx` 时才被调用。关于错误处理，请看 [`setErrorHandler`](Server.md#seterrorhandler)。
 
  ```js
 fastify.setReplySerializer(function (payload, statusCode){
@@ -685,11 +685,11 @@ fastify.setReplySerializer(function (payload, statusCode){
 
 <a name="set-validator-compiler"></a>
 #### setValidatorCompiler
-为所有的路由设置 schema 校验编译器 (validator compiler)。详见 [#schema-validator](./Validation-and-Serialization.md#schema-validator)。
+为所有的路由设置 schema 校验编译器 (validator compiler)。详见 [#schema-validator](Validation-and-Serialization.md#schema-validator)。
 
 <a name="set-serializer-resolver"></a>
 #### setSerializerCompiler
-为所有的路由设置 schema 序列化编译器 (serializer compiler)。详见 [#schema-serializer](./Validation-and-Serialization.md#schema-serializer)。
+为所有的路由设置 schema 序列化编译器 (serializer compiler)。详见 [#schema-serializer](Validation-and-Serialization.md#schema-serializer)。
 **注：** [`setReplySerializer`](#set-reply-serializer) 有更高的优先级！
 
 <a name="validator-compiler"></a>
@@ -705,11 +705,11 @@ fastify.setReplySerializer(function (payload, statusCode){
 <a name="set-not-found-handler"></a>
 #### setNotFoundHandler
 
-`fastify.setNotFoundHandler(handler(request, reply))`：为 404 状态 (not found) 设置处理函数 (handler)。向 `fastify.register()` 传递不同的 [`prefix` 选项](./Plugins.md#route-prefixing-option)，就可以为不同的插件设置不同的处理函数。这些处理函数被视为常规的路由处理函数，因此它们的请求会经历一个完整的 [Fastify 生命周期](./Lifecycle.md#lifecycle)。
+`fastify.setNotFoundHandler(handler(request, reply))`：为 404 状态 (not found) 设置处理函数 (handler)。向 `fastify.register()` 传递不同的 [`prefix` 选项](Plugins.md#route-prefixing-option)，就可以为不同的插件设置不同的处理函数。这些处理函数被视为常规的路由处理函数，因此它们的请求会经历一个完整的 [Fastify 生命周期](Lifecycle.md#lifecycle)。
 
-你也可以为 404 处理函数注册 [`preValidation`](./Hooks.md/#route-hooks) 或 [`preHandler`](./Hooks.md/#route-hooks) 钩子。
+你也可以为 404 处理函数注册 [`preValidation`](Hooks.md/#route-hooks) 或 [`preHandler`](Hooks.md/#route-hooks) 钩子。
 
-_注：通过此方法注册的 `preValidation` 钩子会在遇到未知路由时触发，但手动调用 [`reply.callNotFound`](./Reply.md#call-not-found) 方法时则**不会**_。此时只有 preHandler 会执行。
+_注：通过此方法注册的 `preValidation` 钩子会在遇到未知路由时触发，但手动调用 [`reply.callNotFound`](Reply.md#call-not-found) 方法时则**不会**_。此时只有 preHandler 会执行。
 
 ```js
 fastify.setNotFoundHandler({
