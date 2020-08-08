@@ -43,7 +43,9 @@ fastify.listen(3000, function (err, address) {
 更喜欢使用 `async/await`？Fastify 对其提供了开箱即用的支持。<br>
 *(我们还建议使用 [make-promises-safe](https://github.com/mcollina/make-promises-safe) 来避免文件描述符 (file descriptor) 及内存的泄露)*
 ```js
-const fastify = require('fastify')()
+const fastify = require('fastify')({
+  logger: true
+})
 
 fastify.get('/', async (request, reply) => {
   return { hello: 'world' }
