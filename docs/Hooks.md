@@ -23,6 +23,8 @@
   - [onClose](#onclose)
   - [onRoute](#onroute)
   - [onRegister](#onregister)
+- [作用域](#scope)
+- [路由层钩子](#route-level-hooks)
 
 **注意**：使用 `async`/`await` 或返回一个 `Promise` 时，`done` 回调不可用。在这种情况下，仍然使用 `done` 可能会导致难以预料的行为，例如，处理函数的重复调用。
 
@@ -340,7 +342,7 @@ fastify.addHook('onRoute', (routeOptions) => {
   routeOptions.method
   routeOptions.schema
   routeOptions.url // 路由的完整 URL，包括前缀
-  routeOptions.path // `url` 的别名 
+  routeOptions.path // `url` 的别名
   routeOptions.routePath // 无前缀的 URL
   routeOptions.bodyLimit
   routeOptions.logLevel

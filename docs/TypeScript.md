@@ -37,6 +37,7 @@ Fastify 是用普通的 JavaScript 编写的，因此，类型定义的维护并
   ```bash
   npx typescript --init
   ```
+  或使用一个[推荐的配置文件](https://github.com/tsconfig/bases#node-10-tsconfigjson)。
 4. 创建 `index.ts` ，在此编写服务器的代码。
 5. 将下列代码添加到该文件中：
   ```typescript
@@ -332,12 +333,19 @@ Fastify 是用普通的 JavaScript 编写的，因此，类型定义的维护并
   }
   
   module.exports = fp(myPlugin, {
-    fastify: '3.x'
+    fastify: '3.x',
+    name: 'my-plugin' // 被 fastify-plugin 用来获取属性名
   })
   ```
 5. 在 `index.d.ts` 中加入以下代码：
   ```typescript
-  // 导出任意额外的类型，非必需
+  import { FastifyPlugin } from 'fastify'
+
+  interface PluginOptions {
+    //...
+  }
+  // 你可以导出任意内容
+  // 在此，我们导出之前添加的装饰器
   export interface myPluginFunc {
     (input: string): string
   }
@@ -348,7 +356,15 @@ Fastify 是用普通的 JavaScript 编写的，因此，类型定义的维护并
       myPluginFunc: myPluginFunc
     }
   }
+
+  // fastify-plugin 会自动添加具名导出，因此请确保加上该类型。
+  // 如果缺少 `module.exports.myPlugin`，变量名会通过 `options.name` 属性获取。
+  export const myPlugin: FastifyPlugin<PluginOptions>
+  // fastify-plugin 会自动在导出的插件上添加 `.default` 属性。详见下文。
+  export default myPlugin
   ```
+
+__注意__：v2.3.0 及以上版本的 [fastify-plugin](https://github.com/fastify/fastify-plugin) 会自动给导出的插件添加 `default` 属性以及具名导出。为了更好的开发体验，请确保在类型文件中加上了 `export default` 与 `export const myPlugin`。完整的例子可以查看 [fastify-swagger](https://github.com/fastify/fastify-swagger/blob/master/index.d.ts)。
 
 这样一来，该插件便能被任意 TypeScript 项目使用了！
 

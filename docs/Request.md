@@ -2,7 +2,7 @@
 
 ## Request
 处理函数的第一个参数是 `Request`.<br>
-Request 是 Fastify 的核心对象，包含了一下的字段:
+Request 是 Fastify 的核心对象，包含了以下字段:
 - `query` - 解析后的 querystring
 - `body` - 消息主体
 - `params` - URL 参数
@@ -16,6 +16,9 @@ Request 是 Fastify 的核心对象，包含了一下的字段:
 - `hostname` - 请求方的主机名
 - `method` - 请求方法
 - `url` - 请求路径
+- `routerMethod` - 处理请求的路由函数
+- `routerPath` - 处理请求的路由的匹配模式
+- `is404` - 当请求被 404 处理时为 true，反之为 false
 - `connection` - 请求的底层连接
 
 ```js

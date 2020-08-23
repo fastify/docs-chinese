@@ -301,6 +301,24 @@ async function plugin (fastify, opts) {
 export default plugin
 ```
 
+__注意__：Fastify 不支持具名导入 ESM 模块，但支持 `default` 导入。
+
+```js
+// server.mjs
+import Fastify from 'fastify'
+
+const fastify = Fastify()
+
+///...
+
+fastify.listen(3000, (err, address) => {
+  if (err) {
+    fastify.log.error(err)
+    process.exit(1)
+  }
+})
+```
+
 <a name="handle-errors"></a>
 ## 错误处理
 你的插件也可能在启动的时候失败. 或许你预料到这个并且在这种情况下有特定的处理逻辑. 你该怎么实现呢?
