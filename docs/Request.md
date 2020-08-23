@@ -14,6 +14,9 @@ Request 是 Fastify 的核心对象，包含了一下的字段:
 - `ip` - 请求方的 ip 地址
 - `ips` - x-forwarder-for header 中保存的请求源 ip 数组 (仅当 [`trustProxy`](Server.md#factory-trust-proxy) 开启时有效)
 - `hostname` - 请求方的主机名
+- `method` - 请求方法
+- `url` - 请求路径
+- `connection` - 请求的底层连接
 
 ```js
 fastify.post('/:params', options, function (request, reply) {

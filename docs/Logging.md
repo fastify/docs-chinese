@@ -53,13 +53,13 @@ const fastify = require('fastify')({
 <a name="logging-request-id"></a>
 默认情况下，Fastify 给每个请求分配了一个 id 以便跟踪。如果头部存在 "request-id" 即使用该值，否则会生成一个新的增量 id。你可以通过 Fastify 工厂函数的 [`requestIdHeader`](Server.md#factory-request-id-header) 与 [`genReqId`](Server.md#gen-request-id) 来进行自定义。
 
-默认的日志工具使用标准的序列化工具，生成包括 `req`、`res` 与 `err` 属性在内的序列化对象。可以借由指定自定义的序列化工具来改变这一行为。
+默认的日志工具使用标准的序列化工具，生成包括 `req`、`res` 与 `err` 属性在内的序列化对象。`req` 对象是 Fastify [`Request`](https://github.com/fastify/fastify/blob/master/docs/Request.md) 对象，而 `res` 则是 Fastify [`Reply`](https://github.com/fastify/fastify/blob/master/docs/Reply.md) 对象。可以借由指定自定义的序列化工具来改变这一行为。
 ```js
 const fastify = require('fastify')({
   logger: {
     serializers: {
-      req: function (req) {
-        return { url: req.url }
+      req (request) {
+        return { url: request.url }
       }
     }
   }
@@ -72,20 +72,20 @@ const fastify = require('fastify')({
   logger: {
     prettyPrint: true,
     serializers: {
-      res(res) {
+      res (reply) {
         // 默认
         return {
-          statusCode: res.statusCode
+          statusCode: reply.statusCode
         }
       },
-      req(req) {
+      req (request) {
         return {
-          method: req.method,
-          url: req.url,
-          path: req.path,
-          parameters: req.parameters,
+          method: request.method,
+          url: request.url,
+          path: request.path,
+          parameters: request.parameters,
           // 记录 header 可能会触犯隐私法律，例如 GDPR (译注：General Data Protection Regulation)。你应该用 "redact" 选项来移除敏感的字段。此外，验证数据也可能在日志中泄露。
-          headers: req.headers
+          headers: request.headers
         };
       }
     }
@@ -138,14 +138,14 @@ const fastify = Fastify({
     redact: ['req.headers.authorization'],
     level: 'info',
     serializers: {
-      req (req) {
+      req (request) {
         return {
-          method: req.method,
-          url: req.url,
-          headers: req.headers,
-          hostname: req.hostname,
-          remoteAddress: req.ip,
-          remotePort: req.connection.remotePort
+          method: request.method,
+          url: request.url,
+          headers: request.headers,
+          hostname: request.hostname,
+          remoteAddress: request.ip,
+          remotePort: request.connection.remotePort
         }
       }
     }
