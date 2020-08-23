@@ -328,7 +328,7 @@ const versioning = {
     removeAdditional: true,
     useDefaults: true,
     coerceTypes: true,
-    allErrors: true,
+    allErrors: false,
     nullable: true
   },
   plugins: []
