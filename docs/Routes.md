@@ -49,6 +49,7 @@ fastify.route(options)
 * `errorHandler(error, request, reply)`：在请求作用域内使用的自定义错误控制函数。覆盖默认的全局错误函数，以及由 [`setErrorHandler`](Server.md#setErrorHandler) 设置的请求错误函数。
 * `validatorCompiler({ schema, method, url, httpPart })`：生成校验请求的 schema 的函数。详见[验证与序列化](Validation-and-Serialization.md#schema-validator)。
 * `serializerCompiler({ { schema, method, url, httpStatus } })`：生成序列化响应的 schema 的函数。详见[验证与序列化](Validation-and-Serialization.md#schema-serializer)。
+* `schemaErrorFormatter(errors, dataVar)`：生成一个函数，用于格式化来自 schema 校验函数的错误。详见[验证与序列化](Validation-and-Serialization.md#schema-validator)。在当前路由上会覆盖全局的 schema 错误格式化函数，以及 `setSchemaErrorFormatter` 设置的值。
 * `bodyLimit`：一个以字节为单位的整形数，默认值为 `1048576` (1 MiB)，防止默认的 JSON 解析器解析超过此大小的请求主体。你也可以通过 `fastify(options)`，在首次创建 Fastify 实例时全局设置该值。
 * `logLevel`：设置日志级别。详见下文。
 * `logSerializers`：设置当前路由的日志序列化器。
