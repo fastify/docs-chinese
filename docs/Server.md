@@ -687,6 +687,10 @@ fastify.setReplySerializer(function (payload, statusCode){
 #### setValidatorCompiler
 为所有的路由设置 schema 校验编译器 (validator compiler)。详见 [#schema-validator](Validation-and-Serialization.md#schema-validator)。
 
+<a name="set-schema-error-formatter"></a>
+#### setSchemaErrorFormatter
+为所有的路由设置 schema 错误格式化器 (schema error formatter)。详见 [#error-handling](Validation-and-Serialization.md#error-handling)。
+
 <a name="set-serializer-resolver"></a>
 #### setSerializerCompiler
 为所有的路由设置 schema 序列化编译器 (serializer compiler)。详见 [#schema-serializer](Validation-and-Serialization.md#schema-serializer)。
@@ -701,6 +705,10 @@ fastify.setReplySerializer(function (payload, statusCode){
 #### serializerCompiler
 该属性用于获取 schema 序列化器。未设置序列化器时，在服务器启动前，该值是 `null`，之后是一个签名为 `function ({ schema, method, url, httpPart })` 的函数。该函数将 `schema` 参数编译为一个校验数据的函数，并返回生成的函数。
 `schema` 参数能访问到所有通过 [`.addSchema`](#add-schema) 添加的共用 schema。
+
+<a name="schema-error-formatter"></a>
+#### schemaErrorFormatter
+该属性用于格式化 `validationCompiler` 在校验 schema 时发生的错误。详见 [#error-handling](Validation-and-Serialization.md#error-handling)。
 
 <a name="set-not-found-handler"></a>
 #### setNotFoundHandler
