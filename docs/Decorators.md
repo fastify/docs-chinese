@@ -41,6 +41,8 @@ fastify.get('/', (req, reply) => {
 })
 ```
 
+装饰器的初始值应该尽可能地与其未来将被设置的值接近。例如，字符串类型的装饰器的初始值为 `''`，对象或函数类型的初始值为 `null`。
+
 更多此话题的内容，请见 [JavaScript engine fundamentals: Shapes and Inline Caches](https://web.archive.org/web/20200201163000/https://mathiasbynens.be/notes/shapes-ics)。
 
 ### 使用方法

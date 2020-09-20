@@ -10,6 +10,8 @@ Fastify 是用普通的 JavaScript 编写的，因此，类型定义的维护并
 
 > 插件不一定包含类型定义。更多内容请看[插件](#plugins)。我们鼓励用户提交 PR 来改善插件的类型支持。
 
+别忘了安装 `@types/node`。
+
 ## 从例子中学习
 
 通过例子来学习 Fastify 的类型系统是最好的途径！以下四个例子涵盖了最常见的开发场景。例子之后是更详尽深入的文档。
@@ -241,7 +243,7 @@ Fastify 是用普通的 JavaScript 编写的，因此，类型定义的维护并
   ```bash
   npm init -y
   npm i fastify fastify-plugin
-  npm i -D typescript
+  npm i -D typescript @types/node
   ```
 2. 在 `package.json` 的 `"scripts"` 中加上一行 `build`，`"types"` 中写入 `'index.d.ts'`：
   ```json
@@ -267,7 +269,7 @@ Fastify 是用普通的 JavaScript 编写的，因此，类型定义的维护并
 4. 新建 `index.ts` 文件，在这里编写插件代码。
 5. 在 `index.ts` 中写入以下代码。
   ```typescript
-  import { FastifyPlugin } from 'fastify'
+  import { FastifyPluginCallback, FastifyPluginAsync } from 'fastify'
   import fp from 'fastify-plugin'
 
   // 利用声明合并，将插件的属性加入合适的 fastify 接口。
@@ -285,16 +287,24 @@ Fastify 是用普通的 JavaScript 编写的，因此，类型定义的维护并
     myPluginOption: string
   }
 
-  // 定义插件
-  const myPlugin: FastifyPlugin<MyPluginOptions> = (fastify, options, done) => {
+  // 使用回调函数定义插件
+  const myPluginCallback: FastifyPluginCallback<MyPluginOptions> = (fastify, options, done) => {
     fastify.decorateRequest('myPluginProp', 'super_secret_value')
     fastify.decorateReply('myPluginProp', options.myPluginOption)
 
     done()
   }
 
+  // 使用 promise 定义插件
+  const myPluginAsync: FastifyPluginAsync<MyPluginOptions> = async (fastify, options) => {
+    fastify.decorateRequest('myPluginProp', 'super_secret_value')
+    fastify.decorateReply('myPluginProp', options.myPluginOption)
+  }
+
   // 使用 fastify-plugin 导出插件
-  export default fp(myPlugin, '3.x')
+  export default fp(myPluginCallback, '3.x')
+  // 或者
+  // export default fp(myPluginAsync, '3.x')
   ```
 6. 运行 `npm run build` 编译，生成 JavaScript 源文件以及类型定义文件。
 7. 如此一来，插件便完工了。你可以[发布到 npm] 或直接本地使用。
@@ -630,7 +640,7 @@ Fastify 服务器实例化时，调用 [`fastify()`][Fastify] 方法使用到的
 
 ##### fastify.FastifyInstance<[RawServer][RawServerGeneric], [RawRequest][RawRequestGeneric], [RequestGeneric][FastifyRequestGenericInterface], [Logger][LoggerGeneric]>
 
-[源码](../types/instance.d.ts#L16)
+[源码](https://github.com/fastify/fastify/blob/master/types/instance.d.ts#L16)
 
 表示 Fastify 服务器对象的接口，[`fastify()`][Fastify] 方法的返回值。假如你使用了 `decorate` 方法，借由[声明合并](https://www.typescriptlang.org/docs/handbook/declaration-merging.html)可以拓展该接口。
 
@@ -781,15 +791,27 @@ RawReplyDefaultExpression<http2.Http2Server> // -> http2.Http2ServerResponse
 
 通过插件，用户能拓展 Fastify 的功能。一个插件可以是一组路由，也可以是一个装饰器，或其它逻辑。要激活一个插件，需调用 [`fastify.register()`][FastifyRegister] 方法。
 
-##### fastify.FastifyPlugin<[Options][FastifyPluginOptions]>
-[源码](../types/plugin.d.ts#L10)
+创建插件时，我们推荐使用 `fastify-plugin`。在“从例子中学习”的[插件](#plugins)一节中有使用 TypeScript 创建插件的指南。
+
+##### fastify.FastifyPluginCallback<[Options][FastifyPluginOptions]>
+[源码](https://github.com/fastify/fastify/blob/master/types/plugin.d.ts#L9)
 
 [`fastify.register()`][FastifyRegister] 使用的接口方法定义。
 
-创建插件时，我们推荐使用 `fastify-plugin`。在“从例子中学习”的[插件](#plugins)一节中有使用 TypeScript 创建插件的指南。
+##### fastify.FastifyPluginAsync<[Options][FastifyPluginOptions]>
+[源码](https://github.com/fastify/fastify/blob/master/types/plugin.d.ts#L20)
+
+[`fastify.register()`][FastifyRegister] 使用的接口方法定义。
+
+##### fastify.FastifyPlugin<[Options][FastifyPluginOptions]>
+[源码](https://github.com/fastify/fastify/blob/master/types/plugin.d.ts#L29)
+
+[`fastify.register()`][FastifyRegister] 使用的接口方法定义。
+
+通用的 `FastifyPlugin` 已不推荐使用，取而代之的是上述 `FastifyPluginCallback` 以及 `FastifyPluginAsync`。这是因为 `FastifyPlugin` 无法正确推断出异步函数的类型。
 
 ##### fastify.FastifyPluginOptions
-[源码](../types/plugin.d.ts#L23)
+[源码](https://github.com/fastify/fastify/blob/master/types/plugin.d.ts#L31)
 
 一个用于约束 [`fastify.register()`][FastifyRegister] 的 `options` 参数为对象类型的宽松类型对象 (loosely typed object)。在创建插件时，将插件的选项定义为此接口 (`interface MyPluginOptions extends FastifyPluginOptions`)，传递给 register 方法。
 
@@ -797,8 +819,12 @@ RawReplyDefaultExpression<http2.Http2Server> // -> http2.Http2ServerResponse
 
 #### Register
 
+##### fastify.FastifyRegister(plugin: [FastifyPluginCallback][FastifyPluginCallback], opts: [FastifyRegisterOptions][FastifyRegisterOptions])
+[源码](https://github.com/fastify/fastify/blob/master/types/register.d.ts#L9)
+##### fastify.FastifyRegister(plugin: [FastifyPluginAsync][FastifyPluginAsync], opts: [FastifyRegisterOptions][FastifyRegisterOptions])
+[源码](https://github.com/fastify/fastify/blob/master/types/register.d.ts#L9)
 ##### fastify.FastifyRegister(plugin: [FastifyPlugin][FastifyPlugin], opts: [FastifyRegisterOptions][FastifyRegisterOptions])
-[源码](../types/register.d.ts#L5)
+[源码](https://github.com/fastify/fastify/blob/master/types/register.d.ts#L9)
 
 指定 [`fastify.register()`](Server.md#register) 类型的类型接口，返回一个拥有默认值为 [FastifyPluginOptions][FastifyPluginOptions] 的 `Options` 泛型的函数签名。当调用此函数时，根据 FastifyPlugin 参数能推断出该泛型，因此不必特别指定。options 参数是插件选项以及 `prefix: string` 和 `logLevel` ([LogLevel][LogLevel]) 两个属性的交叉类型。
 
@@ -819,7 +845,7 @@ fastify().register(plugin, { option1: '', option2: true }) // OK - options 对�
 在“从例子中学习”的[插件](#plugins)一节中有使用 TypeScript 创建插件的详细示例。
 
 ##### fastify.FastifyRegisterOptions<Options>
-[源码](../types/register.d.ts#L16)
+[源码](https://github.com/fastify/fastify/blob/master/types/register.d.ts#L16)
 
 该类型是 `Options` 泛型以及包括 `prefix: string` 和 `logLevel` ([LogLevel][LogLevel]) 两个可选属性的未导出接口 `RegisterOptions` 的交叉类型。也可以被指定为返回前述交叉类型的函数。
 
@@ -831,19 +857,19 @@ fastify().register(plugin, { option1: '', option2: true }) // OK - options 对�
 
 ##### fastify.FastifyLoggerOptions<[RawServer][RawServerGeneric], [RawRequest][RawRequestGeneric], [RawReply][RawReplyGeneric]>
 
-[源码](../types/logger.d.ts#L17)
+[源码](https://github.com/fastify/fastify/blob/master/types/logger.d.ts#L17)
 
 Fastify 内建日志工具的接口定义，模仿了 [Pino.js](http://getpino.io/#/) 的接口定义。当通过服务器选项启用日志时，参照[日志](Logging.md)文档使用它。
 
 ##### fastify.FastifyLogFn
 
-[源码](../types/logger.d.ts#L7)
+[源码](https://github.com/fastify/fastify/blob/master/types/logger.d.ts#L7)
 
 一个重载函数接口，实现 Fastify 调用日志的方法，会传递到所有 FastifyLoggerOptions 中启用的日志级别属性。
 
 ##### fastify.LogLevel
 
-[源码](../types/logger.d.ts#L12)
+[源码](https://github.com/fastify/fastify/blob/master/types/logger.d.ts#L12)
 
 `'info' | 'error' | 'debug' | 'fatal' | 'warn' | 'trace'` 的联合类型
 
@@ -855,7 +881,7 @@ context 类型定义和类型系统中其它高度动态化的部分类似。路
 
 ##### fastify.FastifyContext
 
-[源码](../types/context.d.ts#L6)
+[源码](https://github.com/fastify/fastify/blob/master/types/context.d.ts#L6)
 
 有一个默认为 `unknown` 的必填属性 `config` 的接口。可用泛型或重载来指定。
 
@@ -869,13 +895,13 @@ Fastify 的其中一条核心原则便是强大的路由。本节中多数的类
 
 ##### fastify.RouteHandlerMethod<[RawServer][RawServerGeneric], [RawRequest][RawRequestGeneric], [RawReply][RawReplyGeneric], [RequestGeneric][FastifyRequestGenericInterface], [ContextConfig][ContextConfigGeneric]>
 
-[源码](../types/route.d.ts#L105)
+[源码](https://github.com/fastify/fastify/blob/master/types/route.d.ts#L105)
 
 路由控制函数的类型声明，有两个参数：类型为 `FastifyRequest` 的 `request`，以及类型为 `FastifyReply` 的 `reply`。泛型参数会传递给这些参数。当控制函数为同步函数时，返回 `void`，异步则返回 `Promise<any>`。
 
 ##### fastify.RouteOptions<[RawServer][RawServerGeneric], [RawRequest][RawRequestGeneric], [RawReply][RawReplyGeneric], [RequestGeneric][FastifyRequestGenericInterface], [ContextConfig][ContextConfigGeneric]>
 
-[源码](../types/route.d.ts#L78)
+[源码](https://github.com/fastify/fastify/blob/master/types/route.d.ts#L78)
 
 拓展了 RouteShorthandOptions 的接口，并添加以下三个必填属性：
 1. `method` 单个或一组 [HTTP 方法][HTTPMethods]。
@@ -884,19 +910,19 @@ Fastify 的其中一条核心原则便是强大的路由。本节中多数的类
 
 ##### fastify.RouteShorthandMethod<[RawServer][RawServerGeneric], [RawRequest][RawRequestGeneric], [RawReply][RawReplyGeneric]>
 
-[源码](../types/route.d.ts#12)
+[源码](https://github.com/fastify/fastify/blob/master/types/route.d.ts#12)
 
 一个重载函数接口，用于定义 `.get/.post` 等简写方法的三种不同形式。
 
 ##### fastify.RouteShorthandOptions<[RawServer][RawServerGeneric], [RawRequest][RawRequestGeneric], [RawReply][RawReplyGeneric], [RequestGeneric][FastifyRequestGenericInterface], [ContextConfig][ContextConfigGeneric]>
 
-[源码](../types/route.d.ts#55)
+[源码](https://github.com/fastify/fastify/blob/master/types/route.d.ts#55)
 
 包含所有路由基本选项的接口。所有属性都是可选的。该接口是 RouteOptions 和 RouteShorthandOptionsWithHandler 接口的基础。
 
 ##### fastify.RouteShorthandOptionsWithHandler<[RawServer][RawServerGeneric], [RawRequest][RawRequestGeneric], [RawReply][RawReplyGeneric], [RequestGeneric][FastifyRequestGenericInterface], [ContextConfig][ContextConfigGeneric]>
 
-[源码](../types/route.d.ts#93)
+[源码](https://github.com/fastify/fastify/blob/master/types/route.d.ts#93)
 
 向 RouteShorthandOptions 接口添加一个必填属性：`handler`，类型为 RouteHandlerMethod。
 
@@ -910,25 +936,25 @@ Fastify 的其中一条核心原则便是强大的路由。本节中多数的类
 
 ##### fastify.FastifyBodyParser<[RawBody][RawBodyGeneric], [RawServer][RawServerGeneric], [RawRequest][RawRequestGeneric]>
 
-[源码](../types/content-type-parser.d.ts#L7)
+[源码](https://github.com/fastify/fastify/blob/master/types/content-type-parser.d.ts#L7)
 
 定义 body 解析器 (body parser) 的函数类型。使用 `RawBody` 泛型指定被解析的 body。
 
 ##### fastify.FastifyContentTypeParser<[RawServer][RawServerGeneric], [RawRequest][RawRequestGeneric]>
 
-[源码](../types/content-type-parser.d.ts#L17)
+[源码](https://github.com/fastify/fastify/blob/master/types/content-type-parser.d.ts#L17)
 
 定义 body 解析器的函数类型。使用 `RawRequest` 泛型定义 content。
 
 ##### fastify.AddContentTypeParser<[RawServer][RawServerGeneric], [RawRequest][RawRequestGeneric]>
 
-[源码](../types/content-type-parser.d.ts#L46)
+[源码](https://github.com/fastify/fastify/blob/master/types/content-type-parser.d.ts#L46)
 
 `addContentTypeParser` 方法的重载函数接口。当 `parseAs` 出现在 `opts` 参数中时，`parser` 参数使用 [FastifyBodyParser][]，否则使用 [FastifyContentTypeParser][]。
 
 ##### fastify.hasContentTypeParser
 
-[源码](../types/content-type-parser.d.ts#L63)
+[源码](https://github.com/fastify/fastify/blob/master/types/content-type-parser.d.ts#L63)
 
 检查指定 content type 解析器是否存在的方法。
 
@@ -938,7 +964,7 @@ Fastify 的其中一条核心原则便是强大的路由。本节中多数的类
 
 ##### fastify.FastifyError
 
-[源码](../types/error.d.ts#L17)
+[源码](https://github.com/fastify/fastify/blob/master/types/error.d.ts#L17)
 
 FastifyError 是自定义的错误对象，包括了状态码及校验结果。
 
@@ -946,7 +972,7 @@ FastifyError 是自定义的错误对象，包括了状态码及校验结果。
 
 ##### fastify.ValidationResult
 
-[源码](../types/error.d.ts#L4)
+[源码](https://github.com/fastify/fastify/blob/master/types/error.d.ts#L4)
 
 路由校验内在地依赖于 Ajv，一个高性能 JSON schema 校验工具。
 
@@ -958,7 +984,7 @@ FastifyError 是自定义的错误对象，包括了状态码及校验结果。
 
 ##### fastify.onRequestHookhandler<[RawServer][RawServerGeneric], [RawRequest][RawRequestGeneric], [RawReply][RawReplyGeneric], [RequestGeneric][FastifyRequestGenericInterface], [ContextConfig][ContextConfigGeneric]>(request: [FastifyRequest][FastifyRequest], reply: [FastifyReply][FastifyReply], done: (err?: [FastifyError][FastifyError]) => void): Promise\<unknown\> | void
 
-[源码](../types/hooks.d.ts#L17)
+[源码](https://github.com/fastify/fastify/blob/master/types/hooks.d.ts#L17)
 
 `onRequest` 是第一个被执行的钩子，其下一个钩子为 `preParsing`。
 
@@ -966,7 +992,7 @@ FastifyError 是自定义的错误对象，包括了状态码及校验结果。
 
 ##### fastify.preParsingHookhandler<[RawServer][RawServerGeneric], [RawRequest][RawRequestGeneric], [RawReply][RawReplyGeneric], [RequestGeneric][FastifyRequestGenericInterface], [ContextConfig][ContextConfigGeneric]>(request: [FastifyRequest][FastifyRequest], reply: [FastifyReply][FastifyReply], done: (err?: [FastifyError][FastifyError]) => void): Promise\<unknown\> | void
 
-[源码](../types/hooks.d.ts#L35)
+[源码](https://github.com/fastify/fastify/blob/master/types/hooks.d.ts#L35)
 
 `preParsing` 是第二个钩子，前一个为 `onRequest`，下一个为 `preValidation`。
 
@@ -976,7 +1002,7 @@ FastifyError 是自定义的错误对象，包括了状态码及校验结果。
 
 ##### fastify.preValidationHookHandler<[RawServer][RawServerGeneric], [RawRequest][RawRequestGeneric], [RawReply][RawReplyGeneric], [RequestGeneric][FastifyRequestGenericInterface], [ContextConfig][ContextConfigGeneric]>(request: [FastifyRequest][FastifyRequest], reply: [FastifyReply][FastifyReply], done: (err?: [FastifyError][FastifyError]) => void): Promise\<unknown\> | void
 
-[源码](../types/hooks.d.ts#L53)
+[源码](https://github.com/fastify/fastify/blob/master/types/hooks.d.ts#L53)
 
 `preValidation` 是第三个钩子，前一个为 `preParsing`，下一个为 `preHandler`。
 
@@ -984,13 +1010,13 @@ FastifyError 是自定义的错误对象，包括了状态码及校验结果。
 
 ##### fastify.preHandlerHookHandler<[RawServer][RawServerGeneric], [RawRequest][RawRequestGeneric], [RawReply][RawReplyGeneric], [RequestGeneric][FastifyRequestGenericInterface], [ContextConfig][ContextConfigGeneric]>(request: [FastifyRequest][FastifyRequest], reply: [FastifyReply][FastifyReply], done: (err?: [FastifyError][FastifyError]) => void): Promise\<unknown\> | void
 
-[源码](../types/hooks.d.ts#L70)
+[源码](https://github.com/fastify/fastify/blob/master/types/hooks.d.ts#L70)
 
 `preHandler` 是第四个钩子，前一个为 `preValidation`，下一个为 `preSerialization`。
 
 ##### fastify.preSerializationHookHandler<PreSerializationPayload, [RawServer][RawServerGeneric], [RawRequest][RawRequestGeneric], [RawReply][RawReplyGeneric], [RequestGeneric][FastifyRequestGenericInterface], [ContextConfig][ContextConfigGeneric]>(request: [FastifyRequest][FastifyRequest], reply: [FastifyReply][FastifyReply], payload: PreSerializationPayload, done: (err: [FastifyError][FastifyError] | null, res?: unknown) => void): Promise\<unknown\> | void
 
-[源码](../types/hooks.d.ts#L94)
+[源码](https://github.com/fastify/fastify/blob/master/types/hooks.d.ts#L94)
 
 `preSerialization` 是第五个钩子，前一个为 `preHandler`，下一个为 `onSend`。
 
@@ -998,7 +1024,7 @@ FastifyError 是自定义的错误对象，包括了状态码及校验结果。
 
 ##### fastify.onSendHookHandler<OnSendPayload, [RawServer][RawServerGeneric], [RawRequest][RawRequestGeneric], [RawReply][RawReplyGeneric], [RequestGeneric][FastifyRequestGenericInterface], [ContextConfig][ContextConfigGeneric]>(request: [FastifyRequest][FastifyRequest], reply: [FastifyReply][FastifyReply], payload: OnSendPayload, done: (err: [FastifyError][FastifyError] | null, res?: unknown) => void): Promise\<unknown\> | void
 
-[源码](../types/hooks.d.ts#L114)
+[源码](https://github.com/fastify/fastify/blob/master/types/hooks.d.ts#L114)
 
 你可以在 `onSend` 钩子中变更 payload。这是第六个钩子，前一个为 `preSerialization`，下一个为 `onResponse`。
 
@@ -1006,7 +1032,7 @@ FastifyError 是自定义的错误对象，包括了状态码及校验结果。
 
 ##### fastify.onResponseHookHandler<[RawServer][RawServerGeneric], [RawRequest][RawRequestGeneric], [RawReply][RawReplyGeneric], [RequestGeneric][FastifyRequestGenericInterface], [ContextConfig][ContextConfigGeneric]>(request: [FastifyRequest][FastifyRequest], reply: [FastifyReply][FastifyReply], done: (err?: [FastifyError][FastifyError]) => void): Promise\<unknown\> | void
 
-[源码](../types/hooks.d.ts#L134)
+[源码](https://github.com/fastify/fastify/blob/master/types/hooks.d.ts#L134)
 
 `onResponse` 是第七个，也是最后一个钩子，前一个为 `onSend`。
 
@@ -1014,7 +1040,7 @@ FastifyError 是自定义的错误对象，包括了状态码及校验结果。
 
 ##### fastify.onErrorHookHandler<[RawServer][RawServerGeneric], [RawRequest][RawRequestGeneric], [RawReply][RawReplyGeneric], [RequestGeneric][FastifyRequestGenericInterface], [ContextConfig][ContextConfigGeneric]>(request: [FastifyRequest][FastifyRequest], reply: [FastifyReply][FastifyReply], error: [FastifyError][FastifyError], done: () => void): Promise\<unknown\> | void
 
-[源码](../types/hooks.d.ts#L154)
+[源码](https://github.com/fastify/fastify/blob/master/types/hooks.d.ts#L154)
 
 该钩子可用于自定义错误日志，或当发生错误时添加特定的 header。
 
@@ -1026,13 +1052,13 @@ FastifyError 是自定义的错误对象，包括了状态码及校验结果。
 
 ##### fastify.onRouteHookHandler<[RawServer][RawServerGeneric], [RawRequest][RawRequestGeneric], [RawReply][RawReplyGeneric], [RequestGeneric][FastifyRequestGenericInterface], [ContextConfig][ContextConfigGeneric]>(opts: [RouteOptions][RouteOptions] & { path: string; prefix: string }): Promise\<unknown\> | void
 
-[源码](../types/hooks.d.ts#L174)
+[源码](https://github.com/fastify/fastify/blob/master/types/hooks.d.ts#L174)
 
 当注册一个新的路由时被触发。它的监听函数拥有一个唯一的参数：routeOptions 对象。该接口是同步的，因此，监听函数不接受回调作为参数。
 
 ##### fastify.onRegisterHookHandler<[RawServer][RawServerGeneric], [RawRequest][RawRequestGeneric], [RawReply][RawReplyGeneric], [Logger][LoggerGeneric]>(instance: [FastifyInstance][FastifyInstance], done: (err?: [FastifyError][FastifyError]) => void): Promise\<unknown\> | void
 
-[源码](../types/hooks.d.ts#L191)
+[源码](https://github.com/fastify/fastify/blob/master/types/hooks.d.ts#L191)
 
 当注册一个新的插件，或创建了新的封装好的上下文后被触发。该钩子在注册的代码之前被执行。
 
@@ -1042,7 +1068,7 @@ FastifyError 是自定义的错误对象，包括了状态码及校验结果。
 
 ##### fastify.onCloseHookHandler<[RawServer][RawServerGeneric], [RawRequest][RawRequestGeneric], [RawReply][RawReplyGeneric], [Logger][LoggerGeneric]>(instance: [FastifyInstance][FastifyInstance], done: (err?: [FastifyError][FastifyError]) => void): Promise\<unknown\> | void
 
-[源码](../types/hooks.d.ts#L206)
+[源码](https://github.com/fastify/fastify/blob/master/types/hooks.d.ts#L206)
 
 使用 fastify.close() 停止服务器时被触发。当插件需要一个 "shutdown" 事件时有用，例如关闭一个数据库连接。
 
@@ -1067,6 +1093,8 @@ FastifyError 是自定义的错误对象，包括了状态码及校验结果。
 [FastifyLoggerOptions]: #fastifyfastifyloggeroptions
 [ContextConfigGeneric]: #ContextConfigGeneric
 [FastifyPlugin]: ##fastifyfastifypluginoptions-rawserver-rawrequest-requestgeneric
+[FastifyPluginCallback]: #fastifyfastifyplugincallbackoptions
+[FastifyPluginAsync]: #fastifyfastifypluginasyncoptions
 [FastifyPluginOptions]: #fastifyfastifypluginoptions
 [FastifyRegister]: #fastifyfastifyregisterrawserver-rawrequest-requestgenericplugin-fastifyplugin-opts-fastifyregisteroptions
 [FastifyRegisterOptions]: #fastifyfastifytregisteroptions

@@ -654,6 +654,10 @@ fastify.register(function (instance, opts, done) {
 #### log
 日志的实例，详见[这里](Logging.md)。
 
+<a name="version"></a>
+#### version
+Fastify 实例的版本。可在插件中使用。详见[插件](Plugins.md#handle-the-scope)一文。
+
 <a name="inject"></a>
 #### inject
 伪造 http 注入 (作为测试之用) 。请看[更多内容](Testing.md#inject)。

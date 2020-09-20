@@ -13,6 +13,7 @@
   - [.callNotFound()](#callnotfound)
   - [.getResponseTime()](#getresponsetime)
   - [.type(contentType)](#typecontenttype)
+  - [.raw](#raw)
   - [.serializer(func)](#serializerfunc)
   - [.sent](#sent)
   - [.send(data)](#senddata)
@@ -176,6 +177,22 @@ reply
 ```
 
 请看 [`.send()`](#send) 了解更多关于发送不同类型值的信息。
+
+<a name="raw"></a>
+### .raw
+Node 核心的 [`http.ServerResponse`](https://nodejs.org/dist/latest/docs/api/http.html#http_class_http_serverresponse) 对象。使用 `Reply.raw` 上的方法会跳过 fastify 对 http 响应的处理逻辑，所以请谨慎使用。以下是一个例子：
+
+```js
+app.get('/cookie-2', (req, reply) => {
+  reply.setCookie('session', 'value', { secure: false }) // 这行不会应用
+
+  // 在这个例子里我们只使用了 nodejs 的 http 响应对象
+  reply.raw.writeHead(200, { 'Content-Type': 'text/plain' })
+  reply.raw.write('ok')
+  reply.raw.end()
+})
+```
+在 [Reply.md#getheaders](Reply.md#getheaders) 里有另一个误用 `Reply.raw` 的例子。
 
 <a name="sent"></a>
 ### .sent
