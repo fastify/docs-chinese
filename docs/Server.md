@@ -252,13 +252,14 @@ const fastify = Fastify({ trustProxy: true })
 
 更多示例详见 [proxy-addr](https://www.npmjs.com/package/proxy-addr)。
 
-你还可以通过 [`request`](Request.md) 对象获取 `ip`、`ips` 与 `hostname` 的值。
+你还可以通过 [`request`](Request.md) 对象获取 `ip`、`ips`、`hostname` 与 `protocol` 的值。
 
 ```js
 fastify.get('/', (request, reply) => {
   console.log(request.ip)
   console.log(request.ips)
   console.log(request.hostname)
+  console.log(request.protocol)
 })
 ```
 
@@ -749,13 +750,15 @@ fastify.register(function (instance, options, done) {
 <a name="set-error-handler"></a>
 #### setErrorHandler
 
-`fastify.setErrorHandler(handler(error, request, reply))`：设置任意时刻的错误处理函数。错误处理函数是完全封装 (fully encapsulated) 的，因此不同插件的处理函数可以不同。支持 *async-await* 语法。<br>
+`fastify.setErrorHandler(handler(error, request, reply))`：设置任意时刻的错误处理函数。错误处理函数绑定在 Fastify 实例之上，是完全封装 (fully encapsulated) 的，因此不同插件的处理函数可以不同。支持 *async-await* 语法。<br>
 *注：假如错误的 `statusCode` 小于 400，在处理错误前 Fastify 将会自动将其设为 500。*
 
 ```js
 fastify.setErrorHandler(function (error, request, reply) {
   // 记录错误
+  this.log.error(error)
   // 发送错误响应
+  reply.status(409).send({ ok: false })
 })
 ```
 
@@ -789,4 +792,29 @@ fastify.ready(() => {
   //   │   └── /hello (GET)
   //   └── hello/world (GET)
 })
+```
+
+<a name="addContentTypeParser"></a>
+#### addContentTypeParser
+
+`fastify.addContentTypeParser(content-type, options, parser)` 用于给指定 content type 自定义解析器，当你使用自定义的 content types 时会很有帮助。例如 `text/json, application/vnd.oasis.opendocument.text`。`content-type` 是一个字符串或字符串数组。
+
+```js
+// 传递给 getDefaultJsonParser 的两个参数用于配置原型污染以及构造函数污染，允许的值为 'ignore'、'remove' 和 'error'。设置为 ignore 会跳过校验，和直接调用 JSON.parse() 效果相同。详见 <a href="https://github.com/fastify/secure-json-parse#api">`secure-json-parse` 的文档</a>。
+
+fastify.addContentTypeParser('text/json', { asString: true }, fastify.getDefaultJsonParser('ignore', 'ignore'))
+```
+
+<a name="getDefaultJsonParser"></a>
+#### getDefaultJsonParser
+
+`fastify.getDefaultJsonParser(onProtoPoisoning, onConstructorPoisoning)` 接受两个参数。第一个参数是原型污染的配置，第二个则是构造函数污染的配置。详见 <a href="https://github.com/fastify/secure-json-parse#api">`secure-json-parse` 的文档</a>。
+
+<a name="defaultTextParser"></a>
+#### defaultTextParser 
+
+`fastify.defaultTextParser()` 可用于将 content 解析为纯文本。
+
+```js
+fastify.addContentTypeParser('text/json', { asString: true }, fastify.defaultTextParser())
 ```

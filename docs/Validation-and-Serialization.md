@@ -157,13 +157,19 @@ const bodyJsonSchema = {
 }
 
 const queryStringJsonSchema = {
-  name: { type: 'string' },
-  excitement: { type: 'integer' }
+  type: 'object',
+  properties: {
+    name: { type: 'string' },
+    excitement: { type: 'integer' }
+  }
 }
 
 const paramsJsonSchema = {
-  par1: { type: 'string' },
-  par2: { type: 'number' }
+  type: 'object',
+  properties: {
+    par1: { type: 'string' },
+    par2: { type: 'number' }
+  }
 }
 
 const headersJsonSchema = {
@@ -191,7 +197,7 @@ fastify.post('/the/url', { schema }, handler)
 
 你可以提供一组用于 Ajv 的插件：
 
-> 插件格式参见 [`ajv 选项`](Server.md#factory-ajv)
+> 插件格式参见 [`ajv 选项`](Server.md#ajv)
 
 ```js
 const fastify = require('fastify')({
