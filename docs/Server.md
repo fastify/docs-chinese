@@ -818,3 +818,81 @@ fastify.addContentTypeParser('text/json', { asString: true }, fastify.getDefault
 ```js
 fastify.addContentTypeParser('text/json', { asString: true }, fastify.defaultTextParser())
 ```
+
+<a name="initial-config"></a>
+#### initialConfig
+
+`fastify.initialConfig`：暴露一个记录了 Fastify 初始选项的只读对象。
+
+当前暴露的属性有：
+- connectionTimeout
+- keepAliveTimeout
+- bodyLimit
+- caseSensitive
+- http2
+- https (返回 `false`/`true`。当特别指明时，返回 `{ allowHTTP1: true/false }`)
+- ignoreTrailingSlash
+- maxParamLength
+- onProtoPoisoning
+- pluginTimeout
+- requestIdHeader
+
+```js
+const { readFileSync } = require('fs')
+const Fastify = require('fastify')
+
+const fastify = Fastify({
+  https: {
+    allowHTTP1: true,
+    key: readFileSync('./fastify.key'),
+    cert: readFileSync('./fastify.cert')
+  },
+  logger: { level: 'trace'},
+  ignoreTrailingSlash: true,
+  maxParamLength: 200,
+  caseSensitive: true,
+  trustProxy: '127.0.0.1,192.168.1.1/24',
+})
+
+console.log(fastify.initialConfig)
+/*
+输出：
+{
+  caseSensitive: true,
+  https: { allowHTTP1: true },
+  ignoreTrailingSlash: true,
+  maxParamLength: 200
+}
+*/
+
+fastify.register(async (instance, opts) => {
+  instance.get('/', async (request, reply) => {
+    return instance.initialConfig
+    /*
+    返回：
+    {
+      caseSensitive: true,
+      https: { allowHTTP1: true },
+      ignoreTrailingSlash: true,
+      maxParamLength: 200
+    }
+    */
+  })
+
+  instance.get('/error', async (request, reply) => {
+    // 会抛出错误
+    // 因为 initialConfig 是只读的，不可修改
+    instance.initialConfig.https.allowHTTP1 = false
+
+    return instance.initialConfig
+  })
+})
+
+// 开始监听
+fastify.listen(3000, (err) => {
+  if (err) {
+    fastify.log.error(err)
+    process.exit(1)
+  }
+})
+```
