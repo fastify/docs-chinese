@@ -30,7 +30,7 @@ fastify.addContentTypeParser('application/jsoff', async function (request, paylo
 })
 
 // 可以为不同的 content type 使用默认的 JSON/Text 解析器
-fastify.addContentTypeParser('text/json', { parseAs: 'string' }, fastify.getDefaultJsonParser('ignore', 'ignore')
+fastify.addContentTypeParser('text/json', { parseAs: 'string' }, fastify.getDefaultJsonParser('ignore', 'ignore'))
 ```
 
 你也可以用 `hasContentTypeParser` API 来验证某个 content type 解析器是否存在。
