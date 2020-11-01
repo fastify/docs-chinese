@@ -46,7 +46,7 @@ fastify.route(options)
 * `onSend(request, reply, payload, done)`：响应即将发送前调用的[函数](Hooks.md#route-hooks)。可以是一个函数数组。
 * `onResponse(request, reply, done)`：当响应发送后调用的[函数](Hooks.md#onresponse)。因此，在这个函数内部，不允许再向客户端发送数据。可以是一个函数数组。
 * `handler(request, reply)`：处理请求的函数。函数被调用时，[Fastify server](Server.md) 将会与 `this` 进行绑定。注意，使用箭头函数会破坏这一绑定。
-* `errorHandler(error, request, reply)`：在请求作用域内使用的自定义错误控制函数。覆盖默认的全局错误函数，以及由 [`setErrorHandler`](Server.md#setErrorHandler) 设置的请求错误函数。
+* `errorHandler(error, request, reply)`：在请求作用域内使用的自定义错误控制函数。覆盖默认的全局错误函数，以及由 [`setErrorHandler`](Server.md#setErrorHandler) 设置的请求错误函数。你可以通过 `instance.errorHandler` 访问默认的错误函数，在没有插件覆盖的情况下，其指向 Fastify 默认的 `errorHandler`。
 * `validatorCompiler({ schema, method, url, httpPart })`：生成校验请求的 schema 的函数。详见[验证与序列化](Validation-and-Serialization.md#schema-validator)。
 * `serializerCompiler({ { schema, method, url, httpStatus } })`：生成序列化响应的 schema 的函数。详见[验证与序列化](Validation-and-Serialization.md#schema-serializer)。
 * `schemaErrorFormatter(errors, dataVar)`：生成一个函数，用于格式化来自 schema 校验函数的错误。详见[验证与序列化](Validation-and-Serialization.md#schema-validator)。在当前路由上会覆盖全局的 schema 错误格式化函数，以及 `setSchemaErrorFormatter` 设置的值。
@@ -291,7 +291,7 @@ module.exports = function (fastify, opts, done) {
 <a name="custom-log-level"></a>
 ### 自定义日志级别
 在 Fastify 中为路由里设置不同的日志级别是十分容易的。<br/>
-你只需在插件或路由的选项里设置 `logLevel` 为相应的[值](https://github.com/pinojs/pino/blob/master/docs/API.md#discussion-3)即可。
+你只需在插件或路由的选项里设置 `logLevel` 为相应的[值](https://github.com/pinojs/pino/blob/master/docs/api.md#level-string)即可。
 
 要注意的是，如果在插件层面上设置了 `logLevel`，那么 [`setNotFoundHandler`](Server.md#setnotfoundhandler) 和 [`setErrorHandler`](Server.md#seterrorhandler) 也会受到影响。
 

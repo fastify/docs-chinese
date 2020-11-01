@@ -762,7 +762,8 @@ fastify.setErrorHandler(function (error, request, reply) {
 })
 ```
 
-当没有设置错误处理函数时，Fastify 会调用一个默认函数，并根据 `statusCode` 相应地记录日志：
+当没有设置错误处理函数时，Fastify 会调用一个默认函数。你能通过 `fastify.errorHandler` 访问该函数。它根据 `statusCode` 相应地记录日志。
+
 ```js
 var statusCode = error.statusCode
 if (statusCode >= 500) {
@@ -811,12 +812,30 @@ fastify.addContentTypeParser('text/json', { asString: true }, fastify.getDefault
 `fastify.getDefaultJsonParser(onProtoPoisoning, onConstructorPoisoning)` 接受两个参数。第一个参数是原型污染的配置，第二个则是构造函数污染的配置。详见 <a href="https://github.com/fastify/secure-json-parse#api">`secure-json-parse` 的文档</a>。
 
 <a name="defaultTextParser"></a>
-#### defaultTextParser 
+#### defaultTextParser
 
 `fastify.defaultTextParser()` 可用于将 content 解析为纯文本。
 
 ```js
 fastify.addContentTypeParser('text/json', { asString: true }, fastify.defaultTextParser())
+```
+
+<a name="errorHandler"></a>
+#### errorHandler
+
+`fastify.errorHandler` 使用 Fastify 默认的错误处理函数来处理错误。
+
+```js
+fastify.get('/', {
+  errorHandler: (error, request, reply) => {
+    if (error.code === 'SOMETHING_SPECIFIC') {
+      reply.send({ custom: 'response' })
+      return
+    }
+
+    fastify.errorHandler(error, request, response)
+  }
+}, handler)
 ```
 
 <a name="initial-config"></a>

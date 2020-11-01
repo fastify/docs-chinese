@@ -9,7 +9,7 @@
   - [.getHeader(key)](#getheaderkey)
   - [.removeHeader(key)](#removeheaderkey)
   - [.hasHeader(key)](#hasheaderkey)
-  - [.redirect(dest)](#redirectdest)
+  - [.redirect([code,] dest)](#redirectcode--dest)
   - [.callNotFound()](#callnotfound)
   - [.getResponseTime()](#getresponsetime)
   - [.type(contentType)](#typecontenttype)
@@ -39,7 +39,7 @@ Reply 是 Fastify 的一个核心对象。它暴露了以下函数及属性：
 - `.removeHeader(key)` - 清除已设置的 header 的值。
 - `.hasHeader(name)` - 检查某个 header 是否设置。
 - `.type(value)` - 设置 `Content-Type` header。
-- `.redirect([code,] url)` - 重定向至指定的 url，状态码可选 (默认为 `302`)。
+- `.redirect([code,] dest)` - 重定向至指定的 url，状态码可选 (默认为 `302`)。
 - `.callNotFound()` - 调用自定义的 not found 处理函数。
 - `.serialize(payload)` - 使用默认的或自定义的 json 序列化工具序列化指定的 payload，并返回处理后的结果。
 - `.serializer(function)` - 设置自定义的 payload 序列化工具。
