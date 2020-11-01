@@ -50,7 +50,6 @@ fastify.addHook('onRequest', (request, reply, done) => {
 fastify.addHook('onRequest', async (request, reply) => {
   // 其他代码
   await asyncMethod()
-  return
 })
 ```
 
@@ -97,7 +96,6 @@ fastify.addHook('preValidation', (request, reply, done) => {
 fastify.addHook('preValidation', async (request, reply) => {
   // 其他代码
   await asyncMethod()
-  return
 })
 ```
 
@@ -113,7 +111,6 @@ fastify.addHook('preHandler', (request, reply, done) => {
 fastify.addHook('preHandler', async (request, reply) => {
   // 其他代码
   await asyncMethod()
-  return
 })
 ```
 ### preSerialization
@@ -201,7 +198,6 @@ fastify.addHook('onResponse', (request, reply, done) => {
 fastify.addHook('onResponse', async (request, reply) => {
   // 其他代码
   await asyncMethod()
-  return
 })
 ```
 
@@ -220,7 +216,6 @@ Or `async/await`:
 fastify.addHook('onTimeout', async (request, reply) => {
   // 其他代码
   await asyncMethod()
-  return
 })
 ```
 `onTimeout` 用于监测请求超时，需要在 fastify 实例上设置 `connectionTimeout` 属性。当请求超时，socket 挂起 (hang up) 时，该钩子执行。因此，在这个钩子里不能再向客户端发送数据了。

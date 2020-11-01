@@ -5,6 +5,7 @@
 本文涵盖了使用 Fastify 的推荐方案及最佳实践。
 
 * [使用反向代理](#reverseproxy)
+* [Kubernetes](#kubernetes)
 
 ## 使用反向代理
 <a id="reverseproxy"></a>
@@ -132,3 +133,19 @@ backend static-backend
 [scale-horiz]: https://en.wikipedia.org/wiki/Scalability#Horizontal
 [why-use]: https://web.archive.org/web/20190821102906/https://medium.com/intrinsic/why-should-i-use-a-reverse-proxy-if-node-js-is-production-ready-5a079408b2ca
 [haproxy]: https://www.haproxy.org/
+
+## Kubernetes
+<a id="kubernetes"></a>
+
+`readinessProbe` ([默认情况下](https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/#configure-probes)) 使用 pod 的 IP 作为主机名。而 Fastify 默认监听的是 `127.0.0.1`。在这种情况下，探针 (probe) 无法探测到应用。这时，应用必须监听 `0.0.0.0`，或在 `readinessProbe.httpGet` 中如下指定一个主机名，才能正常工作：
+
+```yaml
+readinessProbe:
+    httpGet:
+        path: /health
+        port: 4000
+    initialDelaySeconds: 30
+    periodSeconds: 30
+    timeoutSeconds: 3
+    successThreshold: 1
+    failureThreshold: 5
