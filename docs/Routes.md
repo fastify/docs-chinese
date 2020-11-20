@@ -415,6 +415,24 @@ fastify.inject({
 })
 ```
 
+> ## ⚠  安全提示
+> 记得设置 [`Vary`](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Vary) 响应头
+> 为用于区分版本的值 (如 `'Accept-Version'`)，
+> 来避免缓存污染攻击 (cache poisoning attacks)。你也可以在代理或 CDN 层设置该值。
+> 
+> ```js
+> const append = require('vary').append
+> fastify.addHook('onSend', async (req, reply) => {
+>   if (req.headers['accept-version']) { // 或其他自定义 header
+>     let value = reply.getHeader('Vary') || ''
+>     const header = Array.isArray(value) ? value.join(', ') : String(value)
+>     if ((value = append(header, 'Accept-Version'))) { // 或其他自定义 header
+>       reply.header('Vary', value)
+>     }
+>   }
+> })
+> ```
+
 如果你声明了多个拥有相同主版本或次版本号的版本，Fastify 总是会根据 `Accept-Version` header 的值选择最兼容的版本。<br/>
 假如请求未带有 `Accept-Version` header，那么将返回一个 404 错误。
 

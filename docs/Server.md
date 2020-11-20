@@ -263,6 +263,8 @@ fastify.get('/', (request, reply) => {
 })
 ```
 
+**注：如果请求存在多个 <code>x-forwarded-host</code> 或 <code>x-forwarded-proto</code> header，只会根据最后一个产生 <code>request.hostname</code> 和 <code>request.protocol</code>**
+
 <a name="plugin-timeout"></a>
 ### `pluginTimeout`
 
