@@ -4,7 +4,7 @@
 
 Fastify 是用普通的 JavaScript 编写的，因此，类型定义的维护并不容易。可喜的是，自版本 2 以来，维护者和贡献者们已经在类型维护上投入了巨大的努力。
 
-版本 3 的类型系统发生了改变。新的系统带来了泛型约束 (generic constraining) 与默认值，以及定义请求 body，querystring 等 schema 的新方式！在团队改善框架和类型定义的协作中，难免有所纰漏。我们鼓励你**参与贡献**。请记得在开始前阅读 [`CONTRIBUTING.md`](https://github.com/fastify/fastify/blob/master/CONTRIBUTING.md) 一文，
+版本 3 的类型系统发生了改变。新的系统带来了泛型约束 (generic constraining) 与默认值，以及定义请求 body，querystring 等 schema 的新方式！在团队改善框架和类型定义的协作中，难免有所纰漏。我们鼓励你**参与贡献**。请记得在开始前阅读 [`CONTRIBUTING.md`](https://github.com/fastify/fastify/blob/master/CONTRIBUTING.md) 一文！
 
 > 本文档介绍的是 Fastify 3.x 版本的类型
 
@@ -42,23 +42,23 @@ Fastify 是用普通的 JavaScript 编写的，因此，类型定义的维护并
   或使用一个[推荐的配置文件](https://github.com/tsconfig/bases#node-10-tsconfigjson)。
 4. 创建 `index.ts` ，在此编写服务器的代码。
 5. 将下列代码添加到该文件中：
-  ```typescript
-  import fastify from 'fastify'
+   ```typescript
+   import fastify from 'fastify'
 
-  const server = fastify()
+   const server = fastify()
 
-  server.get('/ping', async (request, reply) => {
-    return 'pong\n'
-  })
+   server.get('/ping', async (request, reply) => {
+     return 'pong\n'
+   })
 
-  server.listen(8080, (err, address) => {
-    if(err) {
-      console.error(err)
-      process.exit(1)
-    }
-    console.log(`Server listening at ${address}`)
-  })
-  ```
+   server.listen(8080, (err, address) => {
+     if (err) {
+       console.error(err)
+       process.exit(1)
+     }
+     console.log(`Server listening at ${address}`)
+   })
+   ```
 6. 执行 `npm run build`。这么做会将 `index.ts` 编译为能被 Node.js 运行的 `index.js`。如果遇到了错误，请在 [fastify/help](https://github.com/fastify/help/) 发布 issue。
 7. 执行 `npm run start` 来启动 Fastify 服务器。
 8. 你将看到控制台输出： `Server listening at http://127.0.0.1:8080`。
@@ -74,51 +74,51 @@ Fastify 是用普通的 JavaScript 编写的，因此，类型定义的维护并
 
 1. 照着上面例子的 1-4 步来初始化项目。
 2. 在 `index.ts` 中定义两个接口 (interface)，`IQuerystring` 和 `IHeaders`：
-    ```typescript
-    interface IQuerystring {
-      username: string;
-      password: string;
-    }
+   ```typescript
+   interface IQuerystring {
+     username: string;
+     password: string;
+   }
 
-    interface IHeaders {
-      'H-Custom': string;
-    }
-    ```
+   interface IHeaders {
+     'H-Custom': string;
+   }
+   ```
 3. 使用这两个接口，定义一个新的 API 路由，并将它们用作泛型。路由方法的简写形式 (如 `.get`) 接受一个泛型对象 `RequestGenericInterface`，它包含了四个具名属性：`Body`、`Querystring`、`Params` 以及 `Headers`。接口会随着路由方法向下传递，到达路由处理函数中的 `request` 实例。
-    ```typescript
-    server.get<{ 
-      Querystring: IQuerystring,
-      Headers: IHeaders
-    }>('/auth', async (request, reply) => {
-      const { username, password } = request.query
-      const customerHeader = request.headers['H-Custom']
-      // 处理请求数据
+   ```typescript
+   server.get<{
+     Querystring: IQuerystring,
+     Headers: IHeaders
+   }>('/auth', async (request, reply) => {
+     const { username, password } = request.query
+     const customerHeader = request.headers['H-Custom']
+     // 处理请求数据
 
-      return `logged in!`
-    }) 
-    ```
+     return `logged in!`
+   })
+   ```
 4. 执行 `npm run build` 和 `npm run start` 来构建并运行项目。
 5. 访问 api：
-    ```bash
-    curl localhost:8080/auth?username=admin&password=Password123!
-    ```
-    将会返回 `logged in!`。
+   ```bash
+   curl localhost:8080/auth?username=admin&password=Password123!
+   ```
+   将会返回 `logged in!`。
 6. 此外，泛型接口还可以用在路由层钩子方法中。在上面的路由内加上一个 `preValidation` 钩子：
-    ```typescript
-    server.get<{ 
-      Querystring: IQuerystring,
-      Headers: IHeaders
-    }>('/auth', {
-      preValidation: (request, reply, done) => {
-        const { username, password } = request.query
-        done(username !== 'admin' ? new Error('Must be admin') : undefined) // 只允许 `admin` 访问
-      }
-    }, async (request, reply) => {
-      const customerHeader = request.headers['H-Custom']
-      // 处理请求数据
-      return `logged in!`
-    }) 
-    ```
+   ```typescript
+   server.get<{
+     Querystring: IQuerystring,
+     Headers: IHeaders
+   }>('/auth', {
+     preValidation: (request, reply, done) => {
+       const { username, password } = request.query
+       done(username !== 'admin' ? new Error('Must be admin') : undefined) // only validate `admin` account
+     }
+   }, async (request, reply) => {
+     const customerHeader = request.headers['H-Custom']
+     // 处理请求数据
+     return `logged in!`
+   })
+   ```
 7. 构建运行之后，使用任何值不为 `admin` 的 `username` 查询字符串访问服务。你将收到一个 500 错误：`{"statusCode":500,"error":"Internal Server Error","message":"Must be admin"}`
 
    干得漂亮。现在你能够为每个路由定义接口，并拥有严格类型的请求与响应实例了。Fastify 类型系统的其他部分依赖于泛型属性。关于如何使用它们，请参照后文详细的类型系统文档。
@@ -129,109 +129,109 @@ Fastify 是用普通的 JavaScript 编写的，因此，类型定义的维护并
 
 1. 完成 '起步' 中例子的 1-4 步。
 2. 安装 `json-schema-to-typescript` 模块：
-    ```
-    npm i -D json-schema-to-typescript
-    ```
+   ```
+   npm i -D json-schema-to-typescript
+   ```
 3. 新建一个名为 `schemas` 的文件夹。在其中添加 `headers.json` 与 `querystring.json` 两个文件，将下面的 schema 定义粘贴到对应文件中。
-    ```json
-    {
-      "title": "Headers Schema",
-      "type": "object",
-      "properties": {
-        "H-Custom": { "type": "string" }
-      },
-      "additionalProperties": false,
-      "required": ["H-Custom"]
-    }
-    ```
-    ```json
-    {
-      "title": "Querystring Schema",
-      "type": "object",
-      "properties": {
-        "username": { "type": "string" },
-        "password": { "type": "string" }
-      },
-      "additionalProperties": false,
-      "required": ["username", "password"]
-    }
-    ```
+   ```json
+   {
+     "title": "Headers Schema",
+     "type": "object",
+     "properties": {
+       "H-Custom": { "type": "string" }
+     },
+     "additionalProperties": false,
+     "required": ["H-Custom"]
+   }
+   ```
+   ```json
+   {
+     "title": "Querystring Schema",
+     "type": "object",
+     "properties": {
+       "username": { "type": "string" },
+       "password": { "type": "string" }
+     },
+     "additionalProperties": false,
+     "required": ["username", "password"]
+   }
+   ```
 4. 在 package.json 里加上一行 `compile-schemas` 脚本：
-    ```json
-    {
-      "scripts": {
-        "compile-schemas": "json2ts -i schemas -o types"
-      }
-    }
-    ```
-    `json2ts` 是囊括在 `json-schema-to-typescript` 中的命令行工具。`schemas` 是输入路径，`types` 则是输出路径。
+   ```json
+   {
+     "scripts": {
+       "compile-schemas": "json2ts -i schemas -o types"
+     }
+   }
+   ```
+   `json2ts` 是囊括在 `json-schema-to-typescript` 中的命令行工具。`schemas` 是输入路径，`types` 则是输出路径。
 5. 执行 `npm run compile-schemas`，在 `types` 文件夹下生成两个新文件。
 6. 更新 `index.ts`：
-    ```typescript
-    import fastify from 'fastify'
+   ```typescript
+   import fastify from 'fastify'
 
-    // 导入 json schema
-    import QuerystringSchema from './schemas/querystring.json'
-    import HeadersSchema from './schemas/headers.json'
+   // 导入 json schema
+   import QuerystringSchema from './schemas/querystring.json'
+   import HeadersSchema from './schemas/headers.json'
 
-    // 导入生成的接口
-    import { QuerystringSchema as QuerystringSchemaInterface } from './types/querystring'
-    import { HeadersSchema as HeadersSchemaInterface } from './types/headers'
+   // 导入生成的接口
+   import { QuerystringSchema as QuerystringSchemaInterface } from './types/querystring'
+   import { HeadersSchema as HeadersSchemaInterface } from './types/headers'
 
-    const server = fastify()
+   const server = fastify()
 
-    server.get<{ 
-      Querystring: QuerystringSchemaInterface,
-      Headers: HeadersSchemaInterface
-    }>('/auth', {
-      schema: {
-        querystring: QuerystringSchema,
-        headers: HeadersSchema
-      },
-      preValidation: (request, reply, done) => {
-        const { username, password } = request.query
-        done(username !== 'admin' ? new Error('Must be admin') : undefined)
-      }
-    }, async (request, reply) => {
-      const customerHeader = request.headers['H-Custom']
-      // 处理请求数据
-      return `logged in!`
-    }) 
+   server.get<{
+     Querystring: QuerystringSchemaInterface,
+     Headers: HeadersSchemaInterface
+   }>('/auth', {
+     schema: {
+       querystring: QuerystringSchema,
+       headers: HeadersSchema
+     },
+     preValidation: (request, reply, done) => {
+       const { username, password } = request.query
+       done(username !== 'admin' ? new Error('Must be admin') : undefined)
+     }
+   }, async (request, reply) => {
+     const customerHeader = request.headers['H-Custom']
+     // 处理请求数据
+     return `logged in!`
+   })
 
-    server.route<{ 
-      Querystring: QuerystringSchemaInterface,
-      Headers: HeadersSchemaInterface
-    }>({
-      method: 'GET',
-      url: '/auth2',
-      schema: {
-        querystring: QuerystringSchema,
-        headers: HeadersSchema
-      },
-      preHandler: (request, reply) => {
-        const { username, password } = request.query
-        const customerHeader = request.headers['H-Custom']
-      },
-      handler: (request, reply) => {
-        const { username, password } = request.query
-        const customerHeader = request.headers['H-Custom']
-      }
-    })
+   server.route<{
+     Querystring: QuerystringSchemaInterface,
+     Headers: HeadersSchemaInterface
+   }>({
+     method: 'GET',
+     url: '/auth2',
+     schema: {
+       querystring: QuerystringSchema,
+       headers: HeadersSchema
+     },
+     preHandler: (request, reply) => {
+       const { username, password } = request.query
+       const customerHeader = request.headers['H-Custom']
+     },
+     handler: (request, reply) => {
+       const { username, password } = request.query
+       const customerHeader = request.headers['H-Custom']
+     }
+   })
 
-    server.listen(8080, (err, address) => {
-      if(err) {
-        console.error(err)
-        process.exit(0)
-      }
-      console.log(`Server listening at ${address}`)
-    })
-    ```
-    要特别关注文件顶部的导入。虽然看上去有些多余，但你必须同时导入 schema 与生成的接口。
+   server.listen(8080, (err, address) => {
+     if (err) {
+       console.error(err)
+       process.exit(0)
+     }
+     console.log(`Server listening at ${address}`)
+   })
+   ```
+   要特别关注文件顶部的导入。虽然看上去有些多余，但你必须同时导入 schema 与生成的接口。
 
 真棒！现在你就能同时运用 JSON Schema 与 TypeScript 的定义了。给 Fastify 路由定义 schema 还能提高吞吐量！更多信息请见[验证和序列化](Validation-and-Serialization.md)。
 
 一些其他说明：
-  - 行内 JSON schema 目前还未支持类型定义。假如你有好的想法，欢迎 PR！
+- 行内 JSON schema 目前还未支持类型定义。假如你有好的想法，欢迎 PR！
 
 ### 插件
 
@@ -240,139 +240,139 @@ Fastify 是用普通的 JavaScript 编写的，因此，类型定义的维护并
 #### 用 TypeScript 编写 Fastify 插件
 
 1. 初始化新的 npm 项目，并安装必需的依赖。
-  ```bash
-  npm init -y
-  npm i fastify fastify-plugin
-  npm i -D typescript @types/node
-  ```
+   ```bash
+   npm init -y
+   npm i fastify fastify-plugin
+   npm i -D typescript @types/node
+   ```
 2. 在 `package.json` 的 `"scripts"` 中加上一行 `build`，`"types"` 中写入 `'index.d.ts'`：
-  ```json
-  {
-    "types": "index.d.ts",
-    "scripts": {
-      "build": "tsc -p tsconfig.json"
-    }
-  }
-  ```
+   ```json
+   {
+     "types": "index.d.ts",
+     "scripts": {
+       "build": "tsc -p tsconfig.json"
+     }
+   }
+   ```
 3. 初始化 TypeScript 配置文件：
-  ```bash
-  npx typescript --init
-  ```
-  文件生成后，启用 `"compilerOptions"` 对象中的 `"declaration"` 选项。
-  ```json
-  {
-    "compileOptions": {
-      "declaration": true
-    }
-  }
-  ```
+   ```bash
+   npx typescript --init
+   ```
+   文件生成后，启用 `"compilerOptions"` 对象中的 `"declaration"` 选项。
+   ```json
+   {
+     "compileOptions": {
+       "declaration": true
+     }
+   }
+   ```
 4. 新建 `index.ts` 文件，在这里编写插件代码。
 5. 在 `index.ts` 中写入以下代码。
-  ```typescript
-  import { FastifyPluginCallback, FastifyPluginAsync } from 'fastify'
-  import fp from 'fastify-plugin'
+   ```typescript
+   import { FastifyPluginCallback, FastifyPluginAsync } from 'fastify'
+   import fp from 'fastify-plugin'
 
-  // 利用声明合并，将插件的属性加入合适的 fastify 接口。
-  declare module 'fastify' {
-    interface FastifyRequest {
-      myPluginProp: string
-    }
-    interface FastifyReply {
-      myPluginProp: number
-    }
-  }
+   // 利用声明合并，将插件的属性加入合适的 fastify 接口。
+   declare module 'fastify' {
+     interface FastifyRequest {
+       myPluginProp: string
+     }
+     interface FastifyReply {
+       myPluginProp: number
+     }
+   }
 
-  // 定义选项
-  export interface MyPluginOptions {
-    myPluginOption: string
-  }
+   // 定义选项
+   export interface MyPluginOptions {
+     myPluginOption: string
+   }
 
-  // 使用回调函数定义插件
-  const myPluginCallback: FastifyPluginCallback<MyPluginOptions> = (fastify, options, done) => {
-    fastify.decorateRequest('myPluginProp', 'super_secret_value')
-    fastify.decorateReply('myPluginProp', options.myPluginOption)
+   // 使用回调函数定义插件
+   const myPluginCallback: FastifyPluginCallback<MyPluginOptions> = (fastify, options, done) => {
+     fastify.decorateRequest('myPluginProp', 'super_secret_value')
+     fastify.decorateReply('myPluginProp', options.myPluginOption)
 
-    done()
-  }
+     done()
+   }
 
-  // 使用 promise 定义插件
-  const myPluginAsync: FastifyPluginAsync<MyPluginOptions> = async (fastify, options) => {
-    fastify.decorateRequest('myPluginProp', 'super_secret_value')
-    fastify.decorateReply('myPluginProp', options.myPluginOption)
-  }
+   // 使用 promise 定义插件
+   const myPluginAsync: FastifyPluginAsync<MyPluginOptions> = async (fastify, options) => {
+     fastify.decorateRequest('myPluginProp', 'super_secret_value')
+     fastify.decorateReply('myPluginProp', options.myPluginOption)
+   }
 
-  // 使用 fastify-plugin 导出插件
-  export default fp(myPluginCallback, '3.x')
-  // 或者
-  // export default fp(myPluginAsync, '3.x')
-  ```
+   // 使用 fastify-plugin 导出插件
+   export default fp(myPluginCallback, '3.x')
+   // 或者
+   // export default fp(myPluginAsync, '3.x')
+   ```
 6. 运行 `npm run build` 编译，生成 JavaScript 源文件以及类型定义文件。
 7. 如此一来，插件便完工了。你可以[发布到 npm] 或直接本地使用。
-  > 并非将插件发布到 npm _才能_ 使用。你可以将其放在 Fastify 项目内，并像引用任意代码一样引用它！请确保声明文件在项目编译的范围内，以便能被 TypeScript 处理器使用。
+   > 并非将插件发布到 npm _才能_ 使用。你可以将其放在 Fastify 项目内，并像引用任意代码一样引用它！请确保声明文件在项目编译的范围内，以便能被 TypeScript 处理器使用。
 
 #### 为插件编写类型定义
 
 以下例子是为 JavaScript 编写的 Fastify 插件所作，展示了如何在插件中加入 TypeScript 支持，以方便用户使用。
 
 1. 初始化新的 npm 项目，并安装必需的依赖。
-  ```bash
-  npm init -y
-  npm i fastify-plugin
-  ```
+   ```bash
+   npm init -y
+   npm i fastify-plugin
+   ```
 2. 新建 `index.js` 和 `index.d.ts`。
 3. 将这两个文件写入 package.json 的 `main` 和 `types` 中 (文件名不一定为 `index`，但推荐都使用这个名字)：
-  ```json
-  {
-    "main": "index.js",
-    "types": "index.d.ts"
-  }
-  ```
+   ```json
+   {
+     "main": "index.js",
+     "types": "index.d.ts"
+   }
+   ```
 4. 在 `index.js` 中加入以下代码：
-  ```javascript
-  // 极力推荐使用 fastify-plugin 包装插件
-  const fp = require('fastify-plugin')
+   ```javascript
+   // 极力推荐使用 fastify-plugin 包装插件
+   const fp = require('fastify-plugin')
 
-  function myPlugin (instance, options, next) {
+   function myPlugin (instance, options, next) {
 
-    // 用自定义函数 myPluginFunc 装饰 fastify 实例
-    instance.decorate('myPluginFunc', (input) => {
-      return input.toUpperCase()
-    })
+     // 用自定义函数 myPluginFunc 装饰 fastify 实例
+     instance.decorate('myPluginFunc', (input) => {
+       return input.toUpperCase()
+     })
 
-    next()
-  }
+     next()
+   }
   
-  module.exports = fp(myPlugin, {
-    fastify: '3.x',
-    name: 'my-plugin' // 被 fastify-plugin 用来获取属性名
-  })
-  ```
+   module.exports = fp(myPlugin, {
+     fastify: '3.x',
+     name: 'my-plugin' // 被 fastify-plugin 用来获取属性名
+   })
+   ```
 5. 在 `index.d.ts` 中加入以下代码：
-  ```typescript
-  import { FastifyPlugin } from 'fastify'
+   ```typescript
+   import { FastifyPlugin } from 'fastify'
 
-  interface PluginOptions {
-    //...
-  }
-  // 你可以导出任意内容
-  // 在此，我们导出之前添加的装饰器
-  export interface myPluginFunc {
-    (input: string): string
-  }
+   interface PluginOptions {
+     //...
+   }
+   // 你可以导出任意内容
+   // 在此，我们导出之前添加的装饰器
+   export interface myPluginFunc {
+     (input: string): string
+   }
 
-  // 利用声明合并将自定义属性加入 Fastify 的类型系统
-  declare module 'fastify' {
-    interface FastifyInstance {
-      myPluginFunc: myPluginFunc
-    }
-  }
+   // 利用声明合并将自定义属性加入 Fastify 的类型系统
+   declare module 'fastify' {
+     interface FastifyInstance {
+       myPluginFunc: myPluginFunc
+     }
+   }
 
-  // fastify-plugin 会自动添加具名导出，因此请确保加上该类型。
-  // 如果缺少 `module.exports.myPlugin`，变量名会通过 `options.name` 属性获取。
-  export const myPlugin: FastifyPlugin<PluginOptions>
-  // fastify-plugin 会自动在导出的插件上添加 `.default` 属性。详见下文。
-  export default myPlugin
-  ```
+   // fastify-plugin 会自动添加具名导出，因此请确保加上该类型。
+   // 如果缺少 `module.exports.myPlugin`，变量名会通过 `options.name` 属性获取。
+   export const myPlugin: FastifyPlugin<PluginOptions>
+   // fastify-plugin 会自动在导出的插件上添加 `.default` 属性。详见下文。
+   export default myPlugin
+   ```
 
 __注意__：v2.3.0 及以上版本的 [fastify-plugin](https://github.com/fastify/fastify-plugin) 会自动给导出的插件添加 `default` 属性以及具名导出。为了更好的开发体验，请确保在类型文件中加上了 `export default` 与 `export const myPlugin`。完整的例子可以查看 [fastify-swagger](https://github.com/fastify/fastify-swagger/blob/master/index.d.ts)。
 
@@ -405,54 +405,54 @@ Fastify 插件使用声明合并来修改已有的 Fastify 类型接口 (详见�
 Fastify 的 API 都首先来自于 `fastify()` 方法。在 JavaScript 中，通过 `const fastify = require('fastify')` 来导入。在 TypeScript 中，建议的做法是使用 `import/from` 语法，这样类型能得到处理。有如下几种导入的方法。
 
 1. `import fastify from 'fastify'`
-    - 类型得到了处理，但无法通过点标记 (dot notation) 访问
-    - 例子：
-    ```typescript
-    import fastify from 'fastify'
+   - 类型得到了处理，但无法通过点标记 (dot notation) 访问
+   - 例子：
+     ```typescript
+     import fastify from 'fastify'
 
-    const f = fastify()
-    f.listen(8080, () => { console.log('running') })
-    ```
-    - 通过解构赋值访问类型
-    ```typescript
-    import fastify, { FastifyInstance } from 'fastify'
+     const f = fastify()
+     f.listen(8080, () => { console.log('running') })
+     ```
+   - 通过解构赋值访问类型
+     ```typescript
+     import fastify, { FastifyInstance } from 'fastify'
 
-    const f: FastifyInstance = fastify()
-    f.listen(8080, () => { console.log('running') })
-    ```
-    - 主 API 方法也可以使用解构赋值
-    ```typescript
-    import { fastify, FastifyInstance } from 'fastify'
+     const f: FastifyInstance = fastify()
+     f.listen(8080, () => { console.log('running') })
+     ```
+   - 主 API 方法也可以使用解构赋值
+     ```typescript
+     import { fastify, FastifyInstance } from 'fastify'
 
-    const f: FastifyInstance = fastify()
-    f.listen(8080, () => { console.log('running') })
-    ```
+     const f: FastifyInstance = fastify()
+     f.listen(8080, () => { console.log('running') })
+     ```
 2. `import * as Fastify from 'fastify'`
-    - 类型得到了处理，并可通过点标记访问
-    - 主 API 方法要用稍微不同的语法调用 (见例子)
-    - 例子：
-    ```typescript
-    import * as Fastify from 'fastify'
+   - 类型得到了处理，并可通过点标记访问
+   - 主 API 方法要用稍微不同的语法调用 (见例子)
+   - 例子：
+     ```typescript
+     import * as Fastify from 'fastify'
 
-    const f: Fastify.FastifyInstance = Fastify.fastify()
-    f.listen(8080, () => { console.log('running') })
-    ```
+     const f: Fastify.FastifyInstance = Fastify.fastify()
+     f.listen(8080, () => { console.log('running') })
+     ```
 3. `const fastify = require('fastify')`
-    - 语法有效，也能正确地导入。然而并**不**支持类型
-    - 例子：
-    ```typescript
-    const fastify = require('fastify')
+   - 语法有效，也能正确地导入。然而并**不**支持类型
+   - 例子：
+     ```typescript
+     const fastify = require('fastify')
 
-    const f = fastify()
-    f.listen(8080, () => { console.log('running') })
-    ```
-    - 支持解构，但同样无法处理类型
-    ```typescript
-    const { fastify } = require('fastify')
+     const f = fastify()
+     f.listen(8080, () => { console.log('running') })
+     ```
+   - 支持解构，但同样无法处理类型
+     ```typescript
+     const { fastify } = require('fastify')
 
-    const f = fastify()
-    f.listen(8080, () => { console.log('running') })
-    ```
+     const f = fastify()
+     f.listen(8080, () => { console.log('running') })
+     ```
 
 #### 泛型
 
@@ -460,7 +460,7 @@ Fastify 的 API 都首先来自于 `fastify()` 方法。在 JavaScript 中，通
 
 多数定义依赖于 `@node/types` 中的 `http`、`https` 与 `http2` 模块。
 
-##### RawServer 
+##### RawServer
 底层 Node.js server 的类型。
 
 默认值：`http.Server`
@@ -521,33 +521,33 @@ const server = fastify()
 ###### 例子 2：HTTPS 服务器
 
 1. 从 `@types/node` 与 `fastify` 导入模块。
-    ```typescript
-    import fs from 'fs'
-    import path from 'path'
-    import fastify from 'fastify'
-    ```
+   ```typescript
+   import fs from 'fs'
+   import path from 'path'
+   import fastify from 'fastify'
+   ```
 2. 按照官方 [Node.js https 服务器指南](https://nodejs.org/en/knowledge/HTTP/servers/how-to-create-a-HTTPS-server/)的步骤，创建 `key.pem` 与 `cert.pem` 文件。
 3. 实例化一个 Fastify https 服务器，并添加一个路由：
-    ```typescript
-    const server = fastify({
-      https: {
-        key: fs.readFileSync(path.join(__dirname, 'key.pem')),
-        cert: fs.readFileSync(path.join(__dirname, 'cert.pem'))
-      }
-    })
+   ```typescript
+   const server = fastify({
+     https: {
+       key: fs.readFileSync(path.join(__dirname, 'key.pem')),
+       cert: fs.readFileSync(path.join(__dirname, 'cert.pem'))
+     }
+   })
 
-    server.get('/', async function (request, reply) {
-      return { hello: 'world' }
-    })
+   server.get('/', async function (request, reply) {
+     return { hello: 'world' }
+   })
 
-    server.listen(8080, (err, address) => {
-      if(err) {
-        console.error(err)
-        process.exit(0)
-      }
-      console.log(`Server listening at ${address}`)
-    })
-    ```
+   server.listen(8080, (err, address) => {
+     if (err) {
+       console.error(err)
+       process.exit(0)
+     }
+     console.log(`Server listening at ${address}`)
+   })
+   ```
 4. 构建并运行！执行 `curl -k https://localhost:8080` 来测试服务。
 
 ###### 例子 3：HTTP2 服务器
@@ -609,19 +609,19 @@ server.get('/', async (request, reply) => {
 
 ---
 
-##### fastify.HTTPMethods 
+##### fastify.HTTPMethods
 [源码](https://github.com/fastify/fastify/blob/master/types/utils.d.ts#L8)
 
 `'DELETE' | 'GET' | 'HEAD' | 'PATCH' | 'POST' | 'PUT' | 'OPTIONS'` 的联合类型 (Union type)
 
-##### fastify.RawServerBase 
+##### fastify.RawServerBase
 [源码](https://github.com/fastify/fastify/blob/master/types/utils.d.ts#L13)
 
 依赖于 `@types/node` 的模块 `http`、`https`、`http2`
 
 `http.Server | https.Server | http2.Http2Server | http2.Http2SecureServer` 的联合类型
 
-##### fastify.RawServerDefault 
+##### fastify.RawServerDefault
 [源码](https://github.com/fastify/fastify/blob/master/types/utils.d.ts#L18)
 
 依赖于 `@types/node` 的模块 `http`
@@ -652,7 +652,7 @@ Fastify 服务器实例化时，调用 [`fastify()`][Fastify] 方法使用到的
 
 #### Request
 
-##### fastify.FastifyRequest<[RequestGeneric][FastifyRequestGenericInterface], [RawServer][RawServerGeneric], [RawRequest][RawRequestGeneric]> 
+##### fastify.FastifyRequest<[RequestGeneric][FastifyRequestGenericInterface], [RawServer][RawServerGeneric], [RawRequest][RawRequestGeneric]>
 [源码](https://github.com/fastify/fastify/blob/master/types/request.d.ts#L15)
 
 该接口包含了 Fastify 请求对象的属性。这些属性无视请求类型 (http 或 http2)，也无关路由层级。因此在 GET 请求中访问 `request.body` 并不会抛错 (假如 GET 有 body 😉)。
@@ -767,7 +767,7 @@ declare module 'fastify' {
 }
 ```
 
-##### fastify.RawReplyDefaultExpression<[RawServer][RawServerGeneric]> 
+##### fastify.RawReplyDefaultExpression<[RawServer][RawServerGeneric]>
 [源码](https://github.com/fastify/fastify/blob/master/types/utils.d.ts#L27)
 
 依赖于 `@types/node` 的模块 `http`、`https`、`http2`
