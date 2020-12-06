@@ -263,6 +263,7 @@ fastify.get('/streams', function (request, reply) {
 <a name="errors"></a>
 #### Errors
 若使用 *send* 发送一个 *Error* 的实例，Fastify 会自动创建一个如下的错误结构：
+
 ```js
 {
   error: String        // http 错误信息
@@ -271,6 +272,7 @@ fastify.get('/streams', function (request, reply) {
   statusCode: Number   // http 状态码
 }
 ```
+
 你可以向 Error 对象添加自定义属性，例如 `headers`，这可以用来增强 http 响应。<br>
 *注意：如果 `send` 一个错误，但状态码小于 400，Fastify 会自动将其设为 500。*
 
@@ -279,6 +281,36 @@ fastify.get('/streams', function (request, reply) {
 ```js
 fastify.get('/', function (request, reply) {
   reply.send(httpErrors.Gone())
+})
+```
+
+你可以通过如下方式自定义 JSON 错误的输出：
+
+- 为自定义状态码设置响应 JSON schema。
+- 为 `Error` 实例添加额外属性。
+
+请注意，如果返回的状态码不在响应 schema 列表里，那么默认行为将被应用。
+
+```js
+fastify.get('/', {
+  schema: {
+    response: {
+      501: {
+        type: 'object',
+        properties: {
+          statusCode: { type: 'number' },
+          code: { type: 'string' },
+          error: { type: 'string' },
+          message: { type: 'string' },
+          time: { type: 'string' }
+        }
+      }
+    }
+  }
+}, function (request, reply) {
+  const error = new Error('This endpoint has not been implemented')
+  error.time = 'it will be implemented in two weeks'
+  reply.code(501).send(error)
 })
 ```
 

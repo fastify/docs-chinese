@@ -43,7 +43,9 @@ fastify.get('/', (req, reply) => {
 
 装饰器的初始值应该尽可能地与其未来将被设置的值接近。例如，字符串类型的装饰器的初始值为 `''`，对象或函数类型的初始值为 `null`。
 
-更多此话题的内容，请见 [JavaScript engine fundamentals: Shapes and Inline Caches](https://web.archive.org/web/20200201163000/https://mathiasbynens.be/notes/shapes-ics)。
+请注意，上述例子仅可用于基本类型的值，因为引用类型会在所有请求中共享。详见 [decorateRequest](#decorate-request)。
+
+更多此话题的内容，请见 [JavaScript engine fundamentals: Shapes and Inline Caches](https://mathiasbynens.be/notes/shapes-ics)。
 
 ### 使用方法
 <a name="usage"></a>
@@ -107,6 +109,27 @@ fastify.decorateReply('utility', function () {
 
 注：使用箭头函数会破坏 `this` 和 Fastify `Reply` 实例的绑定。
 
+注：使用 `decorateReply` 装饰引用类型，会触发警示：
+
+```js
+// 反面教材
+fastify.decorateReply('foo', { bar: 'fizz'})
+```
+在这个例子里，该对象的引用存在于所有请求中，导致**任何更改都会影响到所有请求，并可能触发安全漏洞或内存泄露**。要合适地封装请求对象，请在 [`'onRequest'` 钩子](Hooks.md#onrequest)里设置新的值。示例如下：
+
+```js
+const fp = require('fastify-plugin')
+
+async function myPlugin (app) {
+  app.decorateRequest('foo', null)
+  app.addHook('onRequest', async (req, reply) => {
+    req.foo = { bar: 42 }
+  }) 
+}
+
+module.exports = fp(myPlugin)
+```
+
 关于 `dependencies` 参数，请见 [`decorate`](#decorate)。
 
 #### `decorateRequest(name, value, [dependencies])`
@@ -121,6 +144,27 @@ fastify.decorateRequest('utility', function () {
 ```
 
 注：使用箭头函数会破坏 `this` 和 Fastify `Request` 实例的绑定。
+
+注：使用 `decorateRequest` 装饰引用类型，会触发警示：
+
+```js
+// 反面教材
+fastify.decorateRequest('foo', { bar: 'fizz'})
+```
+在这个例子里，该对象的引用存在于所有请求中，导致**任何更改都会影响到所有请求，并可能触发安全漏洞或内存泄露**。要合适地封装请求对象，请在 [`'onRequest'` 钩子](Hooks.md#onrequest)里设置新的值。示例如下：
+
+```js
+const fp = require('fastify-plugin')
+
+async function myPlugin (app) {
+  app.decorateRequest('foo', null)
+  app.addHook('onRequest', async (req, reply) => {
+    req.foo = { bar: 42 }
+  }) 
+}
+
+module.exports = fp(myPlugin)
+```
 
 关于 `dependencies` 参数，请见 [`decorate`](#decorate)。
 

@@ -492,16 +492,26 @@ const fastify = Fastify()
 })
 ```
 
-如果你需要自定义错误的格式化，可以给 Fastify 实例化时的选项添加 `schemaErrorFormatter`，其值为返回一个错误的同步函数。
+#### `schemaErrorFormatter`
+
+如果你需要自定义错误的格式化，可以给 Fastify 实例化时的选项添加 `schemaErrorFormatter`，其值为返回一个错误的同步函数。函数的 this 指向 Fastify 服务器实例。
 
 `errors` 是 Fastify schema 错误 (`FastifySchemaValidationError`) 的一个数组。
 `dataVar` 是当前验证的 schema 片段 (params | body | querystring | headers)。
+
 ```js
 const fastify = Fastify({
   schemaErrorFormatter: (errors, dataVar) => {
     // ... 自定义的格式化逻辑
     return new Error(myErrorMessage)
   }
+})
+
+// 或
+fastify.setSchemaErrorFormatter(function (errors, dataVar) {
+  this.log.error({ err: errors }, 'Validation failed')
+  // ... 自定义的格式化逻辑
+  return new Error(myErrorMessage)
 })
 ```
 
