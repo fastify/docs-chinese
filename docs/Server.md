@@ -696,7 +696,7 @@ fastify.setReplySerializer(function (payload, statusCode){
 
 <a name="set-schema-error-formatter"></a>
 #### setSchemaErrorFormatter
-为所有的路由设置 schema 错误格式化器 (schema error formatter)。详见 [#error-handling](Validation-and-Serialization.md#error-handling)。
+为所有的路由设置 schema 错误格式化器 (schema error formatter)。详见 [#error-handling](Validation-and-Serialization.md#schemaerrorformatter)。
 
 <a name="set-serializer-resolver"></a>
 #### setSerializerCompiler
@@ -715,7 +715,7 @@ fastify.setReplySerializer(function (payload, statusCode){
 
 <a name="schema-error-formatter"></a>
 #### schemaErrorFormatter
-该属性用于格式化 `validationCompiler` 在校验 schema 时发生的错误。详见 [#error-handling](Validation-and-Serialization.md#error-handling)。
+该属性设置一个函数用于格式化 `validationCompiler` 在校验 schema 时发生的错误。详见 [#error-handling](Validation-and-Serialization.md#schemaerrorformatter)。
 
 <a name="set-not-found-handler"></a>
 #### setNotFoundHandler
