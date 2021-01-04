@@ -285,6 +285,13 @@ const fastify = require('fastify')({
 })
 ```
 
+<a name="exposeHeadRoutes"></a>
+### `exposeHeadRoutes`
+
+自动为每个 `GET` 路由添加对应的 `HEAD` 路由。如果你不想禁用该选项，又希望自定义 `HEAD` 处理函数，请在 `GET` 路由前定义该处理函数。
+
++ 默认值：`false`
+
 <a name="versioning"></a>
 ### `versioning`
 
