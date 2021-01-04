@@ -372,14 +372,14 @@ fastify.get('/async-await', options, async function (request, reply) {
 被 reject 的 promise 默认发送 `500` 状态码。要修改回复，可以 reject 一个 promise，或在 `async 函数` 中进行 `throw` 操作，同时附带一个有 `statusCode` (或 `status`) 与 `message` 属性的对象。
 
 ```js
-fastify.get('/teapot', async function (request, reply) => {
+fastify.get('/teapot', async function (request, reply) {
   const err = new Error()
   err.statusCode = 418
   err.message = 'short and stout'
   throw err
 })
 
-fastify.get('/botnet', async function (request, reply) => {
+fastify.get('/botnet', async function (request, reply) {
   throw { statusCode: 418, message: 'short and stout' }
   // 这一 json 对象将被发送给客户端
 })

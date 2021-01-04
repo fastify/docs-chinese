@@ -585,7 +585,7 @@ server.get('/', async (request, reply) => {
 
 ###### 例子 5：指定日志类型
 
-Fastify 使用 [Pino](http://getpino.io/#/) 作为日志工具。其中一些属性可以在构建 Fastify 实例时，在 `logger` 字段中配置。如果需要的属性未被暴露出来，你也能通过将一个外部配置好的 Pino 实例 (或其他兼容的日志工具) 传给这个字段，来配置这些属性。这么做也允许你自定义序列化工具，详见[日志](Logging.md)的文档。
+Fastify 使用 [Pino](https://getpino.io/#/) 作为日志工具。其中一些属性可以在构建 Fastify 实例时，在 `logger` 字段中配置。如果需要的属性未被暴露出来，你也能通过将一个外部配置好的 Pino 实例 (或其他兼容的日志工具) 传给这个字段，来配置这些属性。这么做也允许你自定义序列化工具，详见[日志](Logging.md)的文档。
 
 要使用 Pino 的外部实例，请将 `@types/pino` 添加到 devDependencies 中，并把实例传给 `logger` 字段：
 
@@ -859,7 +859,7 @@ fastify().register(plugin, { option1: '', option2: true }) // OK - options 对�
 
 [源码](https://github.com/fastify/fastify/blob/master/types/logger.d.ts#L17)
 
-Fastify 内建日志工具的接口定义，模仿了 [Pino.js](http://getpino.io/#/) 的接口定义。当通过服务器选项启用日志时，参照[日志](Logging.md)文档使用它。
+Fastify 内建日志工具的接口定义，模仿了 [Pino.js](https://getpino.io/#/) 的接口定义。当通过服务器选项启用日志时，参照[日志](Logging.md)文档使用它。
 
 ##### fastify.FastifyLogFn
 
@@ -982,7 +982,7 @@ FastifyError 是自定义的错误对象，包括了状态码及校验结果。
 
 #### 钩子
 
-##### fastify.onRequestHookhandler<[RawServer][RawServerGeneric], [RawRequest][RawRequestGeneric], [RawReply][RawReplyGeneric], [RequestGeneric][FastifyRequestGenericInterface], [ContextConfig][ContextConfigGeneric]>(request: [FastifyRequest][FastifyRequest], reply: [FastifyReply][FastifyReply], done: (err?: [FastifyError][FastifyError]) => void): Promise\<unknown\> | void
+##### fastify.onRequestHookHandler<[RawServer][RawServerGeneric], [RawRequest][RawRequestGeneric], [RawReply][RawReplyGeneric], [RequestGeneric][FastifyRequestGenericInterface], [ContextConfig][ContextConfigGeneric]>(request: [FastifyRequest][FastifyRequest], reply: [FastifyReply][FastifyReply], done: (err?: [FastifyError][FastifyError]) => void): Promise\<unknown\> | void
 
 [源码](https://github.com/fastify/fastify/blob/master/types/hooks.d.ts#L17)
 
@@ -990,7 +990,7 @@ FastifyError 是自定义的错误对象，包括了状态码及校验结果。
 
 注意：在 `onRequest` 钩子中，request.body 永远为 null，因为此时 body 尚未解析 (解析发生在 `preHandler` 钩子之前)。
 
-##### fastify.preParsingHookhandler<[RawServer][RawServerGeneric], [RawRequest][RawRequestGeneric], [RawReply][RawReplyGeneric], [RequestGeneric][FastifyRequestGenericInterface], [ContextConfig][ContextConfigGeneric]>(request: [FastifyRequest][FastifyRequest], reply: [FastifyReply][FastifyReply], done: (err?: [FastifyError][FastifyError]) => void): Promise\<unknown\> | void
+##### fastify.preParsingHookHandler<[RawServer][RawServerGeneric], [RawRequest][RawRequestGeneric], [RawReply][RawReplyGeneric], [RequestGeneric][FastifyRequestGenericInterface], [ContextConfig][ContextConfigGeneric]>(request: [FastifyRequest][FastifyRequest], reply: [FastifyReply][FastifyReply], done: (err?: [FastifyError][FastifyError]) => void): Promise\<unknown\> | void
 
 [源码](https://github.com/fastify/fastify/blob/master/types/hooks.d.ts#L35)
 

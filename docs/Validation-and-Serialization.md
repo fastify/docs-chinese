@@ -1,13 +1,13 @@
 <h1 align="center">Fastify</h1>
 
 ## 验证和序列化
-Fastify 使用基于 schema 的途径，从本质上将 schema 编译成了高性能的函数，来实现路由的验证与输出的序列化。我们推荐使用 [JSON Schema](http://json-schema.org/)，虽然这并非必要。
+Fastify 使用基于 schema 的途径，从本质上将 schema 编译成了高性能的函数，来实现路由的验证与输出的序列化。我们推荐使用 [JSON Schema](https://json-schema.org/)，虽然这并非必要。
 
 > ## ⚠  安全须知
 > 应当将 schema 的定义写入代码。
 > 因为不管是验证还是序列化，都会使用 `new Function()` 来动态生成代码并执行。
 > 所以，用户提供的 schema 是不安全的。
-> 更多内容，请看 [Ajv](http://npm.im/ajv) 与 [fast-json-stringify](http://npm.im/fast-json-stringify)。
+> 更多内容，请看 [Ajv](https://npm.im/ajv) 与 [fast-json-stringify](https://npm.im/fast-json-stringify)。
 
 ### 核心观念
 验证与序列化的任务分别由两个可定制的工具完成：
@@ -713,7 +713,7 @@ const refToSharedSchemaDefinitions = {
 
 <a name="resources"></a>
 ### 资源
-- [JSON Schema](http://json-schema.org/)
+- [JSON Schema](https://json-schema.org/)
 - [理解 JSON Schema](https://spacetelescope.github.io/understanding-json-schema/)
 - [fast-json-stringify 文档](https://github.com/fastify/fast-json-stringify)
 - [Ajv 文档](https://github.com/epoberezkin/ajv/blob/master/README.md)

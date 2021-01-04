@@ -94,7 +94,7 @@ app.post('/hello', (request, reply) => {
   reply.send(request.raw)
 })
 ```
-这里有一个将来访的 [json line](http://jsonlines.org/) 对象完整输出到日志的例子：
+这里有一个将来访的 [json line](https://jsonlines.org/) 对象完整输出到日志的例子：
 ```js
 const split2 = require('split2')
 const pump = require('pump')

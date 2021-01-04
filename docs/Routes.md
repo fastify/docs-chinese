@@ -31,12 +31,13 @@ fastify.route(options)
 * `method`：支持的 HTTP 请求方法。目前支持 `'DELETE'`、`'GET'`、`'HEAD'`、`'PATCH'`、`'POST'`、`'PUT'` 以及 `'OPTIONS'`。它还可以是一个 HTTP 方法的数组。
 * `url`：路由匹配的 url 路径 (别名：`path`)。
 * `schema`：用于验证请求与回复的 schema 对象。
-必须符合 [JSON Schema](http://json-schema.org/) 格式。请看[这里](Validation-and-Serialization.md)了解更多信息。
+必须符合 [JSON Schema](https://json-schema.org/) 格式。请看[这里](Validation-and-Serialization.md)了解更多信息。
 
   * `body`：当为 POST 或 PUT 方法时，校验请求主体。
   * `querystring` 或 `query`：校验 querystring。可以是一个完整的 JSON Schema 对象，它包括了值为 `object` 的 `type` 属性以及包含参数的 `properties` 对象，也可以仅仅是 `properties` 对象中的值 (见下文示例)。
   * `params`：校验 url 参数。
   * `response`：过滤并生成用于响应的 schema，能帮助提升 10-20% 的吞吐量。
+* `exposeHeadRoute`：为任意 `GET` 路由创建一个对应的 `HEAD` 路由。默认值为服务器实例上的 [`exposeHeadRoutes`](Server.md#exposeHeadRoutes) 选项的值。如果你不想禁用该选项，又希望自定义 `HEAD` 处理函数，请在 `GET` 路由前定义该处理函数。
 * `attachValidation`：当 schema 校验出错时，将一个 `validationError` 对象添加到请求中，否则错误将被发送给错误处理函数。
 * `onRequest(request, reply, done)`：每当接收到一个请求时触发的[函数](Hooks.md#onrequest)。可以是一个函数数组。
 * `preParsing(request, reply, done)`：解析请求前调用的[函数](Hooks.md#preparsing)。可以是一个函数数组。
@@ -54,7 +55,7 @@ fastify.route(options)
 * `logLevel`：设置日志级别。详见下文。
 * `logSerializers`：设置当前路由的日志序列化器。
 * `config`：存放自定义配置的对象。
-* `version`：一个符合[语义化版本控制规范 (semver)](http://semver.org/) 的字符串。[示例](Routes.md#version)。
+* `version`：一个符合[语义化版本控制规范 (semver)](https://semver.org/) 的字符串。[示例](Routes.md#version)。
 `prefixTrailingSlash`：一个字符串，决定如何处理带前缀的 `/` 路由。
   * `both` (默认值)：同时注册 `/prefix` 与 `/prefix/`。
   * `slash`：只会注册 `/prefix/`。
@@ -390,7 +391,7 @@ fastify.listen(3000)
 ### 版本
 
 #### 默认
-需要的话，你可以提供一个版本选项，它允许你为同一个路由声明不同的版本。版本号请遵循 [semver](http://semver.org/) 规范。<br/>
+需要的话，你可以提供一个版本选项，它允许你为同一个路由声明不同的版本。版本号请遵循 [semver](https://semver.org/) 规范。<br/>
 Fastify 会自动检测 `Accept-Version` header，并将请求分配给相应的路由 (当前尚不支持 semver 规范中的 advanced ranges 与 pre-releases 语法)。<br/>
 *请注意，这一特性会降低路由的性能。*
 
