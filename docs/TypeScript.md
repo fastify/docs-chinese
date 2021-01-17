@@ -332,14 +332,14 @@ Fastify 是用普通的 JavaScript 编写的，因此，类型定义的维护并
    // 极力推荐使用 fastify-plugin 包装插件
    const fp = require('fastify-plugin')
 
-   function myPlugin (instance, options, next) {
+   function myPlugin (instance, options, done) {
 
      // 用自定义函数 myPluginFunc 装饰 fastify 实例
      instance.decorate('myPluginFunc', (input) => {
        return input.toUpperCase()
      })
 
-     next()
+     done()
    }
   
    module.exports = fp(myPlugin, {
@@ -836,7 +836,7 @@ const server = fastify()
 const plugin: FastifyPlugin<{
   option1: string;
   option2: boolean;
-}> = function (instance, opts, next) { }
+}> = function (instance, opts, done) { }
 
 fastify().register(plugin, {}) // 错误 - options 对象缺失了必要的属性
 fastify().register(plugin, { option1: '', option2: true }) // OK - options 对象包括了必要的属性
