@@ -2,9 +2,9 @@
 
 ## 中间件
 
-从版本 3 开始，Fastify 便不再内建地支持中间件了，你需要通过插件 [`fastify-express`](https://github.com/fastify/fastify-express) 和 [`middie`](https://github.com/fastify/middie) 来使用它们。
+从 3.0.0 版本开始，Fastify 便不再内建地支持中间件了，你需要通过插件例如 [`fastify-express`](https://github.com/fastify/fastify-express) 或 [`middie`](https://github.com/fastify/middie) 来使用它们。
 
-如果你想使用 express 风格的中间件，可以借助上述两个工具之一的 `fastify-express`：
+以下是通过 [`fastify-express`](https://github.com/fastify/fastify-express) 插件，来使用 express 中间件的示例：
 
 ```js
 await fastify.register(require('fastify-express'))

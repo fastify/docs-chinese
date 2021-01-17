@@ -41,8 +41,8 @@ Fastify 运用了不同的技术来优化代码，其大部分都被写入了文
 我们使用 [`standard`](https://standardjs.com/)，因为它不需任何配置，并且容易与测试集成。
 
 ## 持续集成
-这一项也不是强制的，但假如你开源发布你的代码，持续集成能保证其他人的参与不会破坏你的插件，并检查插件是否如预期般工作。[Travis](https://travis-ci.org/) 持续集成系统对开源项目免费，且易于安装配置。<br>
-此外，你还可以启用 [Greenkeeper](https://greenkeeper.io/) 等服务，它可以帮你将依赖保持在最新版本，并检查在 Fastify 的新版本上你的插件是否存在问题。
+这一项也不是强制的，但假如你开源发布你的代码，持续集成能保证其他人的参与不会破坏你的插件，并检查插件是否如预期般工作。[CircleCI](https://circleci.com/) 和 [GitHub Actions](https://github.com/features/actions) 都是对开源项目免费的持续集成系统，且易于安装配置。<br>
+此外，你还可以启用 [Dependabot](https://dependabot.com/) 或 [Snyk](https://snyk.io/) 等服务，它可以帮你将依赖保持在最新版本，并检查在 Fastify 的新版本上你的插件是否存在问题。
 
 ## 让我们开始吧！
 棒极了，现在你已经了解了如何为 Fastify 写一个好插件！
