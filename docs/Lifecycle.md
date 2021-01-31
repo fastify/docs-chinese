@@ -36,6 +36,12 @@ Incoming Request
                                                                             └─▶ onResponse Hook
 ```
 
+在`用户编写的处理函数`执行前或执行时，你可以调用 `reply.hijack()` 以使得 Fastify：
+- 终止运行所有钩子及用户的处理函数
+- 不再自动发送响应
+
+特别注意 (*)：假如使用了 `reply.raw` 来发送响应，则 `onResponse` 依旧会执行。
+
 ## 响应生命周期
 
 不管用户如何处理请求，结果无非以下几种：
@@ -45,7 +51,7 @@ Incoming Request
 - 同步函数中发送 payload
 - 同步函数中发送 `Error` 实例
 
-因此，响应被提交时的数据流向如下：
+当响应被劫持时 (即调用了 `reply.hijack()`) 会跳过之后的步骤，否则，响应被提交后的数据流向如下：
 
 ```
                         ★ schema validation Error
@@ -56,6 +62,7 @@ Incoming Request
                                                       │
                                                       │         ★ throw an Error
                      ★ send or return                 │                 │
+                            │                         │                 │
                             │                         ▼                 │
        reply sent ◀── JSON ─┴─ Error instance ──▶ setErrorHandler ◀─────┘
                                                       │
