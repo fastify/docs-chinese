@@ -588,6 +588,34 @@ fastify.listen(3000, '0.0.0.0', (err, address) => {
 
 假如未设置 `port` (或设为 0)，则会自动选择一个随机可用的端口 (之后可通过 `fastify.server.address().port` 获知)。
 
+<a name="getDefaultRoute"></a>
+#### getDefaultRoute
+获取服务器 `defaultRoute` 属性的方法：
+
+```js
+const defaultRoute = fastify.getDefaultRoute()
+```
+
+<a name="setDefaultRoute"></a>
+#### setDefaultRoute
+设置服务器 `defaultRoute` 属性的方法：
+
+```js
+const defaultRoute = function (req, res) {
+  res.end('hello world')
+}
+
+fastify.setDefaultRoute(defaultRoute)
+```
+
+<a name="routing"></a>
+#### routing
+访问内部路由库的 `lookup` 方法，该方法将请求匹配到合适的处理函数：
+
+```js
+fastify.routing(req, res)
+```
+
 <a name="route"></a>
 #### route
 将路由添加到服务器的方法，支持简写。请看[这里](Routes.md)。

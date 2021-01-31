@@ -436,7 +436,7 @@ fastify.register(async function plugin (fastify, opts) {
 <a name="route-hooks"></a>
 
 ## 路由层钩子
-你可以为**单个**路由声明一个或多个自定义的 [onRequest](#onrequest)、[onResponse](#onresponse)、[preParsing](#preparsing)、[preValidation](#prevalidation)、[preHandler](#prehandler) 与 [preSerialization](#preserialization) 钩子。
+你可以为**单个**路由声明一个或多个自定义的生命周期钩子 ([onRequest](#onrequest)、[onResponse](#onresponse)、[preParsing](#preparsing)、[preValidation](#prevalidation)、[preHandler](#prehandler)、[preSerialization](#preserialization)、[onSend](#onsend)、[onTimeout](#ontimeout) 与 [onError](#onerror))。
 如果你这么做，这些钩子总是会作为同一类钩子中的最后一个被执行。<br/>
 当你需要进行认证时，这会很有用，而 [preParsing](#preparsing) 与 [preValidation](#prevalidation) 钩子正是为此而生。
 你也可以通过数组定义多个路由层钩子。
@@ -472,6 +472,21 @@ fastify.addHook('preSerialization', (request, reply, payload, done) => {
   done(null, payload)
 })
 
+fastify.addHook('onSend', (request, reply, payload, done) => {
+  // 你的代码
+  done(null, payload)
+})
+
+fastify.addHook('onTimeout', (request, reply, done) => {
+  // 你的代码
+  done()
+})
+
+fastify.addHook('onError', (request, reply, error, done) => {
+  // 你的代码
+  done()
+})
+
 fastify.route({
   method: 'GET',
   url: '/',
@@ -505,6 +520,18 @@ fastify.route({
   preSerialization: (request, reply, payload, done) => {
     // 该钩子总是在共享的 `preSerialization` 钩子后被执行
     done(null, payload)
+  },
+  onSend: (request, reply, payload, done) => {
+    // 该钩子总是在共享的 `onSend` 钩子后被执行
+    done(null, payload)
+  },
+  onTimeout: (request, reply, done) => {
+    // 该钩子总是在共享的 `onTimeout` 钩子后被执行
+    done()
+  },
+  onError: (request, reply, error, done) => {
+    // 该钩子总是在共享的 `onError` 钩子后被执行
+    done()
   },
   handler: function (request, reply) {
     reply.send({ hello: 'world' })

@@ -16,6 +16,7 @@
   - [.raw](#raw)
   - [.serializer(func)](#serializerfunc)
   - [.sent](#sent)
+  - [.hijack](#hijack)
   - [.send(data)](#senddata)
     - [对象](#objects)
     - [字符串](#strings)
@@ -214,6 +215,14 @@ app.get('/', (req, reply) => {
 ```
 
 如果处理函数 reject，将会记录一个错误。
+
+<a name="hijack"></a>
+### .hijack()
+有时你需要终止请求生命周期的执行，并手动发送响应。
+
+Fastify 提供了 `reply.hijack()` 方法来完成此任务。在 `reply.send()` 之前的任意节点调用该方法，能阻止 Fastify 自动发送响应，并不再执行之后的生命周期函数 (包括用户编写的处理函数)。
+
+特别注意 (*)：假如使用了 `reply.raw` 来发送响应，则 `onResponse` 依旧会执行。
 
 <a name="send"></a>
 ### .send(data)
