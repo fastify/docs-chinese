@@ -193,7 +193,7 @@ app.get('/cookie-2', (req, reply) => {
   reply.raw.end()
 })
 ```
-在 [Reply.md#getheaders](Reply.md#getheaders) 里有另一个误用 `Reply.raw` 的例子。
+在《[回复](Reply.md#getheaders)》里有另一个误用 `Reply.raw` 的例子。
 
 <a name="sent"></a>
 ### .sent

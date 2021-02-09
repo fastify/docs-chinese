@@ -108,7 +108,6 @@ Fastify 依托 [Pino](https://getpino.io/) 内建了一个日志工具。该属�
 
 + `object`: 标准的 Pino [选项对象](https://github.com/pinojs/pino/blob/c77d8ec5ce/docs/API.md#constructor)。
 它会被直接传递进 Pino 的构造函数。如果下列属性未在该对象中定义，它们将被相应地添加：
-    * `genReqId`: 一个同步函数，用于生成请求的标识符。默认生成按次序排列的标识符。
     * `level`: 最低的日志级别。若未被设置，则默认为 `'info'`。
     * `serializers`: 序列化函数的哈希。默认情况下，序列化函数应用在 `req` (来访的请求对象)、`res` (发送的响应对象) 以及 `err` (标准的 `Error` 对象) 之上。当一个日志方法接收到含有上述任意属性的对象时，对应的序列化器将会作用于该属性。举例如下：
         ```js

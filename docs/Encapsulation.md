@@ -36,7 +36,9 @@ fastify.register(async function authenticatedContext (childServer) {
     handler (request, response) {
       response.send({
         answer: request.answer,
+        // request.foo 会是 undefined，因为该值是在 publicContext 中定义的
         foo: request.foo,
+        // request.bar 会是 undefined，因为该值是在 grandchildContext 中定义的
         bar: request.bar
       })
     }
@@ -53,6 +55,7 @@ fastify.register(async function publicContext (childServer) {
       response.send({
         answer: request.answer,
         foo: request.foo,
+        // request.bar 会是 undefined，因为该值是在 grandchildContext 中定义的
         bar: request.bar
       })
     }
