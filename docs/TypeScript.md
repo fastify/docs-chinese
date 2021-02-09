@@ -37,7 +37,7 @@ Fastify 是用普通的 JavaScript 编写的，因此，类型定义的维护并
   ```
 3. 初始化 TypeScript 配置文件：
   ```bash
-  npx typescript --init
+  npx tsc --init
   ```
   或使用一个[推荐的配置文件](https://github.com/tsconfig/bases#node-10-tsconfigjson)。
 4. 创建 `index.ts` ，在此编写服务器的代码。
@@ -81,7 +81,7 @@ Fastify 是用普通的 JavaScript 编写的，因此，类型定义的维护并
    }
 
    interface IHeaders {
-     'H-Custom': string;
+     'h-Custom': string;
    }
    ```
 3. 使用这两个接口，定义一个新的 API 路由，并将它们用作泛型。路由方法的简写形式 (如 `.get`) 接受一个泛型对象 `RequestGenericInterface`，它包含了四个具名属性：`Body`、`Querystring`、`Params` 以及 `Headers`。接口会随着路由方法向下传递，到达路由处理函数中的 `request` 实例。
@@ -91,7 +91,7 @@ Fastify 是用普通的 JavaScript 编写的，因此，类型定义的维护并
      Headers: IHeaders
    }>('/auth', async (request, reply) => {
      const { username, password } = request.query
-     const customerHeader = request.headers['H-Custom']
+     const customerHeader = request.headers['h-Custom']
      // 处理请求数据
 
      return `logged in!`
@@ -114,7 +114,7 @@ Fastify 是用普通的 JavaScript 编写的，因此，类型定义的维护并
        done(username !== 'admin' ? new Error('Must be admin') : undefined) // only validate `admin` account
      }
    }, async (request, reply) => {
-     const customerHeader = request.headers['H-Custom']
+     const customerHeader = request.headers['h-Custom']
      // 处理请求数据
      return `logged in!`
    })
@@ -138,10 +138,10 @@ Fastify 是用普通的 JavaScript 编写的，因此，类型定义的维护并
      "title": "Headers Schema",
      "type": "object",
      "properties": {
-       "H-Custom": { "type": "string" }
+       "h-Custom": { "type": "string" }
      },
      "additionalProperties": false,
-     "required": ["H-Custom"]
+     "required": ["h-Custom"]
    }
    ```
    ```json
@@ -193,7 +193,7 @@ Fastify 是用普通的 JavaScript 编写的，因此，类型定义的维护并
        done(username !== 'admin' ? new Error('Must be admin') : undefined)
      }
    }, async (request, reply) => {
-     const customerHeader = request.headers['H-Custom']
+     const customerHeader = request.headers['h-Custom']
      // 处理请求数据
      return `logged in!`
    })
@@ -210,11 +210,11 @@ Fastify 是用普通的 JavaScript 编写的，因此，类型定义的维护并
      },
      preHandler: (request, reply) => {
        const { username, password } = request.query
-       const customerHeader = request.headers['H-Custom']
+       const customerHeader = request.headers['h-Custom']
      },
      handler: (request, reply) => {
        const { username, password } = request.query
-       const customerHeader = request.headers['H-Custom']
+       const customerHeader = request.headers['h-Custom']
      }
    })
 

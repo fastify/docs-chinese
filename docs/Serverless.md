@@ -270,22 +270,15 @@ module.exports = {
 
 ## Vercel
 
-[Vercel](https://vercel.com) 针对 Node.js 应用提供了零配置部署方案。要使用 now，只需要如下配置你的 `now.json` 文件：
+[Vercel](https://vercel.com) 针对 Node.js 应用提供了零配置部署方案。要使用 now，只需要如下配置你的 `vercel.json` 文件：
 
 ```json
 {
-  "version": 2,
-  "builds": [
-    {
-      "src": "api/serverless.js",
-      "use": "@now/node",
-      "config": {
-        "helpers": false
-      }
+  "rewrites": [
+    { 
+      "source": "/(.*)", 
+      "destination": "/api/serverless.js" 
     }
-  ],
-  "routes": [
-    { "src": "/.*", "dest": "/api/serverless.js"}
   ]
 }
 ```
@@ -293,38 +286,25 @@ module.exports = {
 之后，写一个 `api/serverless.js` 文件：
 
 ```js
-'use strict'
-const build = require('./index')
-const app = build()
-module.exports = async function (req, res) {
-  await app.ready()
-  app.server.emit('request', req, res)
+"use strict";
+
+// 读取 .env 文件
+import * as dotenv from "dotenv";
+dotenv.config();
+
+// 引入 Fastify 框架
+import Fastify from "fastify";
+
+// 实例化 Fastify
+const app = Fastify({
+  logger: true,
+});
+
+// 将应用注册为一个常规插件
+app.register(import("../src/app"));
+
+export default async (req, res) => {
+  await app.ready();
+  app.server.emit('request', req, res);
 }
-```
-
-以及一个 `api/index.js` 文件：
-
-```js
-'use strict'
-const fastify = require('fastify')
-function build () {
-  const app = fastify({
-    logger: true
-  })
-  app.get('/', async (req, res) => {
-    const { name = 'World' } = req.query
-    req.log.info({ name }, 'hello world!')
-    return `Hello ${name}!`
-  })
-  return app
-}
-module.exports = build
-```
-
-要注意的是，你得在 `package.json` 中使用 Node 10：
-
-```js
-  "engines": {
-    "node": "10.x"
-  },
 ```
