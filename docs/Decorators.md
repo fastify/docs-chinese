@@ -64,6 +64,7 @@ fastify.decorate('utility', function () {
 ```
 
 正如上文所述，还可以传递非函数的值：
+
 ```js
 fastify.decorate('conf', {
   db: 'some.db',
@@ -72,6 +73,7 @@ fastify.decorate('conf', {
 ```
 
 通过装饰属性的名称便可访问值：
+
 ```js
 fastify.utility()
 

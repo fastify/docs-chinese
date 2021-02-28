@@ -7,7 +7,7 @@
 - [Autocannon](https://github.com/mcollina/autocannon): 用 Node 写的 HTTP/1.1 基准测试工具.
 - [Branch-comparer](https://github.com/StarpTech/branch-comparer): 切换不同的 git 分支, 执行脚本并记录结果.
 - [Concurrently](https://github.com/kimmobrunfeldt/concurrently): 并行运行命令.
-- [Npx](https://github.com/zkat/npx) NPM 包运行器 - 我们用它在不同的 Node.js 版本上执行运行脚本和运行本地的二进制文件. 在 npm@5.2.0 版本以上可用.
+- [Npx](https://github.com/npm/npx): NPM 包运行器，用于在不同的 Node.js 版本上执行运行脚本和运行本地的二进制文件. 在 npm@5.2.0 版本以上可用.
 
 ## 基本用法
 

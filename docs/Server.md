@@ -291,13 +291,13 @@ const fastify = require('fastify')({
 
 + 默认值：`false`
 
-<a name="versioning"></a>
-### `versioning`
+<a name="constraints"></a>
+### `constraints`
 
-默认情况下，`find-my-way` 使用 [semver 版本号规范](Routes.md#version)来为路由设置版本号。你也可以使用自定义的版本号策略。更多信息请看 [find-my-way](https://github.com/delvedor/find-my-way#versioned-routes) 的文档。
+Fastify 内建的路由约束由 `find-my-way` 支持，允许使用 `version` 或 `host` 来约束路由。通过为 `find-my-way` 提供 `constraints` 对象，你可以添加新的约束策略，或覆盖原有策略。更多内容可见于 [find-my-way](https://github.com/delvedor/find-my-way) 的文档。
 
 ```js
-const versioning = {
+const customVersionStrategy = {
   storage: function () {
     let versions = {}
     return {
@@ -311,8 +311,11 @@ const versioning = {
     return req.headers['accept']
   }
 }
- const fastify = require('fastify')({
-  versioning
+
+const fastify = require('fastify')({
+  constraints: {
+    version: customVersionStrategy
+  }
 })
 ```
 
@@ -751,6 +754,44 @@ fastify.setReplySerializer(function (payload, statusCode){
 #### schemaErrorFormatter
 该属性设置一个函数用于格式化 `validationCompiler` 在校验 schema 时发生的错误。详见 [#error-handling](Validation-and-Serialization.md#schemaerrorformatter)。
 
+<a name="schema-controller"></a>
+#### schemaController
+该属性用于管理应用的 schema 的存放位置，可用于 Fastify 无法分辨保存于某些数据结构中的 schema 之时。在 [issue #2446](https://github.com/fastify/fastify/issues/2446) 里有一个通过该属性解决问题的例子。
+
+```js
+const fastify = Fastify({
+  schemaController: {
+    /**
+     * 以下的 factory 函数会在每次调用 `fastify.register()` 时被执行。
+     * 若父级上下文添加了 schema，它会作为参数传入 factory 函数。
+     * @param {object} parentSchemas 会被 `bucket` 对象的 `getSchemas()` 方法返回。
+     */
+    bucket: function factory (parentSchemas) {
+      return {
+        addSchema (inputSchema) {
+          // 该函数保存用户添加的 schema。
+          // 调用 `fastify.addSchema()` 时被执行。
+        },
+        getSchema (schema$id) {
+          // 该函数返回通过 `schema$id` 检索得到的原始 schema。
+          // 调用 `fastify.getSchema()` 时被执行。
+          return aSchema
+        },
+        getSchemas () {
+          // 返回路由 schema 中通过 $ref 引用的所有 schema。
+          // 返回对象以 schema 的 `$id` 为键，以原始内容为值。
+          const allTheSchemaStored = {
+            'schema$id1': schema1,
+            'schema$id2': schema2
+          }
+          return allTheSchemaStored
+        }
+      }
+    }
+  }
+});
+```
+
 <a name="set-not-found-handler"></a>
 #### setNotFoundHandler
 
@@ -887,10 +928,14 @@ fastify.get('/', {
 - http2
 - https (返回 `false`/`true`。当特别指明时，返回 `{ allowHTTP1: true/false }`)
 - ignoreTrailingSlash
+- disableRequestLogging
 - maxParamLength
 - onProtoPoisoning
+- onConstructorPoisoning
 - pluginTimeout
 - requestIdHeader
+- requestIdLogLabel
+- http2SessionTimeout
 
 ```js
 const { readFileSync } = require('fs')

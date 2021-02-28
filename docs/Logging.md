@@ -107,7 +107,7 @@ app.addHook('preHandler', function (req, reply, done) {
 
 *Pino 之外的日志工具会忽略该选项。*
 
-你还可以提供自定义的日志实例。直接将实例传入，取代配置选项就能实现该功能。提供的示例必须实现 Pino 的接口，换句话说，便是拥有下列方法：
+你还可以提供自定义的日志实例。将实例传入，取代配置选项即可。提供的示例必须实现 Pino 的接口，换句话说，便是拥有下列方法：
 `info`、`error`、`debug`、`fatal`、`warn`、`trace`、`child`。
 
 示例:

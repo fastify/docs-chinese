@@ -16,7 +16,7 @@
   - [自定义日志级别](#custom-log-level)
   - [自定义日志序列化器](#custom-log-serializer)
 - [配置路由的处理函数](#routes-config)
-- [路由版本](#version)
+- [路由约束](#constraints)
 
 <a name="full-declaration"></a>
 ### 完整定义
@@ -179,6 +179,11 @@ fastify.get('/example/at/:hour(^\\d{2})h:minute(^\\d{2})m', (request, reply) => 
 
 多参数的路由会影响性能，所以应该尽量使用单参数，对于高频访问的路由来说更是如此。
 如果你对路由的底层感兴趣，可以查看[find-my-way](https://github.com/delvedor/find-my-way)。
+
+双冒号表示字面意义上的一个冒号，这样就不必通过参数来实现带冒号的路由了。举例如下：
+```js
+fastify.post('/name::verb') // 将被解释为 /name:verb
+```
 
 <a name="async-await"></a>
 ### Async Await
@@ -387,19 +392,22 @@ fastify.get('/it', { config: { output: 'ciao mondo!' } }, handler)
 fastify.listen(3000)
 ```
 
-<a name="version"></a>
-### 版本
+<a name="constraints"></a>
+### 约束
 
-#### 默认
-需要的话，你可以提供一个版本选项，它允许你为同一个路由声明不同的版本。版本号请遵循 [semver](https://semver.org/) 规范。<br/>
-Fastify 会自动检测 `Accept-Version` header，并将请求分配给相应的路由 (当前尚不支持 semver 规范中的 advanced ranges 与 pre-releases 语法)。<br/>
+Fastify 允许你基于请求的某些属性，例如 `Host` header 或 [`find-my-way`](https://github.com/delvedor/find-my-way) 指定的其他值，来限制路由仅匹配特定的请求。路由选项里的 `constraints` 属性便是用于这一特性。Fastify 有两个内建的约束属性：`version` 及 `host`。你可以自定义约束策略，来判断某路由是否处理一个请求。
+
+#### 版本约束
+
+你可以在路由的 `constraints` 选项中提供一个 `version` 键。路由版本化允许你为相同路径的路由设置多个处理函数，并根据请求的 `Accept-Version` header 来做匹配。 `Accept-Version` header 的值请遵循 [semver](https://semver.org/) 规范，路由也应当附带对应的 semver 版本声明以便成功匹配。<br/>
+对于版本化的路由，Fastify 需要请求附带上 `Accept-Version` header。此外，相同路径的请求会优先匹配带有版本的控制函数。当前尚不支持 semver 规范中的 advanced ranges 与 pre-releases 语法<br/>
 *请注意，这一特性会降低路由的性能。*
 
 ```js
 fastify.route({
   method: 'GET',
   url: '/',
-  version: '1.2.0',
+  { constraints: { version: '1.2.0'} },
   handler: function (request, reply) {
     reply.send({ hello: 'world' })
   }
@@ -420,7 +428,7 @@ fastify.inject({
 > 记得设置 [`Vary`](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Vary) 响应头
 > 为用于区分版本的值 (如 `'Accept-Version'`)，
 > 来避免缓存污染攻击 (cache poisoning attacks)。你也可以在代理或 CDN 层设置该值。
-> 
+>
 > ```js
 > const append = require('vary').append
 > fastify.addHook('onSend', async (req, reply) => {
@@ -437,5 +445,52 @@ fastify.inject({
 如果你声明了多个拥有相同主版本或次版本号的版本，Fastify 总是会根据 `Accept-Version` header 的值选择最兼容的版本。<br/>
 假如请求未带有 `Accept-Version` header，那么将返回一个 404 错误。
 
-#### 自定义
-新建实例时，可以通过设置 [`versioning`](Server.md#versioning) 来自定义版本号逻辑。
+新建 Fastify 实例时，可以通过设置 [`constraints`](Server.md#constraints) 选项，来自定义版本匹配的逻辑。
+
+#### Host 约束
+
+你可以在路由的 `constraints` 选项中提供一个 `host` 键，使得该路由根据请求的 `Host` header 来做匹配。 `host` 约束的值可以是精确匹配的字符串，也可以是任意匹配的正则表达式
+
+```js
+fastify.route({
+  method: 'GET',
+  url: '/',
+  { constraints: { host: 'auth.fastify.io' } },
+  handler: function (request, reply) {
+    reply.send('hello world from auth.fastify.io')
+  }
+})
+
+fastify.inject({
+  method: 'GET',
+  url: '/',
+  headers: {
+    'Host': 'example.com'
+  }
+}, (err, res) => {
+  // 返回 404，因为 host 不匹配
+})
+
+fastify.inject({
+  method: 'GET',
+  url: '/',
+  headers: {
+    'Host': 'auth.fastify.io'
+  }
+}, (err, res) => {
+  // => 'hello world from auth.fastify.io'
+})
+```
+
+正则形式的 `host` 约束也可用于匹配任意的子域 (或其他模式)：
+
+```js
+fastify.route({
+  method: 'GET',
+  url: '/',
+  { constraints: { host: /.*\.fastify\.io/ } }, // 匹配 fastify.io 的任意子域
+  handler: function (request, reply) {
+    reply.send('hello world from ' + request.headers.host)
+  }
+})
+```

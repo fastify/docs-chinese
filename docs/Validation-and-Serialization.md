@@ -192,6 +192,63 @@ fastify.post('/the/url', { schema }, handler)
 
 *请注意，为了通过校验，并在后续过程中使用正确类型的数据，Ajv 会尝试将数据[隐式转换](https://github.com/epoberezkin/ajv#coercing-data-types)为 schema 中 `type` 属性指明的类型。*
 
+Fastify 提供给 Ajv 的默认配置并不支持隐式转换 querystring 中的数组参数。但是，Fastify 允许你通过设置 Ajv 实例的 [`customOptions`](Server.md#ajv) 选项为 'array'，来将参数转换为数组。举例如下：
+
+```js
+const opts = {
+  schema: {
+    querystring: {
+      type: 'object',
+      properties: {
+        ids: {
+          type: 'array',
+          default: []
+        },
+      },
+    }
+  }
+}
+
+fastify.get('/', opts, (request, reply) => {
+  reply.send({ params: request.query })
+})
+
+fastify.listen(3000, (err) => {
+  if (err) throw err
+})
+```
+
+默认情况下，该处的请求将返回 `400`：
+
+```sh
+curl -X GET "http://localhost:3000/?ids=1
+
+{"statusCode":400,"error":"Bad Request","message":"querystring/hello should be array"}
+```
+
+设置 `coerceTypes` 的值为 'array' 将修复该问题：
+
+```js
+const ajv = new Ajv({
+  removeAdditional: true,
+  useDefaults: true,
+  coerceTypes: 'array', // 看这里
+  allErrors: true
+})
+
+fastify.setValidatorCompiler(({ schema, method, url, httpPart }) => {
+  return ajv.compile(schema)
+})
+```
+
+```sh
+curl -X GET "http://localhost:3000/?ids=1
+
+{"params":{"hello":["1"]}}
+```
+
+更多信息请看[这里](https://ajv.js.org/docs/coercion.html)。
+
 <a name="ajv-plugins"></a>
 #### Ajv 插件
 

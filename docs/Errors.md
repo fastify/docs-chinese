@@ -34,14 +34,14 @@ Fastify 遵循不全则无的原则，旨在精而优。因此，确保正确处
 
 ### Fastify 生命周期钩子的错误，及自定义错误控制函数
 
-在[钩子](Hooks/#manage-errors-from-a-hook)的文档中提到：
+在[钩子](Hooks.md#manage-errors-from-a-hook)的文档中提到：
 > 假如在钩子执行过程中发生错误，只需把它传递给 `done()`，Fastify 便会自动地关闭请求，并向用户发送合适的错误代码。
 
 如果通过 `setErrorHandler` 自定义了一个错误函数，那么错误会被引导到那里，否则被引导到 Fastify 默认的错误函数中去。
 
 自定义错误函数应该考虑以下几点：
 
-- 你可以调用 `reply.send(data)`，正如在[常规路由](Reply/#senddata)中那样
+- 你可以调用 `reply.send(data)`，正如在[常规路由](Reply.md#senddata)中那样
   - object 会被序列化，并触发 `preSerialization` 钩子 (假如有定义的话)
   - string、buffer 及 stream 会被直接发送至客户端 (不会序列化)，并附带上合适的 header。
 
@@ -62,40 +62,40 @@ Fastify 遵循不全则无的原则，旨在精而优。因此，确保正确处
 
 该 content type 的解析器已经被注册。
 
-<a name="FST_ERR_CTP_INVALID_TYPE"></a>
-#### FST_ERR_CTP_INVALID_TYPE
+<a name="FST_ERR_CTP_BODY_TOO_LARGE"></a>
+#### FST_ERR_CTP_BODY_TOO_LARGE
 
-`Content-Type` 应为一个字符串。
+请求 body 大小超过限制。
 
 <a name="FST_ERR_CTP_EMPTY_TYPE"></a>
 #### FST_ERR_CTP_EMPTY_TYPE
 
 content type 不能是一个空字符串。
 
+<a name="FST_ERR_CTP_INVALID_CONTENT_LENGTH"></a>
+#### FST_ERR_CTP_INVALID_CONTENT_LENGTH
+
+请求 body 大小与 Content-Length 不一致。
+
 <a name="FST_ERR_CTP_INVALID_HANDLER"></a>
 #### FST_ERR_CTP_INVALID_HANDLER
 
 该 content type 接收的处理函数无效。
-
-<a name="FST_ERR_CTP_INVALID_PARSE_TYPE"></a>
-#### FST_ERR_CTP_INVALID_PARSE_TYPE
-
-提供的待解析类型不支持。只支持 `string` 和 `buffer`。
-
-<a name="FST_ERR_CTP_BODY_TOO_LARGE"></a>
-#### FST_ERR_CTP_BODY_TOO_LARGE
-
-请求 body 大小超过限制。
 
 <a name="FST_ERR_CTP_INVALID_MEDIA_TYPE"></a>
 #### FST_ERR_CTP_INVALID_MEDIA_TYPE
 
 收到的 media type 不支持 (例如，不存在合适的 `Content-Type` 解析器)。
 
-<a name="FST_ERR_CTP_INVALID_CONTENT_LENGTH"></a>
-#### FST_ERR_CTP_INVALID_CONTENT_LENGTH
+<a name="FST_ERR_CTP_INVALID_PARSE_TYPE"></a>
+#### FST_ERR_CTP_INVALID_PARSE_TYPE
 
-请求 body 大小与 Content-Length 不一致。
+提供的待解析类型不支持。只支持 `string` 和 `buffer`。
+
+<a name="FST_ERR_CTP_INVALID_TYPE"></a>
+#### FST_ERR_CTP_INVALID_TYPE
+
+`Content-Type` 应为一个字符串。
 
 <a name="FST_ERR_DEC_ALREADY_PRESENT"></a>
 #### FST_ERR_DEC_ALREADY_PRESENT
@@ -107,60 +107,60 @@ content type 不能是一个空字符串。
 
 缺失依赖导致装饰器无法注册。
 
-<a name="FST_ERR_HOOK_INVALID_TYPE"></a>
-#### FST_ERR_HOOK_INVALID_TYPE
-
-钩子名称必须为字符串。
-
 <a name="FST_ERR_HOOK_INVALID_HANDLER"></a>
 #### FST_ERR_HOOK_INVALID_HANDLER
 
 钩子的回调必须为函数。
+
+<a name="FST_ERR_HOOK_INVALID_TYPE"></a>
+#### FST_ERR_HOOK_INVALID_TYPE
+
+钩子名称必须为字符串。
 
 <a name="FST_ERR_LOG_INVALID_DESTINATION"></a>
 #### FST_ERR_LOG_INVALID_DESTINATION
 
 日志工具目标地址无效。仅接受 `'stream'` 或 `'file'` 作为目标地址。
 
+<a name="FST_ERR_PROMISE_NOT_FULLFILLED"></a>
+#### FST_ERR_PROMISE_NOT_FULLFILLED
+
+状态码不为 204 时，Promise 的 payload 不能为 'undefined'。
+
 <a id="FST_ERR_REP_ALREADY_SENT"></a>
 #### FST_ERR_REP_ALREADY_SENT
 
 响应已发送。
-
-<a id="FST_ERR_SEND_INSIDE_ONERR"></a>
-#### FST_ERR_SEND_INSIDE_ONERR
-
-不能在 `onError` 钩子中调用 `send`。
 
 <a name="FST_ERR_REP_INVALID_PAYLOAD_TYPE"></a>
 #### FST_ERR_REP_INVALID_PAYLOAD_TYPE
 
 响应 payload 类型无效。只允许 `string` 或 `Buffer`。
 
-<a name="FST_ERR_SCH_MISSING_ID"></a>
-#### FST_ERR_SCH_MISSING_ID
-
-提供的 schema 没有 `$id` 属性。
-
 <a name="FST_ERR_SCH_ALREADY_PRESENT"></a>
 #### FST_ERR_SCH_ALREADY_PRESENT
 
 同 `$id` 的 schema 已经存在。
 
-<a name="FST_ERR_SCH_VALIDATION_BUILD"></a>
-#### FST_ERR_SCH_VALIDATION_BUILD
+<a name="FST_ERR_SCH_MISSING_ID"></a>
+#### FST_ERR_SCH_MISSING_ID
 
-用于校验路由的 JSON schema 不合法。
+提供的 schema 没有 `$id` 属性。
 
 <a name="FST_ERR_SCH_SERIALIZATION_BUILD"></a>
 #### FST_ERR_SCH_SERIALIZATION_BUILD
 
 用于序列化响应的 JSON schema 不合法。
 
-<a name="FST_ERR_PROMISE_NOT_FULLFILLED"></a>
-#### FST_ERR_PROMISE_NOT_FULLFILLED
+<a name="FST_ERR_SCH_VALIDATION_BUILD"></a>
+#### FST_ERR_SCH_VALIDATION_BUILD
 
-状态码不为 204 时，Promise 的 payload 不能为 'undefined'。
+用于校验路由的 JSON schema 不合法。
+
+<a id="FST_ERR_SEND_INSIDE_ONERR"></a>
+#### FST_ERR_SEND_INSIDE_ONERR
+
+不能在 `onError` 钩子中调用 `send`。
 
 <a name="FST_ERR_SEND_UNDEFINED_ERR"></a>
 #### FST_ERR_SEND_UNDEFINED_ERR

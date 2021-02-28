@@ -397,14 +397,14 @@ fastify.get('/botnet', async function (request, reply) {
 想要了解更多？请看 [Routes#async-await](Routes.md#async-await)。
 
 <a name="then"></a>
-### .then(fullfilled, rejected)
+### .then(fulfilled, rejected)
 
 顾名思义，`Reply` 对象能被等待。换句话说，`await reply` 将会等待，直到回复被发送。
 如上的 `await` 语法调用了 `reply.then()`。
 
-`reply.then(fullfilled, rejected)` 接受两个参数：
+`reply.then(fulfilled, rejected)` 接受两个参数：
 
-- `fullfilled` 会在响应完全发送后被调用。
+- `fulfilled` 会在响应完全发送后被调用。
 - `rejected` 会在底层的 stream 出现错误时被调用。例如，socket 连接被破坏时。
 
 更多细节，请看：
