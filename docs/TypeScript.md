@@ -390,6 +390,19 @@ Fastify 插件使用声明合并来修改已有的 Fastify 类型接口 (详见�
 - 确保 [ESLint](https://eslint.org/docs/rules/no-unused-vars) 开启了 `no-unused-vars`，并且所有导入的插件都得到了加载。
 - 通过诸如 [depcheck](https://www.npmjs.com/package/depcheck) 或 [npm-check](https://www.npmjs.com/package/npm-check) 的工具来验证所有插件都在项目中得到了使用。
 
+## 原生 JavaScript 的代码补全
+
+原生 JavaScript 能根据发布好的类型，依照 [TypeScript 的 JSDoc 参考](https://www.typescriptlang.org/docs/handbook/jsdoc-supported-types.html) 来完成代码补全 (例如 [Intellisense](https://code.visualstudio.com/docs/editor/intellisense))。
+
+举个例子：
+
+```js
+/**  @type {import('fastify').FastifyPluginAsync<{ optionA: boolean, optionB: string }>} */
+module.exports = async function (fastify, { optionA, optionB }) {
+  fastify.get('/look', () => 'at me');
+}
+```
+
 ## API 类型系统文档
 
 本节详述了所有在 Fastify 3.x 版本中可用的类型。

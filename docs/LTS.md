@@ -37,4 +37,4 @@ Fastify 长期支持计划 (LTS) 以本文档为准：
 | Windows | Windows Server 2016 R2 | npm                       | 10,12,14  |
 | MacOS   | macOS X Mojave 10.14   | npm                       | 10,12,14  |
 
-使用 yarn 命令需添加 `--ignore-engines`。
+使用 [yarn](https://yarnpkg.com/) 命令需添加 `--ignore-engines`。

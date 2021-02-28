@@ -43,7 +43,7 @@ fastify.register(require('fastify-foo'), {
 })
 ```
 
-`options` 参数还可以是一个在插件注册时确定的 `函数`，这个函数的第一位参数是 fastify 实例：
+`options` 参数还可以是一个在插件注册时确定的 `函数`，这个函数的第一位参数是 Fastify 实例：
 
 ```js
 const fp = require('fastify-plugin')
@@ -58,9 +58,9 @@ fastify.register(fp((fastify, opts, done) => {
 fastify.register(require('fastify-foo'), parent => parent.foo_bar)
 ```
 
-传给函数的 fastify 实例是插件声明时**外部 fastify 实例**的最新状态，允许你访问**注册顺序**在前的插件通过 [`decorate`](Decorators.md) 注入的变量。这在需要依赖前置插件对于 Fastify 实例的改动时派得上用场，比如，使用已存在的数据库连接来包装你的插件。
+传给函数的 Fastify 实例是插件声明时**外部 Fastify 实例**的最新状态，允许你访问**注册顺序**在前的插件通过 [`decorate`](Decorators.md) 注入的变量。这在需要依赖前置插件对于 Fastify 实例的改动时派得上用场，比如，使用已存在的数据库连接来包装你的插件。
 
-请记住，传给函数的 fastify 实例和传给插件的实例是一样的，不是外部 fastify 实例的引用，而是拷贝。任何对函数的实例参数的操作结果，都会和在插件函数中操作的结果一致。也就是说，如果调用了 `decorate`，被注入的变量在插件函数中也是可用的，除非你使用 [`fastify-plugin`](https://github.com/fastify/fastify-plugin) 包装了这个插件。
+请记住，传给函数的 Fastify 实例和传给插件的实例是一样的，不是外部 Fastify 实例的引用，而是拷贝。任何对函数的实例参数的操作结果，都会和在插件函数中操作的结果一致。也就是说，如果调用了 `decorate`，被注入的变量在插件函数中也是可用的，除非你使用 [`fastify-plugin`](https://github.com/fastify/fastify-plugin) 包装了这个插件。
 
 <a name="route-prefixing-option"></a>
 #### 路由前缀选项
