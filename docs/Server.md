@@ -764,7 +764,8 @@ const fastify = Fastify({
     /**
      * 以下的 factory 函数会在每次调用 `fastify.register()` 时被执行。
      * 若父级上下文添加了 schema，它会作为参数传入 factory 函数。
-     * @param {object} parentSchemas 会被 `bucket` 对象的 `getSchemas()` 方法返回。
+     * @param {object} parentSchemas 会由 `bucket` 对象的 `getSchemas()` 方法返回。
+
      */
     bucket: function factory (parentSchemas) {
       return {
