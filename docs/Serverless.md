@@ -2,20 +2,20 @@
 
 使用现有的 Fastify 应用运行无服务器 (serverless) 应用与 REST API。
 
+Fastify 无法直接运行在无服务器平台上，需要做一点修改。本文为如何在知名的无服务器平台上运行 Fastify 应用提供指导。
+
+#### 我应该在无服务器平台上使用 Fastify 吗？
+
+取决于你自己！FaaS 通常使用精简专注的函数，但你依然可以运行完整的 web 应用。但请牢记，应用越繁重，初始化越漫长。在无服务器环境中运行 Fastify，最好的方式便是使用例如 Google Cloud Run、AWS Fargate 以及 Azure Container Instances 之类的平台，它们能同时处理多个请求，因此能充分利用 Fastify 的特性。
+
+开发便利是通过 Fastify 构建无服务器应用的优势之一。在本地环境，Fastify 应用无需任何额外工具即可运作，而相同的代码加上一些额外内容便能在无服务器平台上运行。
+
 ### 目录
 
 - [AWS Lambda](#aws-lambda)
 - [Google Cloud Run](#google-cloud-run)
 - [Netlify Lambda](#netlify-lambda)
 - [Vercel](#vercel)
-
-### 读者须知：
-> Fastify 并不是为无服务器环境准备的。
-Fastify 框架的设计初衷是轻松地实现一个传统的 HTTP/S 服务器。
-无服务器环境则与此不同。
-因此，我们不保证在无服务器环境下，Fastify 也能如预期般运转。
-尽管如此，参照本文中的示例，你仍然可以在无服务器环境中运行 Fastify。
-再次提醒，无服务器环境不是 Fastify 的目标所在，我们不会在这样的集成情景下进行测试。
 
 ## AWS Lambda
 
@@ -275,9 +275,9 @@ module.exports = {
 ```json
 {
   "rewrites": [
-    { 
-      "source": "/(.*)", 
-      "destination": "/api/serverless.js" 
+    {
+      "source": "/(.*)",
+      "destination": "/api/serverless.js"
     }
   ]
 }

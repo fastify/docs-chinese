@@ -97,6 +97,7 @@ Fastify 是用普通的 JavaScript 编写的，因此，类型定义的维护并
      return `logged in!`
    })
    ```
+
 4. 执行 `npm run build` 和 `npm run start` 来构建并运行项目。
 5. 访问 api：
    ```bash
@@ -125,14 +126,78 @@ Fastify 是用普通的 JavaScript 编写的，因此，类型定义的维护并
 
 ### JSON Schema
 
+你可以通过 JSON Schema 来验证请求与响应。给 Fastify 路由定义 schema 还能提高吞吐量！更多信息请见[验证和序列化](Validation-and-Serialization.md)。
+
+此外，在路由处理函数 (包括 pre-validation 等钩子) 中使用定义好的类型也是有好处的。
+
+以下列出了几种实现方案。
+
+#### typebox
+
+[typebox](https://www.npmjs.com/package/@sinclair/typebox) 能帮助你同时构建类型与 schema。通过 typebox 在代码里定义好 schema 之后，你便能将其当作类型或 schema 来使用。
+
+在 Fastify 路由中验证 payload，你可以这么做：
+
+1. 安装 `typebox`。
+
+    ```bash
+    npm i @sinclair/typebox
+    ```
+
+2. 使用 `Type` 定义 schema，并通过 `Static` 创建相应的类型。
+
+    ```typescript
+    import { Static, Type } from '@sinclair/typebox'
+
+    const User = Type.Object({
+      name: Type.String(),
+      mail: Type.Optional(Type.String({ format: "email" })),
+    });
+    type UserType = Static<typeof User>;
+    ```
+
+3. 在路由中使用定义好的类型与 schema。
+
+    ```typescript
+    const app = fastify();
+
+    app.post<{ Body: UserType; Response: UserType }>(
+      "/",
+      {
+        schema: {
+          body: User,
+          response: {
+            200: User,
+          },
+        },
+      },
+      (req, rep) => {
+        const { body: user } = req;
+        /* user 的类型如下：
+        * const user: StaticProperties<{
+        *  name: TString;
+        *  mail: TOptional<TString>;
+        * }>
+        */
+        //...
+        rep.status(200).send(user);
+      }
+    );
+    ```
+
+#### Schemas in JSON Files
+
 在上一个例子里，我们使用接口定义了请求 querystring 和 header 的类型。许多用户使用 JSON Schema 来处理这些工作，幸运的是，有一套方法能将现有的 JSON Schema 转换为 TypeScript 接口！
 
 1. 完成 '起步' 中例子的 1-4 步。
 2. 安装 `json-schema-to-typescript` 模块：
-   ```
+
+   ```bash
    npm i -D json-schema-to-typescript
    ```
+
 3. 新建一个名为 `schemas` 的文件夹。在其中添加 `headers.json` 与 `querystring.json` 两个文件，将下面的 schema 定义粘贴到对应文件中。
+
    ```json
    {
      "title": "Headers Schema",
@@ -144,6 +209,7 @@ Fastify 是用普通的 JavaScript 编写的，因此，类型定义的维护并
      "required": ["h-Custom"]
    }
    ```
+
    ```json
    {
      "title": "Querystring Schema",
@@ -156,7 +222,9 @@ Fastify 是用普通的 JavaScript 编写的，因此，类型定义的维护并
      "required": ["username", "password"]
    }
    ```
+
 4. 在 package.json 里加上一行 `compile-schemas` 脚本：
+
    ```json
    {
      "scripts": {
@@ -164,9 +232,11 @@ Fastify 是用普通的 JavaScript 编写的，因此，类型定义的维护并
      }
    }
    ```
+
    `json2ts` 是囊括在 `json-schema-to-typescript` 中的命令行工具。`schemas` 是输入路径，`types` 则是输出路径。
 5. 执行 `npm run compile-schemas`，在 `types` 文件夹下生成两个新文件。
 6. 更新 `index.ts`：
+
    ```typescript
    import fastify from 'fastify'
 
@@ -228,10 +298,66 @@ Fastify 是用普通的 JavaScript 编写的，因此，类型定义的维护并
    ```
    要特别关注文件顶部的导入。虽然看上去有些多余，但你必须同时导入 schema 与生成的接口。
 
-真棒！现在你就能同时运用 JSON Schema 与 TypeScript 的定义了。给 Fastify 路由定义 schema 还能提高吞吐量！更多信息请见[验证和序列化](Validation-and-Serialization.md)。
+真棒！现在你就能同时运用 JSON Schema 与 TypeScript 的定义了。
 
-一些其他说明：
-- 行内 JSON schema 目前还未支持类型定义。假如你有好的想法，欢迎 PR！
+#### json-schema-to-ts
+
+不想基于 schema 生成类型，而是直接使用它们的话，你可以考虑 [json-schema-to-ts](https://www.npmjs.com/package/json-schema-to-ts) 模块。
+
+安装该模块为 dev-dependency：
+
+```bash
+npm install -D json-schema-to-ts
+```
+
+你可以像定义正常的对象一样定义 schema。但得注意要用 *const* 来定义，原因见该模块的文档。
+
+```typescript
+const todo = {
+  type: 'object',
+  properties: {
+    name: { type: 'string' },
+    description: { type: 'string' },
+    done: { type: 'boolean' },
+  },
+  required: ['name'],
+} as const;
+```
+
+通过类型 `FromSchema` 你可以基于 schema 构建一个类型，并在函数中使用它。
+
+```typescript
+fastify.post<{ Body: FromSchema<typeof todo> }>(
+  '/todo',
+  {
+    schema: {
+      body: todo,
+      response: {
+        201: {
+          type: 'string',
+        },
+      },
+    }
+  },
+  async (request, reply): Promise<void> => {
+
+    /*
+    request.body 的类型如下：
+    {
+      [x: string]: unknown;
+      description?: string;
+      done?: boolean;
+      name: string;
+    }
+    */
+
+    request.body.name // 不会抛出类型错误
+    request.body.notthere // 会抛出类型错误
+    
+    reply.status(201).send();
+  },
+);
+```
 
 ### 插件
 
@@ -714,7 +840,7 @@ import fastify, { RequestGenericInterface } from 'fastify'
 
 const server = fastify()
 
-const requestGeneric: RequestGenericInterface = {
+interface requestGeneric extends RequestGenericInterface {
   Querystring: {
     name: string
   }
