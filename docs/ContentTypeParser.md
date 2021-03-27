@@ -29,8 +29,27 @@ fastify.addContentTypeParser('application/jsoff', async function (request, paylo
   return res
 })
 
+// 处理所有匹配的 content type 
+fastify.addContentTypeParser(/^image\/.*/, function (request, payload, done) {
+  imageParser(payload, function (err, body) {
+    done(err, body)
+  })
+})
+
 // 可以为不同的 content type 使用默认的 JSON/Text 解析器
 fastify.addContentTypeParser('text/json', { parseAs: 'string' }, fastify.getDefaultJsonParser('ignore', 'ignore'))
+```
+
+在使用正则匹配 content-type 解析器之前，Fastify 首先会查找解析出 `string` 类型值的解析器。假如提供了重复的类型，那么 Fastify 会按照提供的顺序反向查找。因此，你可以先指定一般的 content type，之后再指定更为特殊的类型，正如下面的例子一样。
+
+```js
+// 只会调用第二个解析器，因为它也匹配了第一个解析器的类型
+fastify.addContentTypeParser('application/vnd.custom+xml', (request, body, done) => {} )
+fastify.addContentTypeParser('application/vnd.custom', (request, body, done) => {} )
+
+// 这才是我们期望的行为。因为 Fastify 会首先尝试匹配 `application/vnd.custom+xml` content type 解析器
+fastify.addContentTypeParser('application/vnd.custom', (request, body, done) => {} )
+fastify.addContentTypeParser('application/vnd.custom+xml', (request, body, done) => {} )
 ```
 
 你也可以用 `hasContentTypeParser` API 来验证某个 content type 解析器是否存在。

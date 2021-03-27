@@ -85,17 +85,20 @@ fastify.addHook('preParsing', async (request, reply, payload) => {
 **注意**：早先的写法 `function(request, reply, done)` 与 `function(request, reply)` 仍被支持，但不推荐使用。
 
 ### preValidation
+
+使用 `preValidation` 钩子时，你可以在校验前修改 payload。示例如下：
+
 ```js
 fastify.addHook('preValidation', (request, reply, done) => {
-  // 其他代码
+  req.body = { ...req.body, importantKey: 'randomString' }
   done()
 })
 ```
 或使用 `async/await`：
 ```js
 fastify.addHook('preValidation', async (request, reply) => {
-  // 其他代码
-  await asyncMethod()
+  const importantKey = await generateRandomString()
+  req.body = { ...req.body, importantKey }
 })
 ```
 

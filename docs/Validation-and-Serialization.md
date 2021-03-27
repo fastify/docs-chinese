@@ -97,7 +97,7 @@ const mySchema = fastify.getSchema('schemaId')
 ```js
 fastify.addSchema({ $id: 'one', my: 'hello' })
 // 只返回 schema `one`
-fastify.get('/', (request, reply) => { reply.send(fastify.getSchemas()) }) 
+fastify.get('/', (request, reply) => { reply.send(fastify.getSchemas()) })
 
 fastify.register((instance, opts, done) => {
   instance.addSchema({ $id: 'two', my: 'ciao' })
@@ -582,7 +582,7 @@ fastify.setErrorHandler(function (error, request, reply) {
 })
 ```
 
-假如你想轻松愉快地自定义错误响应，请查看 [`ajv-errors`](https://github.com/epoberezkin/ajv-errors)。具体的例子可以移步[这里](https://github.com/fastify/example/blob/master/validation-messages/custom-errors-messages.js)。
+假如你想轻松愉快地自定义错误响应，请查看 [`ajv-errors`](https://github.com/epoberezkin/ajv-errors)。具体的例子可以移步[这里](https://github.com/fastify/example/blob/HEAD/validation-messages/custom-errors-messages.js)。
 
 
 下面的例子展示了如何通过自定义 AJV，为 schema 的**每个属性添加自定义错误信息**。

@@ -3,7 +3,7 @@
 <a name="factory"></a>
 ## 工厂函数
 
-Fastify 模块导出了一个工厂函数，可以用于创建新的<a href="./Server.md"><code><b> Fastify server</b></code></a> 实例。这个工厂函数的参数是一个配置对象，用于自定义最终生成的实例。本文描述了这一对象中可用的属性。
+Fastify 模块导出了一个工厂函数，可以用于创建新的 <code><b>Fastify server</b></code> 实例。这个工厂函数的参数是一个配置对象，用于自定义最终生成的实例。本文描述了这一对象中可用的属性。
 
 <a name="factory-http2"></a>
 ### `http2`
@@ -249,7 +249,7 @@ const fastify = Fastify({ trustProxy: true })
     }
     ```
 
-更多示例详见 [proxy-addr](https://www.npmjs.com/package/proxy-addr)。
+更多示例详见 [`@fastify/proxy-addr`](https://www.npmjs.com/package/@fastify/proxy-addr)。
 
 你还可以通过 [`request`](Request.md) 对象获取 `ip`、`ips`、`hostname` 与 `protocol` 的值。
 
@@ -873,10 +873,32 @@ fastify.ready(() => {
 })
 ```
 
+<a name="print-plugins"></a>
+#### printPlugins
+
+`fastify.printPlugins()`：打印 avvio 内部的插件树，可用于调试插件注册顺序相关的问题。<br/>
+*请在 `ready` 事件的回调中或事件触发之后调用该方法。*
+
+```js
+fastify.register(async function foo (instance) {
+  instance.register(async function bar () {})
+})
+fastify.register(async function baz () {})
+
+fastify.ready(() => {
+  console.error(fastify.printPlugins())
+  // 输出：
+  // └── root
+  //   ├── foo
+  //   │   └── bar
+  //   └── baz
+})
+```
+
 <a name="addContentTypeParser"></a>
 #### addContentTypeParser
 
-`fastify.addContentTypeParser(content-type, options, parser)` 用于给指定 content type 自定义解析器，当你使用自定义的 content types 时会很有帮助。例如 `text/json, application/vnd.oasis.opendocument.text`。`content-type` 是一个字符串或字符串数组。
+`fastify.addContentTypeParser(content-type, options, parser)` 用于给指定 content type 自定义解析器，当你使用自定义的 content types 时会很有帮助。例如 `text/json, application/vnd.oasis.opendocument.text`。`content-type` 是一个字符串、字符串数组或正则表达式。
 
 ```js
 // 传递给 getDefaultJsonParser 的两个参数用于配置原型污染以及构造函数污染，允许的值为 'ignore'、'remove' 和 'error'。设置为 ignore 会跳过校验，和直接调用 JSON.parse() 效果相同。详见 <a href="https://github.com/fastify/secure-json-parse#api">`secure-json-parse` 的文档</a>。
