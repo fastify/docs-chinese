@@ -53,7 +53,7 @@ server.listen(3000, (err, address) => {
 
 ### 使用 fastify.inject() 的好处
 
-感谢有 [`light-my-request`](https://github.com/fastify/light-my-request)，Fastify 自带了伪造的 http 注入。
+感谢有 [`light-my-request`](https://github.com/fastify/light-my-request)，Fastify 自带了伪造的 HTTP 注入。
 
 在进行任何测试之前，我们通过 `.inject` 方法向路由发送假的请求：
 
@@ -89,7 +89,7 @@ status code:  200
 body:  {"hello":"world"}
 ```
 
-### http 注入测试
+### HTTP 注入测试
 
 现在我们能用真实的测试语句代替 `console.log` 了！
 
@@ -112,7 +112,7 @@ test('requests the "/" route', async t => {
     method: 'GET',
     url: '/'
   })
-  t.strictEqual(response.statusCode, 200, 'returns a status code of 200')
+  t.equal(response.statusCode, 200, 'returns a status code of 200')
 })
 ```
 
@@ -201,21 +201,21 @@ const buildFastify = require('./app')
 
 tap.test('GET `/` route', t => {
   t.plan(4)
-  
+
   const fastify = buildFastify()
-  
+
   // 在测试的最后，我们强烈建议你调用 `.close()`
   // 方法来确保所有与外部服务的连接被关闭。
-  t.tearDown(() => fastify.close())
+  t.teardown(() => fastify.close())
 
   fastify.inject({
     method: 'GET',
     url: '/'
   }, (err, response) => {
     t.error(err)
-    t.strictEqual(response.statusCode, 200)
-    t.strictEqual(response.headers['content-type'], 'application/json; charset=utf-8')
-    t.deepEqual(response.json(), { hello: 'world' })
+    t.equal(response.statusCode, 200)
+    t.equal(response.headers['content-type'], 'application/json; charset=utf-8')
+    t.same(response.json(), { hello: 'world' })
   })
 })
 ```
@@ -235,11 +235,11 @@ const buildFastify = require('./app')
 
 tap.test('GET `/` route', t => {
   t.plan(5)
-  
+
   const fastify = buildFastify()
-  
-  t.tearDown(() => fastify.close())
-  
+
+  t.teardown(() => fastify.close())
+
   fastify.listen(0, (err) => {
     t.error(err)
     
@@ -248,9 +248,9 @@ tap.test('GET `/` route', t => {
       url: 'http://localhost:' + fastify.server.address().port
     }, (err, response, body) => {
       t.error(err)
-      t.strictEqual(response.statusCode, 200)
-      t.strictEqual(response.headers['content-type'], 'application/json; charset=utf-8')
-      t.deepEqual(JSON.parse(body), { hello: 'world' })
+      t.equal(response.statusCode, 200)
+      t.equal(response.headers['content-type'], 'application/json; charset=utf-8')
+      t.same(JSON.parse(body), { hello: 'world' })
     })
   })
 })
@@ -265,15 +265,15 @@ const buildFastify = require('./app')
 tap.test('GET `/` route', async (t) => {
   const fastify = buildFastify()
 
-  t.tearDown(() => fastify.close())
-  
+  t.teardown(() => fastify.close())
+
   await fastify.ready()
-  
+
   const response = await supertest(fastify.server)
     .get('/')
     .expect(200)
     .expect('Content-Type', 'application/json; charset=utf-8')
-  t.deepEqual(response.body, { hello: 'world' })
+  t.same(response.body, { hello: 'world' })
 })
 ```
 
@@ -291,4 +291,4 @@ test('should ...', {only: true}, t => ...)
 - `--node-arg=--inspect-brk` 会启动 node 调试工具
 3. 在 VS Code 中创建并运行一个 `Node.js: Attach` 调试配置，不需要额外修改。
 
-现在你便可以在编辑器中检测你的测试文件 (以及 `fastify` 的其他部分) 了。
+现在你便可以在编辑器中检测你的测试文件 (以及 `Fastify` 的其他部分) 了。

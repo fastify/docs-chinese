@@ -161,7 +161,7 @@ fastify.addHook('onResponse', (req, reply, done) => {
 
 <a name="custom-http-server"></a>
 ### `serverFactory`
-通过 `serverFactory` 选项，你可以向 Fastify 传递一个自定义的 http server。<br/>
+通过 `serverFactory` 选项，你可以向 Fastify 传递一个自定义的 HTTP server。<br/>
 `serverFactory` 函数的参数为 `handler` 函数及一个选项对象。`handler` 函数的参数为 `request` 和 `response` 对象，选项对象则与你传递给 Fastify 的一致。
 
 ```js
@@ -181,7 +181,7 @@ fastify.get('/', (req, reply) => {
 
 fastify.listen(3000)
 ```
-Fastify 内在地使用 Node 原生 http server 的 API。因此，如果你使用一个自定义的 server，你必须保证暴露了相同的 API。不这么做的话，你可以在 `serverFactory` 函数内部 `return` 语句之前，向 server 实例添加新的属性。<br/>
+Fastify 内在地使用 Node 原生 HTTP server 的 API。因此，如果你使用一个自定义的 server，你必须保证暴露了相同的 API。不这么做的话，你可以在 `serverFactory` 函数内部 `return` 语句之前，向 server 实例添加新的属性。<br/>
 
 <a name="factory-case-sensitive"></a>
 ### `caseSensitive`
@@ -202,23 +202,23 @@ fastify.get('/user/:username', (request, reply) => {
 <a name="factory-request-id-header"></a>
 ### `requestIdHeader`
 
-用来获知请求 id 的 header 名。请看[请求 id](Logging.md#logging-request-id) 一节。
+用来获知请求 ID 的 header 名。请看[请求 ID](Logging.md#logging-request-id) 一节。
 
 + 默认值：`'request-id'`
 
 <a name="factory-request-id-log-label"></a>
 ### `requestIdLogLabel`
 
-定义日志中请求 id 的标签。
+定义日志中请求 ID 的标签。
 
 + 默认值：`'reqId'`
 
 <a name="factory-gen-request-id"></a>
 ### `genReqId`
-用于生成请求 id 的函数。参数为来访的请求对象。
+用于生成请求 ID 的函数。参数为来访的请求对象。
 
 + 默认值：`'request-id' header 的值 (当存在时) 或单调递增的整数`
-在分布式系统中，你可能会特别想覆盖如下默认的 id 生成行为。要生成 `UUID`，请看[hyperid](https://github.com/mcollina/hyperid)。
+在分布式系统中，你可能会特别想覆盖如下默认的 ID 生成行为。要生成 `UUID`，请看[hyperid](https://github.com/mcollina/hyperid)。
  ```js
 let i = 0
 const fastify = require('fastify')({
@@ -330,7 +330,7 @@ const fastify = require('fastify')({
 <a name="factory-ajv"></a>
 ### `ajv`
 
-配置 Fastify 使用的 ajv 实例。这使得你无需提供一个自定义的实例。
+配置 Fastify 使用的 Ajv 实例。这使得你无需提供一个自定义的实例。
 
 + 默认值：
 
@@ -366,9 +366,9 @@ const fastify = require('fastify')({
 <a name="http2-session-timeout"></a>
 ### `http2SessionTimeout`
 
-为每个 http2 会话设置默认[超时时间](https://nodejs.org/api/http2.html#http2_http2session_settimeout_msecs_callback)。超时后，会话将关闭。默认值：`5000` 毫秒。
+为每个 HTTP/2 会话设置默认[超时时间](https://nodejs.org/api/http2.html#http2_http2session_settimeout_msecs_callback)。超时后，会话将关闭。默认值：`5000` 毫秒。
 
-要注意的是，使用 http2 时需要提供一个优雅的“close”体验。Node 的默认值为 `0`，即无超时。
+要注意的是，使用 HTTP/2 时需要提供一个优雅的“close”体验。Node 的默认值为 `0`，即无超时。
 
 <a name="framework-errors"></a>
 ### `frameworkErrors`
@@ -441,9 +441,9 @@ const fastify = require('fastify')({
 <a name="rewrite-url"></a>
 ### `rewriteUrl`
 
-设置一个异步函数，返回一个字符串，用于重写 url。
+设置一个异步函数，返回一个字符串，用于重写 URL。
 
-> 重写 url 会修改 `req` 对象的 `url` 属性
+> 重写 URL 会修改 `req` 对象的 `url` 属性
 
 ```js
 function rewriteUrl (req) { // req 是 Node.js 的 HTTP 请求对象
@@ -700,7 +700,7 @@ Fastify 实例的版本。可在插件中使用。详见[插件](Plugins.md#hand
 
 <a name="inject"></a>
 #### inject
-伪造 http 注入 (作为测试之用) 。请看[更多内容](Testing.md#inject)。
+伪造 HTTP 注入 (作为测试之用) 。请看[更多内容](Testing.md#inject)。
 
 <a name="add-schema"></a>
 #### addSchema
@@ -856,7 +856,7 @@ if (statusCode >= 500) {
 <a name="print-routes"></a>
 #### printRoutes
 
-`fastify.printRoutes()`：打印路由的基数树 (radix tree)，可作调试之用。<br/>
+`fastify.printRoutes()`：打印路由的基数树 (radix tree)，可作调试之用。可以用 `fastify.printRoutes({ commonPrefix: false })` 来打印扁平化后的路由<br/>
 *记得在 `ready` 函数的内部或之后调用它。*
 
 ```js
@@ -867,9 +867,18 @@ fastify.get('/hello/world', () => {})
 fastify.ready(() => {
   console.log(fastify.printRoutes())
   // └── /
-  //   ├── test (GET)
-  //   │   └── /hello (GET)
-  //   └── hello/world (GET)
+  //     ├── test (GET)
+  //     │   └── /hello (GET)
+  //     └── hel
+  //         ├── lo/world (GET)
+  //         └── licopter (GET)
+
+  console.log(fastify.printRoutes({ commonPrefix: false }))
+  // └── / (-)
+  //     ├── test (GET)
+  //     │   └── /hello (GET)
+  //     ├── hello/world (GET)
+  //     └── helicopter (GET)
 })
 ```
 

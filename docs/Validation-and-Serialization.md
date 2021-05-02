@@ -77,7 +77,7 @@ fastify.post('/', {
 #### 获取共用 schema
 
 当自定义验证器或序列化器的时候，Fastify 不再能控制它们，此时 `.addSchema` 方法失去了作用。
-因此，要获取添加到 Fastify 实例上的 schema，你可以使用 `.getSchemas()`：
+要获取添加到 Fastify 实例上的 schema，你可以使用 `.getSchemas()`：
 
 ```js
 fastify.addSchema({
@@ -118,7 +118,7 @@ fastify.register((instance, opts, done) => {
 路由的验证是依赖 [Ajv](https://www.npmjs.com/package/ajv) 实现的。这是一个高性能的 JSON schema 校验工具。验证输入十分简单，只需将字段加入路由的 schema 中即可！
 
 支持的验证类型如下：
-- `body`：当请求方法为 POST 或 PUT 时，验证 body。
+- `body`：当请求方法为 POST、PUT 或 PATCH 时，验证 body。
 - `querystring` 或 `query`：验证 querystring。
 - `params`：验证路由参数。
 - `headers`：验证 header。
@@ -315,7 +315,7 @@ fastify.post('/foo', {
 <a name="schema-validator"></a>
 #### 验证生成器
 
-`validatorCompiler` 返回一个用于验证 body、url、路由参数、header 以及 querystring 的函数。默认返回一个实现了 [ajv](https://ajv.js.org/) 验证接口的函数。Fastify 内在地使用该函数以加速验证。
+`validatorCompiler` 返回一个用于验证 body、URL、路由参数、header 以及 querystring 的函数。默认返回一个实现了 [ajv](https://ajv.js.org/) 验证接口的函数。Fastify 内在地使用该函数以加速验证。
 
 Fastify 使用的 [ajv 基本配置](https://github.com/epoberezkin/ajv#options-to-modify-validated-data)如下：
 
@@ -349,7 +349,8 @@ fastify.setValidatorCompiler(({ schema, method, url, httpPart }) => {
 })
 ```
 
-也许你想使用其他验证工具，例如 `Joi`。下面的例子展示了如何通过 `Joi` 来验证 url、参数、body 与 querystring！
+_**注意：** 如果你使用自定义校验工具的实例（即使是 Ajv），你应当向该实例而非 Fastify 添加 schema，因为在这种情况下，Fastify 默认的校验工具不再使用，而 `addSchema` 方法也不清楚你在使用什么工具进行校验。_
+
 <a name="using-other-validation-libraries"></a>
 ##### 使用其他验证工具
 
