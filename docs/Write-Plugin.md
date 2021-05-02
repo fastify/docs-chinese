@@ -52,7 +52,7 @@ Fastify 运用了不同的技术来优化代码，其大部分都被写入了文
 - [`point-of-view`](https://github.com/fastify/point-of-view)
 Fastify 的模板渲染 (*ejs, pug, handlebars, marko*) 插件。
 - [`fastify-mongodb`](https://github.com/fastify/fastify-mongodb)
-Fastify 的 MongoDB 连接插件，通过它你可以在你服务器的每个部分共享同一个 MongoDb 连接池。
+Fastify 的 MongoDB 连接插件，通过它你可以在你服务器的每个部分共享同一个 MongoDB 连接池。
 - [`fastify-multipart`](https://github.com/fastify/fastify-multipart)
 为 Fastify 提供 mltipart 支持。
 - [`fastify-helmet`](https://github.com/fastify/fastify-helmet)

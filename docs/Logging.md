@@ -20,6 +20,11 @@ fastify.get('/', options, function (request, reply) {
 })
 ```
 
+在路由函数之外，你可以通过 Fastify 实例上挂载的 Pino 实例来记录日志：
+```js
+fastify.log.info('Something important happened!');
+```
+
 如果你想为日志配置选项，直接将选项传递给 Fastify 实例就可以了。
 你可以在 [Pino 的文档](https://github.com/pinojs/pino/blob/master/docs/api.md#pinooptions-stream)中找到全部选项。如果你想指定文件地址，可以：
 
@@ -51,7 +56,7 @@ const fastify = require('fastify')({
 ```
 
 <a name="logging-request-id"></a>
-默认情况下，Fastify 给每个请求分配了一个 id 以便跟踪。如果头部存在 "request-id" 即使用该值，否则会生成一个新的增量 id。你可以通过 Fastify 工厂函数的 [`requestIdHeader`](Server.md#factory-request-id-header) 与 [`genReqId`](Server.md#gen-request-id) 来进行自定义。
+默认情况下，Fastify 给每个请求分配了一个 ID 以便跟踪。如果头部存在 "request-id" 即使用该值，否则会生成一个新的增量 ID。你可以通过 Fastify 工厂函数的 [`requestIdHeader`](Server.md#factory-request-id-header) 与 [`genReqId`](Server.md#genreqid) 来进行自定义。
 
 默认的日志工具使用标准的序列化工具，生成包括 `req`、`res` 与 `err` 属性在内的序列化对象。`req` 对象是 Fastify [`Request`](./Request.md) 对象，而 `res` 则是 Fastify [`Reply`](./Reply.md) 对象。可以借由指定自定义的序列化工具来改变这一行为。
 ```js

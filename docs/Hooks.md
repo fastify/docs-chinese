@@ -221,7 +221,7 @@ fastify.addHook('onTimeout', async (request, reply) => {
   await asyncMethod()
 })
 ```
-`onTimeout` 用于监测请求超时，需要在 fastify 实例上设置 `connectionTimeout` 属性。当请求超时，socket 挂起 (hang up) 时，该钩子执行。因此，在这个钩子里不能再向客户端发送数据了。
+`onTimeout` 用于监测请求超时，需要在 Fastify 实例上设置 `connectionTimeout` 属性。当请求超时，socket 挂起 (hang up) 时，该钩子执行。因此，在这个钩子里不能再向客户端发送数据了。
 
 ### 在钩子中管理错误
 在钩子的执行过程中如果发生了错误，只需将错误传递给 `done()`，Fastify 就会自动关闭请求，并发送一个相应的错误码给用户。

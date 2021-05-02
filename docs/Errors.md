@@ -20,7 +20,7 @@
 Fastify 遵循不全则无的原则，旨在精而优。因此，确保正确处理错误是开发者需要考虑的问题。
 
 #### 输入数据的错误
-由于大部分的错误源于预期外的输入，我们建议为输入的数据指明 [JSON.schema 验证](Validation-and-Serialization.md)。
+由于大部分的错误源于预期外的输入，因此我们推荐[通过 JSON.schema 来验证输入数据](Validation-and-Serialization.md)。
 
 #### 在 Fastify 中捕捉未捕获的错误
 在不影响性能的前提下，Fastify 尽可能多地捕捉未捕获的错误。这些错误包括：

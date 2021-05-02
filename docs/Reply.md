@@ -42,7 +42,7 @@ Reply 是 Fastify 的一个核心对象。它暴露了以下函数及属性：
 - `.type(value)` - 设置 `Content-Type` header。
 - `.redirect([code,] dest)` - 重定向至指定的 url，状态码可选 (默认为 `302`)。
 - `.callNotFound()` - 调用自定义的 not found 处理函数。
-- `.serialize(payload)` - 使用默认的或自定义的 json 序列化工具序列化指定的 payload，并返回处理后的结果。
+- `.serialize(payload)` - 使用默认的或自定义的 JSON 序列化工具序列化指定的 payload，并返回处理后的结果。
 - `.serializer(function)` - 设置自定义的 payload 序列化工具。
 - `.send(payload)` - 向用户发送 payload。类型可以是纯文本、buffer、JSON、stream，或一个 Error 对象。
 - `.sent` - 一个 boolean，检查 `send` 是否已被调用。
@@ -112,7 +112,7 @@ reply.getHeader('x-foo') // undefined
 
 <a name="redirect"></a>
 ### .redirect([code ,] dest)
-重定向请求至指定的 url，状态码可选，当未通过 `code` 方法设置时，默认为 `302`。
+重定向请求至指定的 URL，状态码可选，当未通过 `code` 方法设置时，默认为 `302`。
 
 示例 (不调用 `reply.code()`)：状态码 `302`，重定向至 `/home`
 ```js
@@ -181,7 +181,7 @@ reply
 
 <a name="raw"></a>
 ### .raw
-Node 核心的 [`http.ServerResponse`](https://nodejs.org/dist/latest/docs/api/http.html#http_class_http_serverresponse) 对象。使用 `Reply.raw` 上的方法会跳过 fastify 对 http 响应的处理逻辑，所以请谨慎使用。以下是一个例子：
+Node 核心的 [`http.ServerResponse`](https://nodejs.org/dist/latest/docs/api/http.html#http_class_http_serverresponse) 对象。使用 `Reply.raw` 上的方法会跳过 Fastify 对 HTTP 响应的处理逻辑，所以请谨慎使用。以下是一个例子：
 
 ```js
 app.get('/cookie-2', (req, reply) => {
@@ -275,14 +275,14 @@ fastify.get('/streams', function (request, reply) {
 
 ```js
 {
-  error: String        // http 错误信息
+  error: String        // HTTP 错误信息
   code: String         // Fastify 的错误代码
   message: String      // 用户错误信息
-  statusCode: Number   // http 状态码
+  statusCode: Number   // HTTP 状态码
 }
 ```
 
-你可以向 Error 对象添加自定义属性，例如 `headers`，这可以用来增强 http 响应。<br>
+你可以向 Error 对象添加自定义属性，例如 `headers`，这可以用来增强 HTTP 响应。<br>
 *注意：如果 `send` 一个错误，但状态码小于 400，Fastify 会自动将其设为 500。*
 
 贴士：你可以通过 [`http-errors`](https://npm.im/http-errors) 或 [`fastify-sensible`](https://github.com/fastify/fastify-sensible) 来简化生成的错误：

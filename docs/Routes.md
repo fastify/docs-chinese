@@ -29,7 +29,7 @@ fastify.route(options)
 ### 路由选项
 
 * `method`：支持的 HTTP 请求方法。目前支持 `'DELETE'`、`'GET'`、`'HEAD'`、`'PATCH'`、`'POST'`、`'PUT'` 以及 `'OPTIONS'`。它还可以是一个 HTTP 方法的数组。
-* `url`：路由匹配的 url 路径 (别名：`path`)。
+* `url`：路由匹配的 URL 路径 (别名：`path`)。
 * `schema`：用于验证请求与回复的 schema 对象。
 必须符合 [JSON Schema](https://json-schema.org/) 格式。请看[这里](Validation-and-Serialization.md)了解更多信息。
 
@@ -146,7 +146,7 @@ fastify.get('/', opts)
 
 <a name="url-building"></a>
 ### Url 构建
-Fastify 同时支持静态与动态的 url。<br>
+Fastify 同时支持静态与动态的 URL<br>
 要注册一个**参数命名**的路径，请在参数名前加上*冒号*。*星号*表示**通配符**。
 *注意，静态路由总是在参数路由和通配符之前进行匹配。*
 
@@ -251,7 +251,7 @@ fastify.get('/', options, async function (request, reply) {
 
 <a name="route-prefixing"></a>
 ### 路由前缀
-有时你需要维护同一 api 的多个不同版本。一般的做法是在所有的路由之前加上版本号，例如 `/v1/user`。
+有时你需要维护同一 API 的多个不同版本。一般的做法是在所有的路由之前加上版本号，例如 `/v1/user`。
 Fastify 提供了一个快捷且智能的方法来解决上述问题，无需手动更改全部路由。这就是*路由前缀*。让我们来看下吧：
 
 ```js

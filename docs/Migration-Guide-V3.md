@@ -145,7 +145,7 @@ fastify.setValidatorCompiler(({ schema, method, url, httpPart }) =>
 
 在 Fastify v3 中，Content Type 解析器现在有了单一函数签名。
 
-新的签名是 `fn(request, payload, done)` 或 `async fn(request, payload)`。注意现在 `request` 是 fastify 的请求对象，而不是 `IncomingMessage` 了。默认情况下，payload 是一个 stream。如果在 `addContentTypeParser` 中使用了 `parseAs` 选项，那么 `payload` 会被当做该选项的值来对待 (string 或 buffer)。
+新的签名是 `fn(request, payload, done)` 或 `async fn(request, payload)`。注意现在 `request` 是 Fastify 的请求对象，而不是 `IncomingMessage` 了。默认情况下，payload 是一个 stream。如果在 `addContentTypeParser` 中使用了 `parseAs` 选项，那么 `payload` 会被当做该选项的值来对待 (string 或 buffer)。
 
 原先的函数签名 `fn(req, [done])` 或 `fn(req, payload, [done])` (这里 `req` 是 `IncomingMessage`) 仍然受支持，但不推荐使用。
 
