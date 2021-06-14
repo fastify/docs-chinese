@@ -9,6 +9,7 @@ Request 是 Fastify 的核心对象，包含了以下字段:
 - `headers` - headers
 - `raw` - Node 原生的 HTTP 请求
 - `req` *(不推荐，请使用 `.raw`)* - Node 原生的 HTTP 请求
+- `server` - Fastify 服务器的实例，以当前的[封装上下文](Encapsulation.md)为作用域。
 - `id` - 请求 id
 - `log` - 请求的日志实例
 - `ip` - 请求方的 ip 地址
@@ -30,6 +31,7 @@ fastify.post('/:params', options, function (request, reply) {
   console.log(request.params)
   console.log(request.headers)
   console.log(request.raw)
+  console.log(request.server)
   console.log(request.id)
   console.log(request.ip)
   console.log(request.ips)

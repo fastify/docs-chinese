@@ -363,6 +363,19 @@ const fastify = require('fastify')({
 })
 ```
 
+<a name="serializer-opts"></a>
+### `serializerOpts`
+
+自定义用于序列化响应 payload 的 [`fast-json-stringify`](https://github.com/fastify/fast-json-stringify#options) 实例的配置：
+
+```js
+const fastify = require('fastify')({
+  serializerOpts: {
+    rounding: 'ceil'
+  }
+})
+```
+
 <a name="http2-session-timeout"></a>
 ### `http2SessionTimeout`
 
@@ -756,7 +769,11 @@ fastify.setReplySerializer(function (payload, statusCode){
 
 <a name="schema-controller"></a>
 #### schemaController
-该属性用于管理应用的 schema 的存放位置，可用于 Fastify 无法分辨保存于某些数据结构中的 schema 之时。在 [issue #2446](https://github.com/fastify/fastify/issues/2446) 里有一个通过该属性解决问题的例子。
+该属性用于管理：
+- `bucket`：应用的 schema 的存放位置
+- `compilersFactory`：必须编译 JSON schema 的模块
+
+可用于 Fastify 无法分辨保存于某些数据结构中的 schema 之时。在 [issue #2446](https://github.com/fastify/fastify/issues/2446) 里有一个通过该属性解决问题的例子。
 
 ```js
 const fastify = Fastify({
@@ -786,6 +803,42 @@ const fastify = Fastify({
             'schema$id2': schema2
           }
           return allTheSchemaStored
+        }
+      }
+    },
+
+    /**
+     * 编译器的 factory 函数让你能充分地控制 Fastify 生命周期里的验证器与序列化器，并给你的编译器提供封装。
+     */
+    compilersFactory: {
+      /**
+       * 以下的 factory 函数会在每次需要一个新的验证器实例时被执行。
+       * 当新的 schema 被添加到封装上下文时，调用 `fastify.register()` 也会执行该函数。
+       * 若父级上下文添加了 schema，它会作为参数传入 factory 函数。
+       * @param {object} externalSchemas 这些 schema 将被 `bucket.getSchemas()` 返回。需要处理外部引用 $ref。
+       * @param {object} ajvServerOption 服务器的 `ajv` 选项。
+       */
+      buildValidator: function factory (externalSchemas, ajvServerOption) {
+        // 该 factory 函数必须返回一个 schema 校验编译器。
+        // 详见 [#schema-validator](Validation-and-Serialization.md#schema-validator)。
+        const yourAjvInstance = new Ajv(ajvServerOption.customOptions)
+        return function validatorCompiler ({ schema, method, url, httpPart }) {
+          return yourAjvInstance.compile(schema)
+        }
+      },
+
+      /**
+       * 以下的 factory 函数会在每次需要一个新的序列化器实例时被执行。
+       * 当新的 schema 被添加到封装上下文时，调用 `fastify.register()` 也会执行该函数。
+       * 若父级上下文添加了 schema，它会作为参数传入 factory 函数。
+       * @param {object} externalSchemas 这些 schema 将被 `bucket.getSchemas()` 返回。需要处理外部引用 $ref。
+       * @param {object} serializerOptsServerOption 服务器的 `serializerOpts` 选项。
+       */
+      buildSerializer: function factory (externalSchemas, serializerOptsServerOption) {
+        // 该 factory 函数必须返回一个 schema 序列化编译器。
+        // 详见 [#schema-serializer](Validation-and-Serialization.md#schema-serializer)。
+        return function serializerCompiler ({ schema, method, url, httpStatus }) {
+          return data => JSON.stringify(data)
         }
       }
     }
