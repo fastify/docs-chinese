@@ -4,7 +4,7 @@
 
 Fastify 是用普通的 JavaScript 编写的，因此，类型定义的维护并不容易。可喜的是，自版本 2 以来，维护者和贡献者们已经在类型维护上投入了巨大的努力。
 
-版本 3 的类型系统发生了改变。新的系统带来了泛型约束 (generic constraining) 与默认值，以及定义请求 body，querystring 等 schema 的新方式！在团队改善框架和类型定义的协作中，难免有所纰漏。我们鼓励你**参与贡献**。请记得在开始前阅读 [`CONTRIBUTING.md`](https://github.com/fastify/fastify/blob/master/CONTRIBUTING.md) 一文！
+版本 3 的类型系统发生了改变。新的系统带来了泛型约束 (generic constraining) 与默认值，以及定义请求 body，querystring 等 schema 的新方式！在团队改善框架和类型定义的协作中，难免有所纰漏。我们鼓励你**参与贡献**。请记得在开始前阅读 [`CONTRIBUTING.md`](https://github.com/fastify/fastify/blob/HEAD/CONTRIBUTING.md) 一文！
 
 > 本文档介绍的是 Fastify 3.x 版本的类型
 
