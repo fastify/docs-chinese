@@ -249,7 +249,7 @@ const fastify = Fastify({ trustProxy: true })
     }
     ```
 
-更多示例详见 [`@fastify/proxy-addr`](https://www.npmjs.com/package/@fastify/proxy-addr)。
+更多示例详见 [`proxy-addr`](https://www.npmjs.com/package/proxy-addr)。
 
 你还可以通过 [`request`](Request.md) 对象获取 `ip`、`ips`、`hostname` 与 `protocol` 的值。
 
@@ -878,6 +878,8 @@ fastify.register(function (instance, options, done) {
 }, { prefix: '/v1' })
 ```
 
+Fastify 启动时，会在插件注册之前就调用 `setNotFoundHandler` 方法添加默认的 404 处理函数。假如你想拓展默认 404 处理函数的行为，例如与插件一同使用，你可以在插件上下文内，不传参数地调用 `fastify.setNotFoundHandler()`。
+
 <a name="set-error-handler"></a>
 #### setErrorHandler
 
@@ -935,6 +937,31 @@ fastify.ready(() => {
 })
 ```
 
+`fastify.printRoutes({ includeMeta: (true | []) })` 会打印出路由的 `route.store` 对象上的属性。`includeMeta` 的值可以是属性名的数组 (例如：`['onRequest', Symbol('key')]`)，也可以只是一个 `true`，表示显示所有属性。简写 `fastify.printRoutes({ includeHooks: true })` 将包含所有的[钩子](Hooks.md)。
+
+```js
+  console.log(fastify.printRoutes({ includeHooks: true, includeMeta: ['metaProperty'] }))
+  // └── /
+  //     ├── test (GET)
+  //     │   • (onRequest) ["anonymous()","namedFunction()"]
+  //     │   • (metaProperty) "value"
+  //     │   └── /hello (GET)
+  //     └── hel
+  //         ├── lo/world (GET)
+  //         │   • (onTimeout) ["anonymous()"]
+  //         └── licopter (GET)
+  
+  console.log(fastify.printRoutes({ includeHooks: true }))
+  // └── /
+  //     ├── test (GET)
+  //     │   • (onRequest) ["anonymous()","namedFunction()"]  
+  //     │   └── /hello (GET)
+  //     └── hel
+  //         ├── lo/world (GET)
+  //         │   • (onTimeout) ["anonymous()"]
+  //         └── licopter (GET)
+```
+
 <a name="print-plugins"></a>
 #### printPlugins
 
@@ -951,9 +978,9 @@ fastify.ready(() => {
   console.error(fastify.printPlugins())
   // 输出：
   // └── root
-  //   ├── foo
-  //   │   └── bar
-  //   └── baz
+  //     ├── foo
+  //     │   └── bar
+  //     └── baz
 })
 ```
 

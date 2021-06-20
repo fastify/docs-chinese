@@ -303,7 +303,7 @@ fastify.addHook('preHandler', async (request, reply) => {
 - [onRegister](#onregister)
 
 ### onReady
-在服务器开始监听请求之前触发。在此你无法更改路由，或添加新的钩子。注册的 `onReady` 钩子函数串行执行，只有全部执行完毕时，服务器才会开始监听请求。钩子接受一个回调函数作为参数：`done`，在钩子函数完成后调用。钩子的 `this` 为 Fastify 实例。
+在服务器开始监听请求之前，或调用 `.ready()` 方法时触发。在此你无法更改路由，或添加新的钩子。注册的 `onReady` 钩子函数串行执行，只有全部执行完毕时，服务器才会开始监听请求。钩子接受一个回调函数作为参数：`done`，在钩子函数完成后调用。钩子的 `this` 为 Fastify 实例。
 
 ```js
 // 回调写法

@@ -65,6 +65,8 @@ fastify.route(options)
 
   `reply` 请看[回复](Reply.md)一文。
 
+**注意：** 在[钩子](Hooks.md)一文中有 `onRequest`、`preParsing`、`preValidation`、`preHandler`、`preSerialization`、`onSend` 以及 `onResponse` 更详尽的说明。此外，要在 `handler` 之前就发送响应，请参阅[在钩子中响应请求](Hooks.md#respond-to-a-request-from-a-hook)。
+
 示例：
 ```js
 fastify.route({

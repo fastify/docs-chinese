@@ -112,8 +112,13 @@ Fastify 是用普通的 JavaScript 编写的，因此，类型定义的维护并
    }>('/auth', {
      preValidation: (request, reply, done) => {
        const { username, password } = request.query
-       done(username !== 'admin' ? new Error('Must be admin') : undefined) // only validate `admin` account
+       done(username !== 'admin' ? new Error('Must be admin') : undefined)
      }
+     //  或使用 async
+     //  preValidation: async (request, reply) => {
+     //    const { username, password } = request.query
+     //    return username !== "admin" ? new Error("Must be admin") : undefined;
+     //  }
    }, async (request, reply) => {
      const customerHeader = request.headers['h-Custom']
      // 处理请求数据
@@ -278,13 +283,15 @@ Fastify 是用普通的 JavaScript 编写的，因此，类型定义的维护并
        querystring: QuerystringSchema,
        headers: HeadersSchema
      },
-     preHandler: (request, reply) => {
+     preHandler: (request, reply, done) => {
        const { username, password } = request.query
        const customerHeader = request.headers['h-Custom']
+       done()
      },
      handler: (request, reply) => {
        const { username, password } = request.query
        const customerHeader = request.headers['h-Custom']
+       reply.status(200).send({username});
      }
    })
 
@@ -327,6 +334,7 @@ const todo = {
 通过类型 `FromSchema` 你可以基于 schema 构建一个类型，并在函数中使用它。
 
 ```typescript
+import { FromSchema } from "json-schema-to-ts";
 fastify.post<{ Body: FromSchema<typeof todo> }>(
   '/todo',
   {
