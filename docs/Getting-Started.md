@@ -241,7 +241,8 @@ module.exports = routes
 <a name="validate-data"></a>
 ### 验证数据
 数据的验证在我们的框架中是极为重要的一环，也是核心的概念。<br>
-Fastify 使用 [JSON Schema](https://json-schema.org/) 验证来访的请求。
+Fastify 使用 [JSON Schema](https://json-schema.org/) 验证来访的请求。(也支持宽松的 JTD schema，但首先得禁用 `jsonShorthand`)。
+
 让我们来看一个验证路由的例子：
 ```js
 const opts = {

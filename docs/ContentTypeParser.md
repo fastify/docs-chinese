@@ -3,6 +3,8 @@
 ## `Content-Type` 解析
 Fastify 原生只支持 `'application/json'` 和 `'text/plain'` content types。默认的字符集是 `utf-8`。如果你需要支持其他的 content types，你需要使用 `addContentTypeParser` API。*默认的 JSON 或者纯文本解析器也可以被更改.*
 
+*注：假如你决定用 `Content-Type` 自定义 content type，UTF-8 便不再是默认的字符集了。请确保如下包含该字符集：`text/html; charset=utf-8`。*
+
 和其他的 API 一样，`addContentTypeParser` 被封装在定义它的作用域中了。这就意味着如果你定义在了根作用域中，那么就是全局可用，如果你定义在一个插件中，那么它只能在那个作用域和子作用域中可用。
 
 Fastify 自动将解析好的 payload 添加到 [Fastify request](Request.md) 对象，你能通过 `request.body` 访问。
