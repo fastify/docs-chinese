@@ -247,7 +247,7 @@ curl -X GET "http://localhost:3000/?ids=1
 {"params":{"hello":["1"]}}
 ```
 
-更多信息请看[这里](https://ajv.js.org/docs/coercion.html)。
+更多信息请看[这里](https://ajv.js.org/coercion.html)。
 
 <a name="ajv-plugins"></a>
 #### Ajv 插件

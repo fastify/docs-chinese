@@ -183,6 +183,37 @@ fastify.listen(3000)
 ```
 Fastify 内在地使用 Node 原生 HTTP server 的 API。因此，如果你使用一个自定义的 server，你必须保证暴露了相同的 API。不这么做的话，你可以在 `serverFactory` 函数内部 `return` 语句之前，向 server 实例添加新的属性。<br/>
 
+<a name="schema-json-shorthand"></a>
+### `jsonShorthand`
+
++ 默认值：`true`
+
+当未发现 JSON Schema 规范中合法的根属性时，Fastify 会默认地自动推断该根属性。如果你想实现自定义的 schema 校验编译器，例如使用 JTD (JSON Type Definition) 代替 JSON schema，你应当设置该选项为 `false` 来确保 schema 不被修改且不会被当成 JSON Schema 处理。
+
+```js
+const AjvJTD = require('ajv/dist/jtd'/* 只在 AJV v7 以上版本生效 */)
+const ajv = new AjvJTD({
+  // 当遇到非法 JTD schema 对象时抛出错误。
+  allErrors: process.env.NODE_ENV === 'development'
+})
+const fastify = Fastify({ jsonShorthand: false })
+fastify.setValidatorCompiler(({ schema }) => {
+  return ajv.compile(schema)
+})
+fastify.post('/', {
+  schema: {
+    body: {
+      properties: {
+        foo: { type: 'uint8' }
+      }
+    }
+  },
+  handler (req, reply) { reply.send({ ok: 1 }) }
+})
+```
+
+**注：目前 Fastify 并不会在发现非法 schema 时抛错。因此，假如你在已有项目中关闭了该选项，请确保现存所有的 schema 不会因此变得非法，因为它们会被当作笼统的一类进行处理。**
+
 <a name="factory-case-sensitive"></a>
 ### `caseSensitive`
 

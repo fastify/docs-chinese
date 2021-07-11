@@ -67,6 +67,8 @@ Fastify 遵循不全则无的原则，旨在精而优。因此，确保正确处
 
 请求 body 大小超过限制。
 
+可通过 Fastify 实例的 [`bodyLimit`](Server.md#bodyLimit) 属性改变大小限制。
+
 <a name="FST_ERR_CTP_EMPTY_TYPE"></a>
 #### FST_ERR_CTP_EMPTY_TYPE
 
