@@ -96,6 +96,8 @@ fastify.get('/', async function (request, reply) {
 fastify.decorate('utility', fn, ['greet', 'log'])
 ```
 
+注：使用箭头函数会破坏 `FastifyInstance` 的 `this` 绑定。
+
 一旦有依赖项不满足，`decorate` 方法便会抛出异常。依赖项检查是在服务器实例启动前进行的，因此，在运行时不会发生异常。
 
 #### `decorateReply(name, value, [dependencies])`

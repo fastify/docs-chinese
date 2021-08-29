@@ -8,14 +8,14 @@ Fastify 模块导出了一个工厂函数，可以用于创建新的 <code><b>Fa
 <a name="factory-http2"></a>
 ### `http2`
 
-设置为 `true`，则会使用 Node.js 原生的 [HTTP/2](https://nodejs.org/dist/latest-v8.x/docs/api/http2.html) 模块来绑定 socket。
+设置为 `true`，则会使用 Node.js 原生的 [HTTP/2](https://nodejs.org/dist/latest-v14.x/docs/api/http2.html) 模块来绑定 socket。
 
 + 默认值：`false`
 
 <a name="factory-https"></a>
 ### `https`
 
-用于配置服务器的 TLS socket 的对象。其选项与 Node.js 原生的 [`createServer` 方法](https://nodejs.org/dist/latest-v8.x/docs/api/https.html#https_https_createserver_options_requestlistener)一致。
+用于配置服务器的 TLS socket 的对象。其选项与 Node.js 原生的 [`createServer` 方法](https://nodejs.org/dist/latest-v14.x/docs/api/https.html#https_https_createserver_options_requestlistener)一致。
 当值为 `null` 时，socket 连接将不会配置 TLS。
 
 当 <a href="./Server.md#factory-http2">
@@ -93,7 +93,7 @@ fastify.get('/bar', function (req, reply) {
 
 允许的值为 `'error'`、`'remove'` 与 `'ignore'`。
 
-+ 默认值：`'ignore'`
++ 默认值：`'error'`
 
 <a name="factory-logger"></a>
 ### `logger`
@@ -412,7 +412,7 @@ const fastify = require('fastify')({
 
 为每个 HTTP/2 会话设置默认[超时时间](https://nodejs.org/api/http2.html#http2_http2session_settimeout_msecs_callback)。超时后，会话将关闭。默认值：`5000` 毫秒。
 
-要注意的是，使用 HTTP/2 时需要提供一个优雅的“close”体验。Node 的默认值为 `0`，即无超时。
+要注意的是，使用 HTTP/2 时需要提供一个优雅的“close”体验。一个低的默认值有助于减轻拒绝服务型攻击 (Denial-of-Service Attacks) 的影响。但当你的服务器使用负载均衡策略，或能自动扩容时，则可以延长超时时间。Node 的默认值为 `0`，即无超时。
 
 <a name="framework-errors"></a>
 ### `frameworkErrors`

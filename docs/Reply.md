@@ -48,10 +48,11 @@ Reply 是 Fastify 的一个核心对象。它暴露了以下函数及属性：
 - `.serializer(function)` - 设置自定义的 payload 序列化工具。
 - `.send(payload)` - 向用户发送 payload。类型可以是纯文本、buffer、JSON、stream，或一个 Error 对象。
 - `.sent` - 一个 boolean，检查 `send` 是否已被调用。
-- `.raw` - Node 原生的 [`http.ServerResponse`](https://nodejs.org/dist/latest/docs/api/http.html#http_class_http_serverresponse) 对象。
-- `.res` *(不推荐，请使用 `.raw`)* - Node 原生的 [`http.ServerResponse`](https://nodejs.org/dist/latest/docs/api/http.html#http_class_http_serverresponse) 对象。
+- `.raw` - Node 原生的 [`http.ServerResponse`](https://nodejs.org/dist/latest-v14.x/docs/api/http.html#http_class_http_serverresponse) 对象。
+- `.res` *(不推荐，请使用 `.raw`)* - Node 原生的 [`http.ServerResponse`](https://nodejs.org/dist/latest-v14.x/docs/api/http.html#http_class_http_serverresponse) 对象。
 - `.log` - 请求的日志实例。
 - `.request` - 请求。
+- `.context` - [请求的 context](Request.md#Request) 属性。
 
 ```js
 fastify.get('/', options, function (request, reply) {
@@ -101,7 +102,7 @@ fastify.get('/', async function (req, rep) {
 ### .header(key, value)
 设置响应 header。如果值被省略或为 undefined，将被强制设成 `''`。
 
-更多信息，请看 [`http.ServerResponse#setHeader`](https://nodejs.org/dist/latest/docs/api/http.html#http_response_setheader_name_value)。
+更多信息，请看 [`http.ServerResponse#setHeader`](https://nodejs.org/dist/latest-v14.x/docs/api/http.html#http_response_setheader_name_value)。
 
 <a name="getHeader"></a>
 ### .getHeader(key)
@@ -196,7 +197,7 @@ reply
 
 <a name="raw"></a>
 ### .raw
-Node 核心的 [`http.ServerResponse`](https://nodejs.org/dist/latest/docs/api/http.html#http_class_http_serverresponse) 对象。使用 `Reply.raw` 上的方法会跳过 Fastify 对 HTTP 响应的处理逻辑，所以请谨慎使用。以下是一个例子：
+Node 核心的 [`http.ServerResponse`](https://nodejs.org/dist/latest-v14.x/docs/api/http.html#http_class_http_serverresponse) 对象。使用 `Reply.raw` 上的方法会跳过 Fastify 对 HTTP 响应的处理逻辑，所以请谨慎使用。以下是一个例子：
 
 ```js
 app.get('/cookie-2', (req, reply) => {
@@ -263,7 +264,7 @@ fastify.get('/json', options, function (request, reply) {
 
 <a name="send-streams"></a>
 #### Streams
-*send* 开箱即用地支持 stream。它使用 [pump](https://www.npmjs.com/package/pump) 来避免文件描述符 (file descriptors) 的泄露。如果在未设置 `'Content-Type'` header 的情况下发送 stream，它会被设定为 `'application/octet-stream'`。
+*send* 开箱即用地支持 stream。如果在未设置 `'Content-Type'` header 的情况下发送 stream，它会被设定为 `'application/octet-stream'`。
 ```js
 fastify.get('/streams', function (request, reply) {
   const fs = require('fs')

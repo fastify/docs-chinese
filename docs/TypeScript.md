@@ -84,7 +84,7 @@ Fastify 是用普通的 JavaScript 编写的，因此，类型定义的维护并
      'h-Custom': string;
    }
    ```
-3. 使用这两个接口，定义一个新的 API 路由，并将它们用作泛型。路由方法的简写形式 (如 `.get`) 接受一个泛型对象 `RequestGenericInterface`，它包含了四个具名属性：`Body`、`Querystring`、`Params` 以及 `Headers`。接口会随着路由方法向下传递，到达路由处理函数中的 `request` 实例。
+3. 使用这两个接口，定义一个新的 API 路由，并将它们用作泛型。路由方法的简写形式 (如 `.get`) 接受一个泛型对象 `RouteGenericInterface`，它包含了五个具名属性：`Body`、`Querystring`、`Params`、`Headers` 以及 `Reply`。`Body`、`Querystring`、`Params` 和 `Headers` 四个接口会随着路由方法向下传递，到达路由处理函数中的 `request` 实例，`Reply` 接口则会到达 `reply` 实例。
    ```typescript
    server.get<{
      Querystring: IQuerystring,
@@ -166,7 +166,7 @@ Fastify 是用普通的 JavaScript 编写的，因此，类型定义的维护并
     ```typescript
     const app = fastify();
 
-    app.post<{ Body: UserType; Response: UserType }>(
+    app.post<{ Body: UserType; Reply: UserType }>(
       "/",
       {
         schema: {
@@ -593,7 +593,7 @@ Fastify 的 API 都首先来自于 `fastify()` 方法。在 JavaScript 中，通
      const f = fastify()
      f.listen(8080, () => { console.log('running') })
      ```
-   - 支持解构，但同样无法处理类型
+   - 支持解构，且能处理类型
      ```typescript
      const { fastify } = require('fastify')
 
