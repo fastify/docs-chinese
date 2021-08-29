@@ -409,7 +409,7 @@ Fastify 允许你基于请求的某些属性，例如 `Host` header 或 [`find-m
 fastify.route({
   method: 'GET',
   url: '/',
-  { constraints: { version: '1.2.0'} },
+  constraints: { version: '1.2.0' },
   handler: function (request, reply) {
     reply.send({ hello: 'world' })
   }
@@ -457,7 +457,7 @@ fastify.inject({
 fastify.route({
   method: 'GET',
   url: '/',
-  { constraints: { host: 'auth.fastify.io' } },
+  constraints: { host: 'auth.fastify.io' },
   handler: function (request, reply) {
     reply.send('hello world from auth.fastify.io')
   }
@@ -490,7 +490,7 @@ fastify.inject({
 fastify.route({
   method: 'GET',
   url: '/',
-  { constraints: { host: /.*\.fastify\.io/ } }, // 匹配 fastify.io 的任意子域
+  constraints: { host: /.*\.fastify\.io/ }, // 匹配 fastify.io 的任意子域
   handler: function (request, reply) {
     reply.send('hello world from ' + request.headers.host)
   }

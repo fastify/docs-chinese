@@ -6,7 +6,7 @@ Request 是 Fastify 的核心对象，包含了以下字段:
 - `query` - 解析后的 querystring
 - `body` - 消息主体
 - `params` - URL 参数
-- `headers` - headers
+- [`headers`](#headers) - header 的 getter 与 setter
 - `raw` - Node 原生的 HTTP 请求
 - `req` *(不推荐，请使用 `.raw`)* - Node 原生的 HTTP 请求
 - `server` - Fastify 服务器的实例，以当前的[封装上下文](Encapsulation.md)为作用域。
@@ -23,6 +23,21 @@ Request 是 Fastify 的核心对象，包含了以下字段:
 - `is404` - 当请求被 404 处理时为 true，反之为 false
 - `connection` - 不推荐，请使用 `socket`。请求的底层连接
 - `socket` - 请求的底层连接
+- `context` - Fastify 内建的对象。你不应该直接使用或修改它，但可以访问它的下列特殊属性：
+  - `context.config` - 路由的 [`config`](Routes.md#routes-config) 对象。
+
+### Headers
+
+`request.headers` 返回来访请求的 header 对象。你也可以如下设置自定义的 header：
+
+```js
+request.headers = {
+  'foo': 'bar',
+  'baz': 'qux'
+}
+```
+
+该操作能向请求 header 添加新的值，且该值能通过 `request.headers.bar` 读取。此外，`request.raw.headers` 能让你访问标准的请求 header。
 
 ```js
 fastify.post('/:params', options, function (request, reply) {
@@ -37,6 +52,9 @@ fastify.post('/:params', options, function (request, reply) {
   console.log(request.ips)
   console.log(request.hostname)
   console.log(request.protocol)
+  console.log(request.url)
+  console.log(request.routerMethod)
+  console.log(request.routerPath)
   request.log.info('some info')
 })
 ```

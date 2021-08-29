@@ -1,7 +1,7 @@
 <h1 align="center">Fastify</h1>
 
 ## `Content-Type` 解析
-Fastify 原生只支持 `'application/json'` 和 `'text/plain'` content types。默认的字符集是 `utf-8`。如果你需要支持其他的 content types，你需要使用 `addContentTypeParser` API。*默认的 JSON 或者纯文本解析器也可以被更改.*
+Fastify 原生只支持 `'application/json'` 和 `'text/plain'` content type。默认的字符集是 `utf-8`。如果你需要支持其他的 content type，你需要使用 `addContentTypeParser` API。*默认的 JSON 或者纯文本解析器也可以被更改或删除。*
 
 *注：假如你决定用 `Content-Type` 自定义 content type，UTF-8 便不再是默认的字符集了。请确保如下包含该字符集：`text/html; charset=utf-8`。*
 
@@ -54,7 +54,11 @@ fastify.addContentTypeParser('application/vnd.custom', (request, body, done) => 
 fastify.addContentTypeParser('application/vnd.custom+xml', (request, body, done) => {} )
 ```
 
-你也可以用 `hasContentTypeParser` API 来验证某个 content type 解析器是否存在。
+在 `hasContentTypeParser` 之外，还有其他 API 可供使用，它们是：`hasContentTypeParser`、`removeContentTypeParser` 与 `removeAllContentTypeParsers`。
+
+#### hasContentTypeParser
+
+使用 `hasContentTypeParser` API 来查询是否存在特定的 content type 解析器。
 
 ```js
 if (!fastify.hasContentTypeParser('application/jsoff')){
@@ -64,6 +68,36 @@ if (!fastify.hasContentTypeParser('application/jsoff')){
     })
   })
 }
+```
+
+#### removeContentTypeParser
+
+通过 `removeContentTypeParser` 可移除一个或多个 content type 解析器。支持使用 `string` 或
+`RegExp` 来匹配。
+
+```js
+fastify.addContentTypeParser('text/xml', function (request, payload, done) {
+  xmlParser(payload, function (err, body) {
+    done(err, body)
+  })
+})
+
+// 移除内建的 content type 解析器。这时只有上文添加的 text/html 解析器可用。
+fastiy.removeContentTypeParser(['application/json', 'text/plain'])
+```
+
+#### removeAllContentTypeParsers
+
+在上文的例子中，你需要明确指定所有你想移除的 content type。但你也可以使用 `removeAllContentTypeParsers`直接移除所有现存的 content type 解析器。在下面的例子里，我们实现了一样的效果，但不再需要手动指定 content type 了。和 `removeContentTypeParser` 一样，该 API 也支持封装。当你想注册一个[能捕获所有 content type 的解析器](#Catch-All)，且忽略内建的解析器时，这个 API 特别有用。
+
+```js
+fastiy.removeAllContentTypeParsers()
+
+fastify.addContentTypeParser('text/xml', function (request, payload, done) {
+  xmlParser(payload, function (err, body) {
+    done(err, body)
+  })
+})
 ```
 
 **注意**：早先的写法 `function(req, done)` 与 `async function(req)` 仍被支持，但不推荐使用。
@@ -91,7 +125,9 @@ fastify.addContentTypeParser('application/json', { parseAs: 'string' }, function
 + `bodyLimit` (number): 自定义解析器能够接收的最大的数据长度，比特为单位。默认是全局的消息主体的长度限制[`Fastify 工厂方法`](Factory.md#bodylimit)。
 
 #### 捕获所有
+
 有些情况下你需要捕获所有的 content type。通过 Fastify，你只需添加`'*'` content type。
+
 ```js
 fastify.addContentTypeParser('*', function (request, payload, done) {
   var data = ''
@@ -101,27 +137,35 @@ fastify.addContentTypeParser('*', function (request, payload, done) {
   })
 })
 ```
+
 在这种情况下，所有的没有特定 content type 解析器的请求都会被这个方法处理。
 
 对请求流 (stream) 执行管道输送 (pipe) 操作也是有用的。你可以如下定义一个 content 解析器：
+
 ```js
 fastify.addContentTypeParser('*', function (request, payload, done) {
   done()
 })
 ```
+
 之后通过核心 HTTP request 对象将请求流直接输送到任意位置：
+
 ```js
 app.post('/hello', (request, reply) => {
   reply.send(request.raw)
 })
 ```
+
 这里有一个将来访的 [json line](https://jsonlines.org/) 对象完整输出到日志的例子：
+
 ```js
 const split2 = require('split2')
 const pump = require('pump')
+
  fastify.addContentTypeParser('*', (request, payload, done) => {
   done(null, pump(payload, split2(JSON.parse)))
 })
+
 fastify.route({
   method: 'POST',
   url: '/api/log/jsons',
@@ -130,4 +174,20 @@ fastify.route({
   }
 })
 ```
-关于输送上传的文件，请看[该插件](https://github.com/fastify/fastify-multipart)。
+
+关于处理上传的文件，请看[该插件](https://github.com/fastify/fastify-multipart)。
+
+如果你真的想将某解析器用于所有 content type，而不仅用于缺少具体解析器的 content type，你应该先调用 `removeAllContentTypeParsers` 方法。
+
+```js
+// 没有下面这行的话，content type 为 application/json 的 body 将被内建的 json 解析器处理。
+fastify.removeAllContentTypeParsers()
+
+fastify.addContentTypeParser('*', function (request, payload, done) {
+  var data = ''
+  payload.on('data', chunk => { data += chunk })
+  payload.on('end', () => {
+    done(null, data)
+  })
+})
+```

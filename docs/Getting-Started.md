@@ -182,7 +182,7 @@ async function routes (fastify, options) {
 
   fastify.get('/animals/:animal', async (request, reply) => {
     const result = await collection.findOne({ animal: request.params.animal })
-    if (result === null) {
+    if (!result) {
       throw new Error('Invalid value')
     }
     return result
@@ -198,9 +198,7 @@ module.exports = routes
 这是 Fastify 最棒的特性之一了！它使得插件按声明的顺序来加载，唯有当前插件加载完毕后，才会加载下一个插件。如此，我们便可以在第一个插件中注册数据库连接器，并在第二个插件中使用它。*(参见 [这里](Plugins.md#handle-the-scope) 了解如何处理插件的作用域)*。
 当调用函数 `fastify.listen()`、`fastify.inject()` 或 `fastify.ready()` 时，插件便开始加载了。
 
-我们还用到了 `decorate` API。现在来看看这一 API 是什么，以及它是如何运作的吧。
-考虑下需要在应用的不同部分使用相同的代码或库的场景。一种解决方案便是按需引入这些代码或库。哈，这固然可行，但却因为重复的代码和麻烦的重构让人苦恼。<br>
-为了解决上述问题，Fastify 提供了 `decorate` API。它允许你在 Fastify 的命名空间下添加自定义对象，如此一来，你就可以在所有地方直接使用这些对象了。
+MongoDB 的插件使用了 `decorate` API，以便在 Fastify 的命名空间下添加自定义对象，如此一来，你就可以在所有地方直接使用这些对象了。我们鼓励运用这一 API，因为它有助于提高代码复用率，减少重复的代码或逻辑。
 
 更深入的内容，例如插件如何运作、如何新建，以及使用 Fastify 全部的 API 去处理复杂的异步引导的细节，请看[插件指南](Plugins-Guide.md)。
 
