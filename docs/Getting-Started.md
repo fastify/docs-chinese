@@ -21,6 +21,13 @@ yarn add fastify
 让我们开始编写第一个服务器吧：
 ```js
 // 加载框架并新建实例
+
+// ESM
+import Fastify from 'fastify'
+const fastify = Fastify({
+  logger: true
+})
+// CommonJs
 const fastify = require('fastify')({
   logger: true
 })
@@ -36,13 +43,19 @@ fastify.listen(3000, function (err, address) {
     fastify.log.error(err)
     process.exit(1)
   }
-  fastify.log.info(`server listening on ${address}`)
+  // 服务器监听地址：${address}
 })
 ```
 
 更喜欢使用 `async/await`？Fastify 对其提供了开箱即用的支持。<br>
 *(我们还建议使用 [make-promises-safe](https://github.com/mcollina/make-promises-safe) 来避免文件描述符 (file descriptor) 及内存的泄露)*
 ```js
+// ESM
+import Fastify from 'fastify'
+const fastify = Fastify({
+  logger: true
+})
+// CommonJs
 const fastify = require('fastify')({
   logger: true
 })
@@ -89,6 +102,26 @@ start()
 在深入之前，先来看看插件系统是如何工作的吧！<br>
 让我们新建一个基本的服务器，但这回我们把路由 (route) 的声明从入口文件转移到一个外部文件。(参阅[路由声明](Routes.md))。
 ```js
+// ESM
+import Fastify from 'fastify'
+import firstRoute from './our-first-route'
+const fastify = Fastify({
+  logger: true
+})
+
+fastify.register(firstRoute)
+
+fastify.listen(3000, function (err, address) {
+  if (err) {
+    fastify.log.error(err)
+    process.exit(1)
+  }
+  // 服务器监听地址：${address}
+})
+```
+
+```js
+// CommonJs
 const fastify = require('fastify')({
   logger: true
 })
@@ -100,7 +133,7 @@ fastify.listen(3000, function (err, address) {
     fastify.log.error(err)
     process.exit(1)
   }
-  fastify.log.info(`server listening on ${address}`)
+  // 服务器监听地址：${address}
 })
 ```
 
@@ -132,6 +165,28 @@ npm i --save fastify-plugin fastify-mongodb
 
 **server.js**
 ```js
+// ESM
+import Fastify from 'fastify'
+import dbConnector from './our-db-connector'
+import firstRoute from './our-first-route'
+
+const fastify = Fastify({
+  logger: true
+})
+fastify.register(dbConnector)
+fastify.register(firstRoute)
+
+fastify.listen(3000, function (err, address) {
+  if (err) {
+    fastify.log.error(err)
+    process.exit(1)
+  }
+  // 服务器监听地址：${address}
+})
+```
+
+```js
+// CommonJs
 const fastify = require('fastify')({
   logger: true
 })
@@ -144,13 +199,30 @@ fastify.listen(3000, function (err, address) {
     fastify.log.error(err)
     process.exit(1)
   }
-  fastify.log.info(`server listening on ${address}`)
+  // 服务器监听地址：${address}
 })
 
 ```
 
 **our-db-connector.js**
 ```js
+// ESM
+import fastifyPlugin from 'fastify-plugin'
+import fastifyMongo from 'fastify-mongodb'
+
+async function dbConnector (fastify, options) {
+  fastify.register(fastifyMongo, {
+    url: 'mongodb://localhost:27017/test_database'
+  })
+}
+
+// 用 fastify-plugin 包装插件，以使插件中声明的装饰器、钩子函数暴露在根作用域里。
+module.exports = fastifyPlugin(dbConnector)
+
+```
+
+```js
+// CommonJs
 const fastifyPlugin = require('fastify-plugin')
 
 async function dbConnector (fastify, options) {

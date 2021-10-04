@@ -83,7 +83,7 @@ fastify.addContentTypeParser('text/xml', function (request, payload, done) {
 })
 
 // 移除内建的 content type 解析器。这时只有上文添加的 text/html 解析器可用。
-fastiy.removeContentTypeParser(['application/json', 'text/plain'])
+Fastiy.removeContentTypeParser(['application/json', 'text/plain'])
 ```
 
 #### removeAllContentTypeParsers
@@ -91,7 +91,7 @@ fastiy.removeContentTypeParser(['application/json', 'text/plain'])
 在上文的例子中，你需要明确指定所有你想移除的 content type。但你也可以使用 `removeAllContentTypeParsers`直接移除所有现存的 content type 解析器。在下面的例子里，我们实现了一样的效果，但不再需要手动指定 content type 了。和 `removeContentTypeParser` 一样，该 API 也支持封装。当你想注册一个[能捕获所有 content type 的解析器](#Catch-All)，且忽略内建的解析器时，这个 API 特别有用。
 
 ```js
-fastiy.removeAllContentTypeParsers()
+Fastiy.removeAllContentTypeParsers()
 
 fastify.addContentTypeParser('text/xml', function (request, payload, done) {
   xmlParser(payload, function (err, body) {

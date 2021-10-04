@@ -3,18 +3,18 @@
 ## Request
 处理函数的第一个参数是 `Request`.<br>
 Request 是 Fastify 的核心对象，包含了以下字段:
-- `query` - 解析后的 querystring
+- `query` - 解析后的 querystring，其格式由 [`querystringParser`](Server.md#querystringParser) 指定。
 - `body` - 消息主体
 - `params` - URL 参数
 - [`headers`](#headers) - header 的 getter 与 setter
 - `raw` - Node 原生的 HTTP 请求
 - `req` *(不推荐，请使用 `.raw`)* - Node 原生的 HTTP 请求
 - `server` - Fastify 服务器的实例，以当前的[封装上下文](Encapsulation.md)为作用域。
-- `id` - 请求 id
+- `id` - 请求 ID
 - `log` - 请求的日志实例
 - `ip` - 请求方的 ip 地址
 - `ips` - x-forwarder-for header 中保存的请求源 ip 数组，按访问先后排序 (仅当 [`trustProxy`](Server.md#factory-trust-proxy) 开启时有效)
-- `hostname` - 请求方的主机名 (当 [`trustProxy`](Server.md#factory-trust-proxy) 启用时，从 `X-Forwarded-Host` header 中获取)
+- `hostname` - 请求方的主机名 (当 [`trustProxy`](Server.md#factory-trust-proxy) 启用时，从 `X-Forwarded-Host` header 中获取)。为了兼容 HTTP/2，当没有相关 header 存在时，将返回 `:authority`。
 - `protocol` - 请求协议 (`https` 或 `http`)
 - `method` - 请求方法
 - `url` - 请求路径

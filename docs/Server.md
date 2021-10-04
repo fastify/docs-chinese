@@ -5,6 +5,37 @@
 
 Fastify 模块导出了一个工厂函数，可以用于创建新的 <code><b>Fastify server</b></code> 实例。这个工厂函数的参数是一个配置对象，用于自定义最终生成的实例。本文描述了这一对象中可用的属性。
 
+- [http2](./Server.md#http2)
+- [https](./Server.md#https)
+- [connectionTimeout](./Server.md#connectiontimeout)
+- [keepAliveTimeout](./Server.md#keepalivetimeout)
+- [ignoreTrailingSlash](./Server.md#ignoretrailingslash)
+- [maxParamLength](./Server.md#maxparamlength)
+- [onProtoPoisoning](./Server.md#onprotopoisoning)
+- [onConstructorPoisoning](./Server.md#onconstructorpoisoning)
+- [logger](./Server.md#logger)
+- [serverFactory](./Server.md#serverfactory)
+- [jsonShorthand](./Server.md#jsonshorthand)
+- [caseSensitive](./Server.md#casesensitive)
+- [requestIdHeader](./Server.md#requestidheader)
+- [requestIdLogLabel](./Server.md#requestidloglabel)
+- [genReqId](./Server.md#genreqid)
+- [trustProxy](./Server.md#trustProxy)
+- [pluginTimeout](./Server.md#plugintimeout)
+- [querystringParser](./Server.md#querystringParser)
+- [exposeHeadRoutes](./Server.md#exposeheadroutes)
+- [constraints](./Server.md#constraints)
+- [return503OnClosing](./Server.md#return503onclosing)
+- [ajv](./Server.md#ajv)
+- [serializerOpts](./Server.md#serializeropts)
+- [http2SessionTimeout](./Server.md#http2sessiontimeout)
+- [frameworkErrors](./Server.md#frameworkerrors)
+- [clientErrorHandler](./Server.md#clienterrorhandler)
+- [rewriteUrl](./Server.md#rewriteurl)
+- [实例](./Server.md#instance)
+- [服务器方法](./Server.md#server-methods)
+- [initialConfig](./Server.md#initialConfig)
+
 <a name="factory-http2"></a>
 ### `http2`
 
@@ -230,6 +261,8 @@ fastify.get('/user/:username', (request, reply) => {
 
 要注意的是，将该选项设为 `false` 与 [RFC3986](https://tools.ietf.org/html/rfc3986#section-6.2.2.1) 相悖。
 
+此外，该选项不影响 query string 的解析。要让 query string 忽略大小写，请看 [`querystringParser`](./Server.md#querystringParser)。
+
 <a name="factory-request-id-header"></a>
 ### `requestIdHeader`
 
@@ -315,6 +348,17 @@ const fastify = require('fastify')({
 })
 ```
 
+你也可以改变默认解析器的行为，例如忽略 query string 的大小写：
+
+```js
+const querystring = require('querystring')
+const fastify = require('fastify')({
+  querystringParser: str => querystring.parse(str.toLowerCase())
+})
+```
+
+若你只想忽略键的大小写，我们推荐你使用自定义解析器。
+
 <a name="exposeHeadRoutes"></a>
 ### `exposeHeadRoutes`
 
@@ -361,7 +405,7 @@ const fastify = require('fastify')({
 <a name="factory-ajv"></a>
 ### `ajv`
 
-配置 Fastify 使用的 Ajv 实例。这使得你无需提供一个自定义的实例。
+配置 Fastify 使用的 Ajv 6 实例。这使得你无需提供一个自定义的实例。
 
 + 默认值：
 
@@ -385,8 +429,8 @@ const fastify = require('fastify')({
       nullable: false // 参见 [ajv 的配置选项](https://ajv.js.org/#options)
     },
     plugins: [
-      require('ajv-merge-patch')
-      [require('ajv-keywords'), 'instanceof'];
+      require('ajv-merge-patch'),
+      [require('ajv-keywords'), 'instanceof']
       // 用法： [plugin, pluginOptions] - 插件与选项
       // 用法： plugin - 仅插件
     ]
@@ -806,6 +850,8 @@ fastify.setReplySerializer(function (payload, statusCode){
 
 可用于 Fastify 无法分辨保存于某些数据结构中的 schema 之时。在 [issue #2446](https://github.com/fastify/fastify/issues/2446) 里有一个通过该属性解决问题的例子。
 
+另一个用例是微调所有 schema 的处理过程。这么做可以用 Ajv 8 替代默认的 Ajv 6！例子见下文。
+
 ```js
 const fastify = Fastify({
   schemaController: {
@@ -875,6 +921,36 @@ const fastify = Fastify({
     }
   }
 });
+```
+
+##### 将 Ajv 8 作为默认的 schema 验证器
+
+Ajv 8 是 Ajv 6 的后继版本，拥有许多改进与新特性。Ajv 8 新特性 (如 JTD 与 Standalone 模式) 的用法详见 [`@fastify/ajv-compiler` 的文档](https://github.com/fastify/ajv-compiler#usage)。
+
+下列代码可以将 Ajv 8 作为默认的 schema 验证器使用：
+
+```js
+const AjvCompiler = require('@fastify/ajv-compiler') // 必须是 v2.x.x 版本
+
+// 请注意，默认情况下 Ajv 8 不支持 schema 的关键词 `format`，
+// 因此需要手动添加
+const ajvFormats = require('ajv-formats')
+
+const app = fastify({
+  ajv: {
+    customOptions: {
+      validateFormats: true
+    },
+    plugins: [ajvFormats]
+  },
+  schemaController: {
+    compilersFactory: {
+      buildValidator: AjvCompiler()
+    }
+  }
+})
+
+// 大功告成！现在你可以在 schema 中使用 Ajv 8 的选项与关键词了！
 ```
 
 <a name="set-not-found-handler"></a>
