@@ -11,7 +11,7 @@ Fastify 使用基于 schema 的途径，从本质上将 schema 编译成了高�
 
 ### 核心观念
 验证与序列化的任务分别由两个可定制的工具完成：
-- [Ajv](https://www.npmjs.com/package/ajv) 用于验证请求。
+- [Ajv 6](https://www.npmjs.com/package/ajv/v/6.12.6) 用于验证请求。
 - [fast-json-stringify](https://www.npmjs.com/package/fast-json-stringify) 用于序列化响应的 body。
 
 这些工具相互独立，但共享通过 `.addSchema(schema)` 方法添加到 Fastify 实例上的 JSON schema。
@@ -115,7 +115,7 @@ fastify.register((instance, opts, done) => {
 ```
 
 ### 验证
-路由的验证是依赖 [Ajv](https://www.npmjs.com/package/ajv) 实现的。这是一个高性能的 JSON schema 校验工具。验证输入十分简单，只需将字段加入路由的 schema 中即可！
+路由的验证是依赖 [Ajv 6](https://www.npmjs.com/package/ajv/v/6.12.6) 实现的。这是一个高性能的 JSON schema 校验工具。验证输入十分简单，只需将字段加入路由的 schema 中即可！
 
 支持的验证类型如下：
 - `body`：当请求方法为 POST、PUT 或 PATCH 时，验证 body。
@@ -125,7 +125,9 @@ fastify.register((instance, opts, done) => {
 
 所有的验证都可以是一个完整的 JSON Schema 对象 (包括值为 `object` 的 `type` 属性以及包含参数的 `properties` 对象)，也可以是一个没有 `type` 与 `properties`，而仅仅在顶层列明参数的简单变种 (见下文示例)。
 
-Example:
+> ℹ 想要使用最新版 Ajv (Ajv 8) 的话，请查阅 [`schemaController`](Server.md#schema-controller) 一节，里边描述了比自定义校验器更简单的方法。
+
+示例：
 ```js
 const bodyJsonSchema = {
   type: 'object',
@@ -247,12 +249,52 @@ curl -X GET "http://localhost:3000/?ids=1
 {"params":{"hello":["1"]}}
 ```
 
+你还可以给每个参数类型 (body, query string, param, header) 都自定义 schema 校验器。
+
+下面的例子改变了 ajv 的默认选项，禁用了 `body` 的强制类型转换。
+
+```js
+const schemaCompilers = {
+  body: new Ajv({
+    removeAdditional: false,
+    coerceTypes: false,
+    allErrors: true
+  }),
+  params: new Ajv({
+    removeAdditional: false,
+    coerceTypes: true,
+    allErrors: true
+  }),
+  querystring: new Ajv({
+    removeAdditional: false,
+    coerceTypes: true,
+    allErrors: true
+  }),
+  headers: new Ajv({
+    removeAdditional: false,
+    coerceTypes: true,
+    allErrors: true
+  })
+}
+
+server.setValidatorCompiler(req => {
+    if (!req.httpPart) {
+      throw new Error('Missing httpPart')
+    }
+    const compiler = schemaCompilers[req.httpPart]
+    if (!compiler) {
+      throw new Error(`Missing compiler for ${req.httpPart}`)
+    }
+    return compiler.compile(req.schema)
+})
+```
+
 更多信息请看[这里](https://ajv.js.org/coercion.html)。
 
 <a name="ajv-plugins"></a>
 #### Ajv 插件
 
-你可以提供一组用于 Ajv 的插件：
+你可以给默认的 `ajv` 实例提供一组插件。这些插件必须**兼容 Ajv 6**。
 
 > 插件格式参见 [`ajv 选项`](Server.md#ajv)
 

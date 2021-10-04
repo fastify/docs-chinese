@@ -27,7 +27,9 @@ Fastify 团队**强烈**地认为上述做法是一种反面模式，是非常�
 1. 应用需要处理多域名。
 1. 应用需要处理静态资源，例如 jpeg 文件。
 
-反向代理的解决方案有很多种，例如 AWS 与 GCP，具体根据环境来择用。对于上述的案例，我们可以使用 [HAProxy][haproxy]。
+反向代理的解决方案有很多种，例如 AWS 与 GCP，具体根据环境来择用。对于上述的案例，我们可以使用 [HAProxy][haproxy] 或 [Nginx][nginx]。
+
+### HAProxy
 
 ```conf
 # global 定义了 HAProxy 实例的基础配置。
@@ -133,6 +135,83 @@ backend static-backend
 [scale-horiz]: https://en.wikipedia.org/wiki/Scalability#Horizontal
 [why-use]: https://web.archive.org/web/20190821102906/https://medium.com/intrinsic/why-should-i-use-a-reverse-proxy-if-node-js-is-production-ready-5a079408b2ca
 [haproxy]: https://www.haproxy.org/
+
+### Nginx
+
+```nginx
+upstream fastify_app {
+  # 更多信息请见：http://nginx.org/en/docs/http/ngx_http_upstream_module.html
+  server 10.10.11.1:80;
+  server 10.10.11.2:80;
+  server 10.10.11.3:80 backup;
+}
+
+server {
+  # 默认服务器
+  listen 80 default_server;
+  listen [::]:80 default_server;
+  
+  # 指定端口
+  # listen 80;
+  # listen [::]:80;
+  # server_name example.tld;
+
+  location / {
+    return 301 https://$host$request_uri;
+  }
+}
+
+server {
+  # 默认服务器
+  listen 443 ssl http2 default_server;
+  listen [::]:443 ssl http2 default_server;
+  
+  # 指定端口
+  # listen 443 ssl http2;
+  # listen [::]:443 ssl http2;
+  # server_name example.tld;
+
+  # 密钥
+  ssl_certificate /path/to/fullchain.pem;
+  ssl_certificate_key /path/to/private.pem;
+  ssl_trusted_certificate /path/to/chain.pem;
+
+  # 通过 https://ssl-config.mozilla.org/ 生成最佳配置
+  ssl_session_timeout 1d;
+  ssl_session_cache shared:FastifyApp:10m;
+  ssl_session_tickets off;
+  
+  # 现代化配置
+  ssl_protocols TLSv1.3;
+  ssl_prefer_server_ciphers off;
+  
+  # HTTP 严格传输安全 (HSTS) (需要 ngx_http_headers_module 模块) (63072000 秒)
+  add_header Strict-Transport-Security "max-age=63072000" always;
+  
+  # 在线证书状态协议缓存 (OCSP stapling)
+  ssl_stapling on;
+  ssl_stapling_verify on;
+
+  # 自定义域名解析器 (resolver)
+  # resolver 127.0.0.1;
+      
+  location / {
+    # 更多信息请见：http://nginx.org/en/docs/http/ngx_http_proxy_module.html
+    proxy_http_version 1.1;
+    proxy_cache_bypass $http_upgrade;
+    proxy_set_header Upgrade $http_upgrade;
+    proxy_set_header Connection 'upgrade';
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto $scheme;
+    
+    proxy_pass http://fastify_app:3000;
+  }
+}
+```
+
+[nginx]: https://nginx.org/
 
 ## Kubernetes
 <a id="kubernetes"></a>

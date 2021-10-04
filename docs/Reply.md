@@ -339,7 +339,7 @@ fastify.get('/', {
 })
 ```
 
-如果你想完全自定义错误处理，请看 [`setErrorHandler`](Server.md#seterrorhandler) API。<br>
+如果你想自定义错误处理，请看 [`setErrorHandler`](Server.md#seterrorhandler) API。<br>
 *注：当自定义错误处理时，你需要自行记录日志*
 
 API:

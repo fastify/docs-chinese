@@ -543,3 +543,37 @@ fastify.route({
 ```
 
 **注**：两个选项都接受一个函数数组作为参数。
+
+## 诊断通道钩子
+
+> **注：** `诊断通道` (diagnostics_channel) 是当前 Node.js 的试验特性，
+> 因此，其 API 即便在补丁版本中也可能会发生变动。
+> 对于 Fastify 支持的 Node.js 版本，不兼容 `诊断通道` 的，
+> 将会使用 [polyfill](https://www.npmjs.com/package/diagnostics_channel)。
+> 而 polyfill 都不支持的版本将无法使用该特性。
+
+当前版本在初始化时，会有一个[`诊断通道`](https://nodejs.org/api/diagnostics_channel.html)发布 `'fastify.initialization'` 事件。此时，Fastify 的实例将会作为回调函数参数的一个属性，该实例可以添加钩子、插件、路由及其他任意内容。
+
+举例来说，某个监控工具可以如下使用（当然这是一个简化的例子）。在典型的“探测工具优先加载 (require instrumentation
+tools first)”风格下，这段代码会在被监控的应用初始化时加载。
+
+```js
+const tracer = /* 某个监控工具 */
+const dc = require('diagnostics_channel')
+const channel = dc.channel('fastify.initialization')
+const spans = new WeakMap()
+
+channel.subscribe(function ({ fastify }) {
+  fastify.addHook('onRequest', (request, reply, done) => {
+    const span = tracer.startSpan('fastify.request')
+    spans.set(request, span)
+    done()
+  })
+
+  fastify.addHook('onResponse', (request, reply, done) => {
+    const span = spans.get(request)
+    span.finish()
+    done()
+  })
+})
+```
