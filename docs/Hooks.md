@@ -90,7 +90,7 @@ fastify.addHook('preParsing', async (request, reply, payload) => {
 
 ```js
 fastify.addHook('preValidation', (request, reply, done) => {
-  req.body = { ...req.body, importantKey: 'randomString' }
+  request.body = { ...request.body, importantKey: 'randomString' }
   done()
 })
 ```
@@ -98,7 +98,7 @@ fastify.addHook('preValidation', (request, reply, done) => {
 ```js
 fastify.addHook('preValidation', async (request, reply) => {
   const importantKey = await generateRandomString()
-  req.body = { ...req.body, importantKey }
+  request.body = { ...request.body, importantKey }
 })
 ```
 

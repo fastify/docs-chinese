@@ -35,6 +35,9 @@ Fastify 是用普通的 JavaScript 编写的，因此，类型定义的维护并
     }
   }
   ```
+
+*注：在 `tsconfig.json` 中将 `target` 设置为 `es2017` 或更高，以避免 [FastifyDeprecation](https://github.com/fastify/fastify/issues/3284) 的警告。*
+  
 3. 初始化 TypeScript 配置文件：
   ```bash
   npx tsc --init

@@ -259,6 +259,24 @@ async function routes (fastify, options) {
     }
     return result
   })
+
+  const animalBodyJsonSchema = {
+    type: 'object',
+    required: ['animal'],
+    properties: {
+      animal: { type: 'string' },
+    },
+  }
+
+  const schema = {
+    body: animalBodyJsonSchema,
+  }
+
+  fastify.post('/animals', { schema }, async (request, reply) => {
+    // 可以通过 `request.body` 对象来获取客户端发送的数据
+    const result = await collection.insertOne({ animal: request.body.animal })
+    return result
+  })
 }
 
 module.exports = routes
@@ -358,6 +376,21 @@ fastify.get('/', opts, async (request, reply) => {
 ```
 一旦指明了 schema，序列化的速度就能达到原先的 2-3 倍。这么做同时也保护了潜在的敏感数据不被泄露，因为 Fastify 仅对 schema 里出现的数据进行序列化。
 请参阅 [验证与序列化](Validation-and-Serialization.md)获取更多信息。
+
+<a name="request-payload"></a>
+### 解析请求 payload
+Fastify 原生地支持解析请求中 `'application/json'` 与 `'text/plain'` 类型的 payload。你可以通过 `request.body` 中的 [Fastify request](Request.md) 对象获得解析结果。<br>
+
+下面的例子将请求 body 解析后返回给客户端：
+
+```js
+const opts = {}
+fastify.post('/', opts, async (request, reply) => {
+  return request.body
+})
+```
+
+请阅读 [Content-Type 解析](ContentTypeParser.md) 一文，以了解 Fastify 默认的解析行为，以及如何支持其他 content type。
 
 <a name="extend-server"></a>
 ### 扩展服务器

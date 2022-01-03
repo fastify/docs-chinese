@@ -2,18 +2,40 @@
 
 ## 日志
 
+### 启用日志
 日志默认关闭，你可以在创建 Fastify 实例时传入 `{ logger: true }` 或者 `{ logger: { level: 'info' } }` 选项来开启它。要注意的是，日志无法在运行时启用。为此，我们使用了
 [abstract-logging](https://www.npmjs.com/package/abstract-logging)。
 
 Fastify 专注于性能，因此使用了 [pino](https://github.com/pinojs/pino) 作为日志工具。默认的日志级别为 `'info'`。
 
-开启日志相当简单：
+开启生产环境的 JSON 日志：
 
 ```js
 const fastify = require('fastify')({
   logger: true
 })
+```
 
+想要同时配合开发环境与生产环境，你需要额外的一点配置：
+```js
+const fastify = require('fastify')({
+  logger: {
+      prettyPrint:
+        environment === 'development'
+          ? {
+              translateTime: 'HH:MM:ss Z',
+              ignore: 'pid,hostname'
+            }
+          : false
+    }
+})
+```
+⚠️ `pino-pretty` 需要作为开发依赖安装。出于性能考虑，它不会被默认安装。
+
+### 用途
+在路由控制函数里，可以这样使用日志：
+
+```js
 fastify.get('/', options, function (request, reply) {
   request.log.info('Some info about the current request')
   reply.send({ hello: 'world' })
@@ -87,8 +109,8 @@ const fastify = require('fastify')({
         return {
           method: request.method,
           url: request.url,
-          path: request.path,
-          parameters: request.parameters,
+          path: request.routerPath,
+          parameters: request.params,
           // 记录 header 可能会触犯隐私法律，例如 GDPR (译注：General Data Protection Regulation)。你应该用 "redact" 选项来移除敏感的字段。此外，验证数据也可能在日志中泄露。
           headers: request.headers
         };

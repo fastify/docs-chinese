@@ -7,6 +7,7 @@
   - [.statusCode](#statusCode)
   - [.server](#server)
   - [.header(key, value)](#headerkey-value)
+    - [set-cookie](#set-cookie)
   - [.getHeader(key)](#getheaderkey)
   - [.removeHeader(key)](#removeheaderkey)
   - [.hasHeader(key)](#hasheaderkey)
@@ -103,6 +104,28 @@ fastify.get('/', async function (req, rep) {
 设置响应 header。如果值被省略或为 undefined，将被强制设成 `''`。
 
 更多信息，请看 [`http.ServerResponse#setHeader`](https://nodejs.org/dist/latest-v14.x/docs/api/http.html#http_response_setheader_name_value)。
+
+<a name="set-cookie"></a>
+- ### set-cookie
+    - 当使用 `set-cookie` 设置多个值为 cookie 时，每个值都会被当作 cookie 发送，而不是替代上一个值。
+
+    ```js
+    reply.header('set-cookie', 'foo');
+    reply.header('set-cookie', 'bar');
+    ```
+  - 浏览器只会考虑采用 `set-cookie` header 的最新值。这是为了避免添加 `set-cookie` header 时的解析过程，并加速序列化。
+
+  - 要重置 `set-cookie` header，你得调用 `reply.removeHeader('set-cookie')` 方法，详见[这里](#removeheaderkey)。
+
+<a name="headers"></a>
+### .headers(object)
+将一个对象的所有键值设为响应 header。底层调用了 [`.header`](#headerkey-value) 方法。
+```js
+reply.headers({
+  'x-foo': 'foo',
+  'x-bar': 'bar'
+})
+```
 
 <a name="getHeader"></a>
 ### .getHeader(key)
