@@ -174,6 +174,7 @@ const milliseconds = reply.getResponseTime()
 ```js
 reply.type('text/html')
 ```
+如果 `Content-Type` 为 JSON 子类型，并且未设置 charset 参数，则使用 `utf-8` 作为 charset 的默认参数。
 
 <a name="serializer"></a>
 ### .serializer(func)
