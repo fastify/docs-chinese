@@ -3,8 +3,8 @@
 ## Request
 处理函数的第一个参数是 `Request`.<br>
 Request 是 Fastify 的核心对象，包含了以下字段:
-- `query` - 解析后的 querystring，其格式由 [`querystringParser`](Server.md#querystringParser) 指定。
-- `body` - 消息主体
+- `query` - 解析后的 querystring，其格式由 [`querystringParser`](Server.md#querystringparser) 指定。
+- `body` - 请求主体。[Content Type 解析器](ContentTypeParser.md)一文中列举了 Fastify 原生支持的 content type 类型，并阐明了如何支持其他类型。
 - `params` - URL 参数
 - [`headers`](#headers) - header 的 getter 与 setter
 - `raw` - Node 原生的 HTTP 请求

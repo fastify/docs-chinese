@@ -8,6 +8,10 @@ Fastify 使用基于 schema 的途径，从本质上将 schema 编译成了高�
 > 因为不管是验证还是序列化，都会使用 `new Function()` 来动态生成代码并执行。
 > 所以，用户提供的 schema 是不安全的。
 > 更多内容，请看 [Ajv](https://npm.im/ajv) 与 [fast-json-stringify](https://npm.im/fast-json-stringify)。
+> 
+> 此外，Ajv 的 [`$async` 特性](https://ajv.js.org/guide/async-validation.html)不该作为首选验证策略的一部分。
+> 该选项用于在验证过程中访问并读取数据库，容易引起拒绝服务型 (Denial of Service) 攻击。
+> 假如你需要运行 `async` 任务，请在验证完成后使用 [Fastify' 的钩子方法](./Hooks.md)，例如 `preHandler`。
 
 ### 核心观念
 验证与序列化的任务分别由两个可定制的工具完成：
@@ -535,7 +539,7 @@ fastify.post('/the/url', { schema }, handler)
 <a name="schema-serializer"></a>
 #### 序列化函数生成器
 
-`serializerCompiler` 返回一个根据输入参数返回字符串的函数。你应该提供一个函数，用于序列化所有定义了 `response` JSON Schema 的路由。
+`serializerCompiler` 返回一个根据输入参数返回字符串的函数。该函数会覆盖默认的序列化函数，用于序列化所有定义了`response` JSON Schema 的路由。
 
 ```js
 fastify.setSerializerCompiler(({ schema, method, url, httpStatus }) => {
@@ -626,7 +630,7 @@ fastify.setErrorHandler(function (error, request, reply) {
 ```
 
 假如你想轻松愉快地自定义错误响应，请查看 [`ajv-errors`](https://github.com/epoberezkin/ajv-errors)。具体的例子可以移步[这里](https://github.com/fastify/example/blob/HEAD/validation-messages/custom-errors-messages.js)。
-
+> 请确保安装的是 1.0.1 版本的 `ajv-errors`，因为其后续版本与 Fastify 3 内建的 AJV 6 不兼容。
 
 下面的例子展示了如何通过自定义 AJV，为 schema 的**每个属性添加自定义错误信息**。
 其中的注释描述了在不同场景下设置不同信息的方法。
@@ -634,7 +638,10 @@ fastify.setErrorHandler(function (error, request, reply) {
 ```js
 const fastify = Fastify({
   ajv: {
-    customOptions: { jsonPointers: true },
+    customOptions: {
+      jsonPointers: true,
+      allErrors: true // 警告：启用该选项存在安全隐患：https://www.cvedetails.com/cve/CVE-2020-8192/
+    },
     plugins: [
       require('ajv-errors')
     ]

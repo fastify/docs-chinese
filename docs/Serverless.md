@@ -13,6 +13,7 @@ Fastify 无法直接运行在无服务器平台上，需要做一点修改。本
 ### 目录
 
 - [AWS Lambda](#aws-lambda)
+- [Google Cloud Functions](#google-cloud-functions)
 - [Google Cloud Run](#google-cloud-run)
 - [Netlify Lambda](#netlify-lambda)
 - [Vercel](#vercel)
@@ -87,6 +88,128 @@ exports.handler = proxy;
 
 - 你没法操作 [stream](https://www.fastify.io/docs/latest/Reply/#streams)，因为 API Gateway 还不支持它。
 - API Gateway 的超时时间为 29 秒，请务必在此时限内回复。
+
+## Google Cloud Functions
+
+### 创建 Fastify 实例
+```js
+const fastify = require("fastify")({
+  logger: true // 你也可以传一个对象作为参数来定义日志级别：{level: 'debug'}
+});
+```
+
+### 添加自定义 `contentTypeParser`
+
+正如 [issue #946](https://github.com/fastify/fastify/issues/946#issuecomment-766319521) 所言，Google Cloud Functions 会在请求到达 Fastify 实例之前对其进行解析，从而影响 `POST` 与 `PATCH` 方法的请求主体。你需要添加一个自定义 [`Content Type 解析器`](https://www.fastify.io/docs/latest/ContentTypeParser/) 来解决该问题。
+
+```js
+fastify.addContentTypeParser('application/json', {}, (req, body, done) => {
+  done(null, body.body);
+});
+```
+
+### 定义端点 (示例)
+
+一个简单的 `GET` 端点 (endpoint)：
+```js
+fastify.get('/', async (request, reply) => {
+  reply.send({message: 'Hello World!'})
+})
+```
+
+带有 schema 校验的 `POST` 端点：
+```js
+fastify.route({
+  method: 'POST',
+  url: '/hello',
+  schema: {
+    body: {
+      type: 'object',
+      properties: {
+        name: { type: 'string'}
+      },
+      required: ['name']
+    },
+    response: {
+      200: {
+        type: 'object', 
+        properties: {
+          message: {type: 'string'}
+        }
+      }
+    },
+  },
+  handler: async (request, reply) => {
+    const { name } = request.body;
+    reply.code(200).send({
+      message: `Hello ${name}!`
+    })
+  }
+})
+```
+
+### 实现并导出函数
+
+最后一步。实现处理请求的函数，并通过触发 `fastify.server` 的 `request` 事件将其传递给 Fastify。
+
+```js
+const fastifyFunction = async (request, reply) => {
+  await fastify.ready();
+  fastify.server.emit('request', request, reply)
+}
+
+export.fastifyFunction = fastifyFunction;
+```
+
+### 本地测试
+
+安装 [Node.js 版的 Google Functions Framework](https://github.com/GoogleCloudPlatform/functions-framework-nodejs)。
+
+可以全局安装：
+```bash
+npm i -g @google-cloud/functions-framework
+```
+
+也可以作为开发库安装：
+```bash
+npm i --save-dev @google-cloud/functions-framework
+```
+
+通过 Functions Framework 本地运行你的函数：
+``` bash
+npx @google-cloud/functions-framework --target=fastifyFunction
+```
+
+或在 `package.json` 中添加如下脚本：
+```json
+"scripts": {
+...
+"dev": "npx @google-cloud/functions-framework --target=fastifyFunction"
+...
+}
+```
+并运行 `npm run dev`.
+
+
+### 部署
+```bash
+gcloud functions deploy fastifyFunction \
+--runtime nodejs14 --trigger-http --region $GOOGLE_REGION --allow-unauthenticated
+```
+
+#### 查阅日志
+```bash
+gcloud functions logs read
+```
+
+#### 请求 `/hello` 端点的示例
+```bash
+curl -X POST https://$GOOGLE_REGION-$GOOGLE_PROJECT.cloudfunctions.net/me -H "Content-Type: application/json" -d '{ "name": "Fastify" }'
+{"message":"Hello Fastify!"}
+```
+
+### 参考
+- [Google Cloud Functions - Node.js Quickstart ](https://cloud.google.com/functions/docs/quickstart-nodejs)
 
 ## Google Cloud Run
 

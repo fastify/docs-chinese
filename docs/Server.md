@@ -9,6 +9,8 @@ Fastify 模块导出了一个工厂函数，可以用于创建新的 <code><b>Fa
 - [https](./Server.md#https)
 - [connectionTimeout](./Server.md#connectiontimeout)
 - [keepAliveTimeout](./Server.md#keepalivetimeout)
+- [maxRequestsPerSocket](./Server.md#maxRequestsPerSocket)
+- [requestTimeout](./Server.md#requestTimeout)
 - [ignoreTrailingSlash](./Server.md#ignoretrailingslash)
 - [maxParamLength](./Server.md#maxparamlength)
 - [onProtoPoisoning](./Server.md#onprotopoisoning)
@@ -22,7 +24,7 @@ Fastify 模块导出了一个工厂函数，可以用于创建新的 <code><b>Fa
 - [genReqId](./Server.md#genreqid)
 - [trustProxy](./Server.md#trustProxy)
 - [pluginTimeout](./Server.md#plugintimeout)
-- [querystringParser](./Server.md#querystringParser)
+- [querystringParser](./Server.md#querystringparser)
 - [exposeHeadRoutes](./Server.md#exposeheadroutes)
 - [constraints](./Server.md#constraints)
 - [return503OnClosing](./Server.md#return503onclosing)
@@ -68,6 +70,22 @@ Fastify 模块导出了一个工厂函数，可以用于创建新的 <code><b>Fa
 定义服务器 keep-alive 超时，单位为毫秒。作用请见 [`server.keepAliveTimeout` 属性](https://nodejs.org/api/http.html#http_server_timeout)的文档。仅当使用 HTTP/1 时有效。当指定了 `serverFactory` 时，该选项被忽略。
 
 + 默认值：`5000` (5 秒)
+
+<a name="factory-max-requests-per-socket"></a>
+### `maxRequestsPerSocket`
+
+定义套接字在关闭 keep-alive 的连接前，可处理的最大请求数。要了解该选项的效果，参阅 [`server.maxRequestsPerSocket` 属性](https://nodejs.org/dist/latest/docs/api/http.html#http_server_maxrequestspersocket)的文档。该选项仅用于 HTTP/1.1 的连接，且当指定了 `serverFactory` 选项时会被忽略。
+> 此文撰写时，只有 16.0.0 及以上版本的 Node.js 支持该选项。兼容性请参阅 Node.js 的文档。
+
++ 默认值：`0` (无限制)
+
+<a name="factory-request-timeout"></a>
+### `requestTimeout`
+
+定义接收客户端请求的超时，单位为毫秒。要了解该选项的效果，参阅 [`server.requestTimeout` 属性](https://nodejs.org/dist/latest/docs/api/http.html#http_server_requesttimeout)的文档。当指定了 `serverFactory` 选项时会被忽略。当服务器之前没有反向代理时，该选项的值必须设置为非零值 (例如 120 秒)，以防范潜在的拒绝服务型 (Denial-of-Service) 攻击。
+> 此文撰写时，只有 14.11.0 及以上版本的 Node.js 支持该选项。兼容性请参阅 Node.js 的文档。
+
++ 默认值：`0` (无限制)
 
 <a name="factory-ignore-slash"></a>
 ### `ignoreTrailingSlash`
@@ -261,7 +279,7 @@ fastify.get('/user/:username', (request, reply) => {
 
 要注意的是，将该选项设为 `false` 与 [RFC3986](https://tools.ietf.org/html/rfc3986#section-6.2.2.1) 相悖。
 
-此外，该选项不影响 query string 的解析。要让 query string 忽略大小写，请看 [`querystringParser`](./Server.md#querystringParser)。
+此外，该选项不影响 query string 的解析。要让 query string 忽略大小写，请看 [`querystringParser`](./Server.md#querystringparser)。
 
 <a name="factory-request-id-header"></a>
 ### `requestIdHeader`
@@ -426,7 +444,7 @@ const fastify = require('fastify')({
 const fastify = require('fastify')({
   ajv: {
     customOptions: {
-      nullable: false // 参见 [ajv 的配置选项](https://ajv.js.org/#options)
+      nullable: false // 参见 [ajv 的配置选项](https://github.com/ajv-validator/ajv/tree/v6#options)
     },
     plugins: [
       require('ajv-merge-patch'),
