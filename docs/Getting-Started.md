@@ -359,6 +359,21 @@ fastify.get('/', opts, async (request, reply) => {
 一旦指明了 schema，序列化的速度就能达到原先的 2-3 倍。这么做同时也保护了潜在的敏感数据不被泄露，因为 Fastify 仅对 schema 里出现的数据进行序列化。
 请参阅 [验证与序列化](Validation-and-Serialization.md)获取更多信息。
 
+<a name="parsing-request-payloads"></a>
+### 解析请求负载
+Fastify 原生支持解析 `application/json` 和 `text/plain` 类型的请求负载，可以从 [Fastify request](Request.md) 对象中的 `request.body` 来访问。<br>
+下面展示了将解析后的请求正文返回给客户端：
+```js
+/**
+ * @type {import('fastify').RouteShorthandOptions}
+ */
+const opts = {}
+fastify.post('/', opts, async (request, reply) => {
+    return request.body
+})
+```
+阅读 [Content-Type Parser](ContentTypeParser.md) 以了解更多关于 Fastify 的默认解析功能以及如何支持其他内容类型的信息。
+
 <a name="extend-server"></a>
 ### 扩展服务器
 Fastify 生来十分精简，也具有高可扩展性。我们相信，一个小巧的框架足以实现一个优秀的应用。<br>
