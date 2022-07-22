@@ -67,7 +67,7 @@ Fastify 模块导出了一个工厂函数，可以用于创建新的 <code><b>Fa
 
 定义服务器 keep-alive 超时，单位为毫秒。作用请见 [`server.keepAliveTimeout` 属性](https://nodejs.org/api/http.html#http_server_timeout)的文档。仅当使用 HTTP/1 时有效。当指定了 `serverFactory` 时，该选项被忽略。
 
-+ 默认值：`5000` (5 秒)
++ 默认值：`72000` (72 秒)
 
 <a name="factory-ignore-slash"></a>
 ### `ignoreTrailingSlash`
@@ -405,36 +405,21 @@ const fastify = require('fastify')({
 <a name="factory-ajv"></a>
 ### `ajv`
 
-配置 Fastify 使用的 Ajv 6 实例。这使得你无需提供一个自定义的实例。
-
-+ 默认值：
-
-```js
-{
-  customOptions: {
-    removeAdditional: true,
-    useDefaults: true,
-    coerceTypes: true,
-    allErrors: false,
-    nullable: true
-  },
-  plugins: []
-}
-```
+配置 Fastify 使用的 Ajv v8 实例，但不提供自定义实例。默认配置在 [#schema-validator](Validation-and-Serialization.md#schema-validator) 部分中进行了解释。
 
 ```js
 const fastify = require('fastify')({
-  ajv: {
-    customOptions: {
-      nullable: false // 参见 [ajv 的配置选项](https://ajv.js.org/#options)
-    },
-    plugins: [
-      require('ajv-merge-patch'),
-      [require('ajv-keywords'), 'instanceof']
-      // 用法： [plugin, pluginOptions] - 插件与选项
-      // 用法： plugin - 仅插件
-    ]
-  }
+    ajv: {
+        customOptions: {
+            removeAdditional: 'all' // 参考 [ajv 配置项](https://ajv.js.org/#options)
+        },
+        plugins: [
+            require('ajv-merge-patch'),
+            [require('ajv-keywords'), 'instanceof']
+            // 用法: [plugin, pluginOptions] - 插件与选项
+            // 用法: plugin - 仅插件
+        ]
+    }
 })
 ```
 
