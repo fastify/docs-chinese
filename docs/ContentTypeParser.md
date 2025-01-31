@@ -118,7 +118,7 @@ fastify.addContentTypeParser('application/json', { parseAs: 'string' }, function
 })
 ```
 
-查看例子 [`example/parser.js`](https://github.com/fastify/fastify/blob/master/examples/parser.js)。
+查看例子 [`example/parser.js`](https://github.com/fastify/fastify/blob/main/examples/parser.js)。
 
 ##### 自定义解析器的选项
 + `parseAs` (string): `'string'` 或者 `'buffer'` 定义了如何收集进来的数据。默认是 `'buffer'`。

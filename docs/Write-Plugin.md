@@ -11,7 +11,7 @@ Fastify 运用了不同的技术来优化代码，其大部分都被写入了文
 
 存有疑虑或寻求建议？我们非常高兴能帮助你！只需在我们的 [求助仓库](https://github.com/fastify/help) 提一个 issue 即可！
 
-一旦你向我们的 [生态列表](https://github.com/fastify/fastify/blob/master/docs/Ecosystem.md) 提交了一个插件，我们将会检查你的代码，需要时也会帮忙改进它。
+一旦你向我们的 [生态列表](https://github.com/fastify/fastify/blob/main/docs/Ecosystem.md) 提交了一个插件，我们将会检查你的代码，需要时也会帮忙改进它。
 
 ## 文档
 文档相当重要。假如你的插件没有好的文档，我们将拒绝将其加入生态列表。缺乏良好的文档会提升用户使用插件的难度，并有可能导致弃用。<br>

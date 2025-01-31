@@ -362,7 +362,7 @@ fastify.get('/', opts, async (request, reply) => {
 <a name="extend-server"></a>
 ### 扩展服务器
 Fastify 生来十分精简，也具有高可扩展性。我们相信，一个小巧的框架足以实现一个优秀的应用。<br>
-换句话说，Fastify 并非一个面面俱到的框架，它依赖于自己惊人的[生态系统](https://github.com/fastify/fastify/blob/master/docs/Ecosystem.md)！
+换句话说，Fastify 并非一个面面俱到的框架，它依赖于自己惊人的[生态系统](https://github.com/fastify/fastify/blob/main/docs/Ecosystem.md)！
 
 <a name="test-server"></a>
 ### 测试服务器

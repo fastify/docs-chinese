@@ -819,4 +819,4 @@ const refToSharedSchemaDefinitions = {
 - [Ajv 文档](https://github.com/epoberezkin/ajv/blob/master/README.md)
 - [Ajv i18n](https://github.com/epoberezkin/ajv-i18n)
 - [Ajv 自定义错误](https://github.com/epoberezkin/ajv-errors)
-- 使用核心方法自定义错误处理，并实现错误文件转储的[例子](https://github.com/fastify/example/tree/master/validation-messages)
+- 使用核心方法自定义错误处理，并实现错误文件转储的[例子](https://github.com/fastify/example/tree/main/validation-messages)
