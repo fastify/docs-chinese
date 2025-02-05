@@ -139,62 +139,91 @@ backend static-backend
 ### Nginx
 
 ```nginx
+# 该名为 fastify_app 的 upstream 为三个服务器的组合：
+# 两个通过轮询调度的基础服务器，
+# 一个基础服务器不可用时启用的备用服务器。
+# 服务器监听 80 端口。
+# 更多信息请见：http://nginx.org/en/docs/http/ngx_http_upstream_module.html
 upstream fastify_app {
-  # 更多信息请见：http://nginx.org/en/docs/http/ngx_http_upstream_module.html
   server 10.10.11.1:80;
   server 10.10.11.2:80;
   server 10.10.11.3:80 backup;
 }
 
+# 此处的 server 代码块将 80 端口 (HTTP) 的请求
+# 重定向为 HTTPS 的相同 URL 请求。
+# 该代码块是可选的，一般当在 Nginx 中
+# 终结 SSL 会话 (SSL termination) 时使用，如下例所示：
 server {
-  # 默认服务器
+  # default server 设置该地址/端口的默认服务器。
+  # 下例中即为任意地址的 80 端口。
   listen 80 default_server;
   listen [::]:80 default_server;
   
-  # 指定端口
+  # server_name 告诉 Nginx 只有服务器名称
+  # 匹配时才使用该 server 代码块。
   # listen 80;
   # listen [::]:80;
   # server_name example.tld;
 
+  # 重定向所有路径。
   location / {
     return 301 https://$host$request_uri;
   }
 }
 
+# 该 server 代码块为 443 端口开启 SSL，
+# 并接受 HTTP/2 连接。
+# 请求在此被代理到
+# fastify_app 服务组的 3000 端口。
 server {
-  # 默认服务器
+  # 此处的 listen 指令告诉 Nginx
+  # 监听任意地址的 443 端口，
+  # 使用 SSL，可能的时候把 HTTP/2 也用上。
   listen 443 ssl http2 default_server;
   listen [::]:443 ssl http2 default_server;
   
-  # 指定端口
+  # server_name 告诉 Nginx 只有服务器名称
+  # 匹配时才使用该 server 代码块。
   # listen 443 ssl http2;
   # listen [::]:443 ssl http2;
   # server_name example.tld;
 
-  # 密钥
+  # PEM 格式的 SSL/TLS 证书链与密钥。
   ssl_certificate /path/to/fullchain.pem;
   ssl_certificate_key /path/to/private.pem;
   ssl_trusted_certificate /path/to/chain.pem;
 
-  # 通过 https://ssl-config.mozilla.org/ 生成最佳配置
+  # 基于 https://ssl-config.mozilla.org/ 的
+  # 通用的最佳实践配置。
   ssl_session_timeout 1d;
   ssl_session_cache shared:FastifyApp:10m;
   ssl_session_tickets off;
   
-  # 现代化配置
+  # 只接受 TLS 1.3 版本。
+  # 该版本兼容大部分现代浏览器，包括升级后的 IE 11。
+  # 要兼容更古老的浏览器的话，
+  # 你需要加上其他版本的协议。
   ssl_protocols TLSv1.3;
   ssl_prefer_server_ciphers off;
   
-  # HTTP 严格传输安全 (HSTS) (需要 ngx_http_headers_module 模块) (63072000 秒)
+  # 添加 header 以告知浏览器，
+  # 必须通过 HTTPS 访问该服务器。
   add_header Strict-Transport-Security "max-age=63072000" always;
   
-  # 在线证书状态协议缓存 (OCSP stapling)
+  # 以下指令仅在你需要开启
+  # 在线证书状态协议缓存 (OCSP stapling) 时有用。
   ssl_stapling on;
   ssl_stapling_verify on;
+  ssl_trusted_certificate /path/to/chain.pem;
 
-  # 自定义域名解析器 (resolver)
-  # resolver 127.0.0.1;
-      
+  # 自定义域名解析器以处理 upstream 的服务器名称。
+  # resolver 127.0.0.1
+
+  # 将所有路径代理至上文指定的后端服务器组。
+  # 请注意用于转发原始请求信息的额外 header。
+  # 你可以将 trustProxy header 设为 Nginx 服务的地址，
+  # 以便 Fastify 添加上 X-Forwarded header。
   location / {
     # 更多信息请见：http://nginx.org/en/docs/http/ngx_http_proxy_module.html
     proxy_http_version 1.1;
@@ -206,7 +235,11 @@ server {
     proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
     proxy_set_header X-Forwarded-Proto $scheme;
     
-    proxy_pass http://fastify_app:3000;
+    # 该指令将请求代理至特定服务器。
+    # 如果你使用了 upstream 组合，则无需指定端口。
+    # 如果你直接代理到服务器 (例：proxy_pass http://127.0.0.1:3000)，
+    # 则需要指定一个端口。
+    proxy_pass http://fastify_app;
   }
 }
 ```
