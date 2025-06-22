@@ -1,3 +1,7 @@
+> [!TIP]
+> This project is archived. The website can be browsed using automatic translators like [Google Translate](https://fastify-dev.translate.goog/?_x_tr_sl=en&_x_tr_tl=zh-TW&_x_tr_hl=it&_x_tr_pto=wapp).
+
+
 # Fastify 文档中文翻译
 
 ### 文档目录
